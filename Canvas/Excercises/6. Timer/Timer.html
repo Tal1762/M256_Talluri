@@ -1,0 +1,309 @@
+<html>
+<head>
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+	<script>
+		function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+		class rectClass{
+            constructor(cRectX, cRectY, cRectWidth, cRectHeight){
+                this.x = cRectX;
+                this.y = cRectY;
+                this.width = cRectWidth;
+                this.height = cRectHeight;
+				this.color = "rgb(255, 0, 0)";
+				this.numUpdate = 0;
+            }
+
+            draw(){
+				c.fillStyle = this.color;
+                c.fillRect(this.x, this.y, this.width, this.height);
+            }
+
+			update(){
+				this.numUpdate += 1;
+				this.x = getRandInt(100, 600);
+				this.y = getRandInt(100, 400);
+				this.width = getRandInt(75, 150);
+				this.height = getRandInt(75, 150);
+				if (this.color == "rgb(255, 0, 0)"){
+					this.color = "rgb(0, 255, 0)";
+				}
+				else if (this.color == "rgb(0, 255, 0)"){
+					this.color = "rgb(0, 0, 255)";
+				}
+				else if (this.color == "rgb(0, 0, 255)"){
+					this.color = "rgb(255, 0, 0)";
+				}
+			}
+        }
+
+		// This timer class keeps track of how much time has elapsed
+		// since the last time it fired.
+		class timerClass{
+			constructor(timeIntervalMS){
+				// Initialize oldTime to be the time of creation
+				this.oldTime = new Date();
+
+				// Set interval to elapse before the timer fires
+				this.interval = timeIntervalMS;
+				
+				// Keeps track of the # of milliseconds accumulated since the last firing
+				this.accum = 0;
+			}
+
+			// This method returns true if the timer is ready to fire, false otherwise
+			// If it returns true, then resets fire interval
+			isReady(){
+				var curTime = new Date();
+				var delta = curTime - this.oldTime;
+
+				this.accum += delta;
+				this.oldTime = curTime;
+				if (this.accum > this.interval){
+					this.accum = 0;
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+		var rect1 = new rectClass(getRandInt(100, 600), getRandInt(100, 400), getRandInt(75, 150), getRandInt(75, 150));
+
+		var output = "time interval:1000 ms";
+
+		var i3 = 0.01;
+
+		var i2 = 0.01;
+
+		var sndCymbal = new Audio('cymbal.wav');
+
+		var sndSnare = new Audio('snare.wav');
+
+		var sndKick = new Audio('kick.wav');
+
+		var sndTop = new Audio('top.wav');
+
+		var bCymbal = false;
+
+		var bSnare = false;
+
+		var bKick = false;
+
+		var bTop = false;
+
+		var gameState = "play";
+								
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		var cymbalTimer = new timerClass(900);
+		var snareTimer = new timerClass(600);
+		var topTimer = new timerClass(750);
+		var kickTimer = new timerClass(900);
+		var rectTimer = new timerClass(1000);
+
+		function gameUpdate(){
+			// ADD YOUR UPDATE CODE HERE
+			if (gameState == "play"){
+				if (newkeys[67]){
+					if (bCymbal == false){
+						bCymbal = true;
+					}
+					else{
+						bCymbal = false;
+					}
+				}
+				if (newkeys[83]){
+					if (bSnare == false){
+						bSnare = true;
+					}
+					else{
+						bSnare = false;
+					}
+				}
+				if (newkeys[75]){
+					if (bKick == false){
+						bKick = true;
+					}
+					else{
+						bKick = false;
+					}
+				}
+				if (newkeys[84]){
+					if (bTop == false){
+						bTop = true;
+					}
+					else{
+						bTop = false;
+					}
+				}
+
+				if (bCymbal == true){
+					if (cymbalTimer.isReady() == true){
+						sndCymbal.currentTime = 0;
+						sndCymbal.play();
+					}
+				}
+
+				if (bSnare == true){
+					if (snareTimer.isReady() == true){
+						sndSnare.currentTime = 0;
+						sndSnare.play();
+					}
+				}
+
+				if (bKick == true){
+					if (kickTimer.isReady() == true){
+						sndKick.currentTime = 0;
+						sndKick.play();
+					}
+				}
+
+				if (bTop == true){
+					if (topTimer.isReady() == true){
+						sndTop.currentTime = 0;
+						sndTop.play();
+					}
+				}
+
+				if (rectTimer.isReady() == true){
+					rect1.update();
+				}
+
+				if (curkeys[38]){
+					if (rectTimer.interval < 10000){
+						rectTimer.interval += i3;
+						rectTimer.interval = Math.round(rectTimer.interval * 100) / 100;
+						output = "time interval:" + rectTimer.interval + " ms";
+					}
+					i3 = i3 + i3 * 0.01;
+
+					if (rectTimer.interval > 10000){
+						rectTimer.interval = 10000;
+						output = "time interval:" + rectTimer.interval + " ms";
+					}
+				}
+
+				if (!curkeys[38]){
+					i3 = 0.01;
+				}
+
+				if (!curkeys[40]){
+					i2 = 0.01;
+				}
+
+				if (curkeys[40]){
+					if (rectTimer.interval > 1){
+						rectTimer.interval -= i2;
+						rectTimer.interval = Math.round(rectTimer.interval * 100) / 100;
+						output = "time interval:" + rectTimer.interval + " ms";
+					}
+					i2 = i2 + i2 * 0.01;
+
+					if (rectTimer.interval < 1){
+						rectTimer.interval = 1;
+						output = "time interval:" + rectTimer.interval + " ms";
+					}
+				}
+				
+				if (newkeys[80]){
+					gameState = "pause";
+				}
+			}
+			else if (gameState == "pause"){
+				if (newkeys[80]){
+					gameState = "play";
+				}
+			}
+			
+			
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			if (gameState == "play"){
+				rect1.draw();
+
+				c.font = "24px Calibri";
+				c.fillStyle = "red";
+
+				c.fillText(output, 550, 30);
+			}
+			else if (gameState == "pause"){
+				c.fillStyle = "gray";
+				c.fillText("The experience has been paused", 235, 200)
+				c.fillRect(370, 225, 20, 100);
+				c.fillRect(410, 225, 20, 100);
+			}
+		}
+	</script>
+</head>
+<body onload="gameFrameworkInit()">	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<html>
+<head>
+    <title> Array methods and properties</title>
+
+    <script>
+        var nameArray = ["Alice", "Bob", "Carol"];
+        // In an array, the first element has an index of 0
+        // Alice is index 0
+        // Box is index 1
+        // Carol is index 2
+        // and so on
+
+        function showNameAtIndex(){
+            var idx = Number(idTxtNameIndex.value);
+            idDivOutput.innerHTML = nameArray[idx];
+        }
+
+        function showAllNames(){
+            showArray(nameArray);
+        }
+
+        function showArray(inputArray){
+            var arraySize = inputArray.length;
+            output = "";
+
+            for (var i=0; i < arraySize; i++){
+                output += inputArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+        }
+
+        function addName(){
+            nameArray.push(idTxtName.value);
+        }
+
+        function deleteName(){
+            var nameToDelete = idTxtName.value;
+            var arraySize = nameArray.length;
+            var deleteCount = 0;
+
+            while(nameArray.indexOf(nameToDelete) != -1){
+                for (var i=0; i < arraySize; i++){
+                    if (nameArray[i] == nameToDelete){
+                        nameArray.splice(i, 1);
+                        deleteCount += 1;
+                    }
+                }
+            }
+
+            if (deleteCount == 0){
+                window.alert(nameToDelete + " is not in the list of names.")
+            }
+            else if(deleteCount == 1){
+                window.alert("The name \"" + nameToDelete + "\" has been removed " + deleteCount + " time!");
+            }
+            else{
+                window.alert("The name \"" + nameToDelete + "\" has been removed " + deleteCount + " times!");
+            }
+        }
+
+        function alertNameInfo(){
+            nameArray.sort();
+            if (nameArray.length == 0){
+                window.alert("There are no names on the list.");
+                return
+            }
+
+            var output = "There are " + nameArray.length + " names on the list. ";
+            output += "By alphabetical order, the first name is " + nameArray[0];
+            output += " and the last name is " + nameArray[nameArray.length - 1] + ".";
+            window.alert(output);
+        }
+
+        function alertMedianName(){
+            nameArray.sort();
+            var medianName = nameArray[(nameArray.length - 1)/2]
+            if (Number.isInteger((nameArray.length - 1)/2) == false){
+                var name1 = nameArray[Math.ceil((nameArray.length - 2)/2)];
+                var name2 = nameArray[Math.floor(nameArray.length/2)];
+                var output = "The middle names in the list by alphabetical order are ";
+                output += name1 + " and " + name2 + ".";
+                window.alert(output);
+            }
+            else{
+                window.alert("The middle name in the list by alphabetical order is " + medianName + ".");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    Name: <input type="text" id="idTxtName"><br><br>
+
+    Index: <input type="text" id="idTxtNameIndex"><br><br>
+
+    <input type="button" value="Show Name At Index" onClick="showNameAtIndex()">
+    <br><br>
+
+    <input type="button" value="Show All Names" onClick="showAllNames()">
+    <br><br>
+
+    <input type="button" value="Add Name" onClick="addName()">
+    <br><br>
+
+    <input type="button" value="Remove Name" onClick="deleteName()">
+    <br><br>
+
+    <input type="button" value="Alert Name Info" onClick="alertNameInfo()">
+    <br><br>
+
+    <input type="button" value="Alert The Name In The Middle" onClick="alertMedianName()">
+    <br><br>
+
+    <div id="idDivOutput"></div>
+</body>
+</html>

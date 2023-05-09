@@ -1,0 +1,51 @@
+<html>
+<head>
+    <title> Array Loops </title>
+
+    <script>
+        const numArray = [];
+
+        function arrayLoad(){
+            for(var i=0; i<=500; i++){
+                numArray.push(i * 3);
+            }
+            console.log(numArray);
+        }
+
+        function findByIndex(){
+            idDivOutput.innerHTML = "";
+            var minimum = Number(idTxtMin.value);
+            var maximum = Number(idTxtMax.value);
+
+            for(var i=minimum; i<=maximum; i++){
+                idDivOutput.innerHTML += numArray[i] + "<br>";
+            }
+        }
+
+        function findByValue(){
+            idDivOutput.innerHTML = "";
+            var minimum = Number(idTxtMin.value);
+            var maximum = Number(idTxtMax.value);
+
+            for(var i=0; i<=500; i++){
+                if (numArray[i] <= maximum && numArray[i] >= minimum){
+                    idDivOutput.innerHTML += numArray[i] + "<br>";
+                }
+            }
+        }
+    </script>
+</head>
+
+<body onLoad="arrayLoad()">
+    Minimum: 
+    <input type="text" id="idTxtMin">
+    <br>
+    Maximum:
+    <input type="text" id="idTxtMax">
+    <br>
+    <input type="button" value="Find By Index" onClick="findByIndex()">
+    <input type="button" value="Find By Value" onClick="findByValue()">
+    <br><br>
+    <div id="idDivOutput"></div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Assessment 1</title>
+    <style type=text/css>
+        body{
+            background-color: cadetblue;
+            color: crimson;
+            font-family: Cambria;
+            font-size: 20px;
+            }
+    </style>
+
+    <script>
+        function alertOutput(){
+            var name = document.getElementById("idTxtName").value;
+            var favSubject = document.getElementById("idSlctSubject").value;
+            window.alert(name + "'s favorite subject is " + favSubject + "!");
+        }
+        function outputInTxtBox(){
+            var name = document.getElementById("idTxtName").value;
+            var favSubject = document.getElementById("idSlctSubject").value;
+            document.getElementById("idTxtOutput").value = name + "'s favorite subject is " + favSubject + "!";
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Type in your name:
+        <input type="text" id="idTxtName">
+        <br><br>
+        <input type="text" id="idTxtOutput">
+        <br><br>
+        Select your favorite subject:
+        <select id="idSlctSubject">
+            <option value="computer science">Computer Science</option>
+            <option value="math">Math</option>
+            <option value="science">Science</option>
+        </select>
+        <br><br>
+        <input type="button" value="Alert the Output" onClick="alertOutput()">
+        <input type="button" value="Put Output in Text Box" onClick="outputInTxtBox()">
+    </form>
+</body>
+</html>

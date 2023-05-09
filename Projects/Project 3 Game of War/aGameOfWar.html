@@ -1,0 +1,215 @@
+<html>
+<head>
+    <title> Let's Play Some War! </title>
+
+    <link rel=stylesheet type=text/css href="style1.css">
+    
+    <script>
+        var cardArray = [];
+        var playerWins = 0;
+        var compWins = 0;
+        var ties = 0;
+        var play = "";
+
+        function restartGame(){
+            playerWins = 0;
+            compWins = 0;
+            ties = 0;
+            idDivOutcome.innerHTML = " Start the game! ";
+            var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+            output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+            idDivScore.innerHTML = output;
+            idImgCard1.src = "redbackofcard.jpg";
+            idImgCard2.src = "bluebackofcard.jpg";
+            idDivOutcome.style.color = "goldenrod";
+        }
+
+        function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+        function initializeArray(){
+            for(var i=0; i<=51; i++){
+                cardArray.push(i + ".jpg");
+            }
+        }
+
+        function playGame(){
+            var card1 = getRandInt(0, 51);
+            var card2 = getRandInt(0, 51);
+            var i1 = card1;
+            var i2 = card2;
+
+            i1 = Math.round(((i1 + 27) / 13) * 100) / 100;
+            i2 = Math.round(((i2 + 27) / 13) * 100) / 100;
+            idImgCard1.src = cardArray[card1];
+            idImgCard2.src = cardArray[card2];
+
+            while (i1 > 1){
+                i1--;
+            }
+            while (i2 > 1){
+                i2--;
+            }
+
+            i1 = Math.round(i1 * 100) / 100;
+            i2 = Math.round(i2 * 100) / 100;
+
+            if (i1 < i2){
+                document.getElementById("idDivOutcome").style.color = "red";
+                idDivOutcome.innerHTML = "The computer wins this round!";
+                compWins += 1;
+                var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+                output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+                idDivScore.innerHTML = output;
+            }
+            else if (i1 > i2){
+                document.getElementById("idDivOutcome").style.color = "chartreuse";
+                idDivOutcome.innerHTML = "The player wins this round!";
+                playerWins += 1;
+                var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+                output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+                idDivScore.innerHTML = output;
+            }
+            else if (i1 == i2){
+                document.getElementById("idDivOutcome").style.color = "goldenrod";
+                idDivOutcome.innerHTML = "This round is a tie!";
+                ties += 1;
+                var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+                output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+                idDivScore.innerHTML = output;
+            }
+
+            if (playerWins == 10){
+                var confirm = window.confirm("You won! Do you want to play again?");
+                if (confirm == false){
+                    window.alert("Ok then...");
+                    close();
+                }
+                else{
+                    window.alert("All right! Let's play again!");
+                    restartGame();
+                }
+            }
+            else if (compWins == 10){
+                var confirm = window.confirm("You lost... Do you want to play again?");
+                if (confirm == false){
+                    window.alert("Ok then...");
+                    close();
+                }
+                else{
+                    window.alert("All right! Let's play again!");
+                    restartGame();
+                }
+            }
+        }
+
+        function restartGameBtn(){
+            var confirm = window.confirm("Are you sure you want to reset the game?");
+            if (confirm == false){
+                window.alert("Awesome! Don't give up!");
+                return
+            }
+            else{
+                window.alert("Ok then! Let's play again!");
+                restartGame();
+            }
+        }
+
+        function pacify(){
+            var num1 = getRandInt(1,4);
+            var num2 = getRandInt(1,4);
+            var numBoth = getRandInt(1,13);
+            var indexNum1 = num1 * 13 - numBoth;
+            var indexNum2 = num2 * 13 - numBoth;
+
+            idImgCard1.src = cardArray[indexNum1];
+            idImgCard2.src = cardArray[indexNum2];
+            document.getElementById("idDivOutcome").style.color = "goldenrod";
+            idDivOutcome.innerHTML = "This round is a tie!";
+            ties += 1;
+            var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+            output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+            idDivScore.innerHTML = output;
+        }
+
+        function runGame(){
+            var card1 = getRandInt(0, 51);
+            var card2 = getRandInt(0, 51);
+            var i1 = card1;
+            var i2 = card2;
+
+            i1 = Math.round(((i1 + 27) / 13) * 100) / 100;
+            i2 = Math.round(((i2 + 27) / 13) * 100) / 100;
+            idImgCard1.src = cardArray[card1];
+            idImgCard2.src = cardArray[card2];
+
+            while (i1 > 1){
+                i1--;
+            }
+            while (i2 > 1){
+                i2--;
+            }
+
+            i1 = Math.round(i1 * 100) / 100;
+            i2 = Math.round(i2 * 100) / 100;
+
+            if (i1 < i2){
+                document.getElementById("idDivOutcome").style.color = "red";
+                idDivOutcome.innerHTML = "The computer wins this round!";
+                compWins += 1;
+                var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+                output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+                idDivScore.innerHTML = output;
+            }
+            else if (i1 > i2){
+                document.getElementById("idDivOutcome").style.color = "chartreuse";
+                idDivOutcome.innerHTML = "The player wins this round!";
+                playerWins += 1;
+                var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+                output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+                idDivScore.innerHTML = output;
+            }
+            else if (i1 == i2){
+                document.getElementById("idDivOutcome").style.color = "goldenrod";
+                idDivOutcome.innerHTML = "This round is a tie!";
+                ties += 1;
+                var output = "<wonky1> Player Wins: " + playerWins + "</wonky1> |<wonky2> Computer Wins: ";
+                output += compWins + "</wonky2> | <wonky3>Ties: " + ties + " </wonky3>";
+                idDivScore.innerHTML = output;
+            }
+        }
+
+        function playNumber(){
+            var numOfTimes = Number(idTxtSecret.value) + 99;
+            for(var i=100; i<=numOfTimes; i++){
+                play = setTimeout(runGame, i);
+            }
+        }
+    </script>
+</head>
+
+<body onLoad="initializeArray()">
+    <input type="button" value="Start Round" id="idBtnStart" onClick="playGame()">
+    <input type="button" value="Restart Game" id="idBtnRestart" onClick="restartGameBtn()">
+    <input type="button" value="Pacifist" id="idBtnPacifist" onClick="pacify()">
+    <br><br>
+    <fieldset>
+    <fieldset id="idFieldSet2">
+    <img src="redbackofcard.jpg" id="idImgCard1" height=250 width=200>
+    <img src="bluebackofcard.jpg" id="idImgCard2" height=250 width=200>
+    </fieldset>
+    </fieldset>
+    <br>
+    <div id="idDivOutcome"> Start the game! </div>
+    <br><br>
+    <div id="idDivScore"><wonky1> Player Wins: 0 </wonky1> |<wonky2> Computer Wins: 0</wonky2> |<wonky3> Ties: 0 </wonky3></div>
+    <br><br><br><br>
+    <fieldset id="idFieldSet3">
+    <input type="text" id="idTxtSecret">
+    <br>
+    <input type="button" id="idBtnSecret" value="Run # of Times" onClick="playNumber()">
+    </fieldset>
+</body>
+</html>

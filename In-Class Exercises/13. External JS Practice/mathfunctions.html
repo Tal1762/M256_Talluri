@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>Math Functions</title>
+    <style>
+        body{
+            background-color: aquamarine;
+            color: darkslateblue;
+            font-family: Geneva;
+            font-size: 24px;
+        }
+    </style>
+
+    <script type="text/javascript" src="math.js">
+    </script>
+
+    <script>
+        function task1(){
+            var min = Number(idTxtMin.value);
+            var max = Number(idTxtMax.value);
+            var output = "The random number selected between " + min;
+            output += " and " + max + " is " + getRandomInt(min, max) + ".";
+            window.alert(output);
+        }
+        function task2(){
+            var originalNum = Number(idTxtValue.value);
+            var roundToDecimal = Number(idTxtNumDigits.value);
+            var output = "The number " + originalNum;
+            output += " rounded to " + roundToDecimal;
+            output += " digits is " + roundNumber(originalNum, roundToDecimal) + ".";
+            window.alert(output);
+        }
+        function task3(){
+            var tempCelsius = Number(idTxtTemp.value);
+            var output = tempCelsius + " degrees Celsius ";
+            output += "converts to ";
+            output += getDegF(tempCelsius) + " degrees Fahrenheit."
+            window.alert(output);
+        }
+        function task4(){
+            var tempFahrenheit = Number(idTxtTemp.value);
+            var output = tempFahrenheit + " degrees Fahrenheit ";
+            output += "converts to ";
+            output += getDegC(tempFahrenheit) + " degrees Celsius."
+            window.alert(output);
+        }
+        function task5(){
+            var circleRadius = Number(idTxtRadius.value);
+            var roundToDecimal = Number(idTxtNumDigits.value);
+            var output = "The area of a circle with radius " + circleRadius;
+            output += " rounded to the nearest " + roundToDecimal;
+            output += " decimal places is " + getAreaCircle(circleRadius, roundToDecimal);
+            output += ".";
+            window.alert(output);
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Minimum:
+        <input type="text" id="idTxtMin">
+        <br>
+        Maximum:
+        <input type="text" id="idTxtMax">
+        <br>
+        <input type="button" value="Task1" onClick="task1()">
+        <br><br>
+        Input a decimal (used for Task2):
+        <input type="text" id="idTxtValue">
+        <br>
+        Input a circle radius (used for Task5):
+        <input type="text" id="idTxtRadius">
+        <br>
+        Type in the decimal place to round to:
+        <input type="text" id="idTxtNumDigits">
+        <br>
+        <input type="button" value="Task2" onClick="task2()">
+        <input type="button" value="Task5" onClick="task5()">
+        <br><br>
+        Enter a temperature:
+        <input type="text" id="idTxtTemp">
+        <br>
+        <input type="button" value="Task3" onClick="task3()">
+        <input type="button" value="Task4" onClick="task4()">
+    </form>
+</body>
+</html>

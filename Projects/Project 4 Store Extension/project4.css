@@ -1,0 +1,161 @@
+table{
+  border: 5px solid black;
+}
+th{
+  border-right: 2px solid aquamarine;
+  border-bottom: 2px solid red;
+  font-size: 20px;
+  color: darkblue;
+  font-family: 'Courier New', Courier, monospace;
+  background-image: linear-gradient(rgb(255, 0, 255), yellow, orange);
+}
+td{
+  border-bottom: 2px dotted blue;
+  border-right: 2px solid aquamarine;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#idBtnAZ{
+  background-image: linear-gradient(red, orange);
+  color: black;
+  border-radius: 8px;
+  font-size: 17px;
+  font-family: Lucida Sans;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 3px #999;
+  padding: 2.5px 5px;
+  user-select: none;
+}
+#idBtnZA{
+  background-image: linear-gradient(orange, red);
+  color: black;
+  border-radius: 8px;
+  font-size: 17px;
+  font-family: Lucida Sans;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 3px #999;
+  padding: 2.5px 5px;
+  user-select: none;
+}
+#idBtnAZ:hover {background-image: linear-gradient(rgb(128, 0, 0), rgb(182, 119, 2))}
+#idBtnAZ:active {
+background-image: linear-gradient(rgb(128, 0, 0), rgb(160, 104, 1));
+box-shadow: 0 1px #666;
+transform: translateY(2px);
+}
+#idBtnZA:hover {background-image: linear-gradient(rgb(182, 119, 2), rgb(128, 0, 0))}
+#idBtnZA:active {
+background-image: linear-gradient(rgb(182, 119, 2), rgb(128, 0, 0));
+box-shadow: 0 1px #666;
+transform: translateY(2px);
+}
+#idBtnLowHigh{
+background-image: linear-gradient(black, green);
+color: greenyellow;
+border-radius: 8px;
+font-size: 17px;
+font-family: Lucida Sans;
+display: inline-block;
+cursor: pointer;
+box-shadow: 0 3px #999;
+padding: 2.5px 5px;
+}
+#idBtnLowHigh:hover {background-image: linear-gradient(black, rgb(0, 92, 0))}
+#idBtnLowHigh:active {
+background-image: linear-gradient(black, rgb(0, 92, 0));
+box-shadow: 0 1px #666;
+transform: translateY(2px);
+}
+#idBtnHighLow{
+  background-image: linear-gradient(green, black);
+  color: greenyellow;
+  border-radius: 8px;
+  font-size: 17px;
+  font-family: Lucida Sans;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 3px #999;
+  padding: 2.5px 5px;
+}
+#idBtnHighLow:hover {background-image: linear-gradient(rgb(0, 92, 0), black)}
+#idBtnHighLow:active {
+  background-image: linear-gradient(rgb(0, 92, 0), black);
+  box-shadow: 0 1px #666;
+  transform: translateY(2px);
+}
+
+@keyframes animation1{
+0% {color: blue; background-color: red;}
+25% {color: blueviolet; background-color: yellow;}
+50% {color: green; background-color: blueviolet;}
+75% {color: yellow; background-color: purple;}
+100% {color: red; background-color: blue;}
+}
+#idBtnAbout{
+background-color: orange;
+animation-name: animation1;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+}
+
+body{
+background-image: radial-gradient(skyblue, greenyellow);
+text-align: center;
+font-family: Roboto;
+}
+
+table{
+text-align: center;
+margin-left: auto;
+margin-right: auto;
+}
+
+tr:nth-child(even){
+background-color: skyblue;
+}
+tr:nth-child(odd){
+background-color: rgb(119, 178, 201);
+}
+
+#idBtndelete0{
+background-color: orange;
+animation-name: animation1;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+padding-left: 24px;
+padding-right: 24px;
+}
+#idBtndelete1{
+background-color: orange;
+animation-name: animation1;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+padding-left: 24px;
+padding-right: 24px;
+}
+#idBtndelete2{
+background-color: orange;
+animation-name: animation1;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+padding-left: 24px;
+padding-right: 24px;
+}
+#idBtndelete3{
+background-color: orange;
+animation-name: animation1;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+padding-left: 24px;
+padding-right: 24px;
+}
+#idBtndelete4{
+background-color: orange;
+animation-name: animation1;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+padding-left: 24px;
+padding-right: 24px;
+}

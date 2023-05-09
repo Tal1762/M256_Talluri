@@ -1,0 +1,63 @@
+<html>
+<head>
+    <title>Bubble Sort Example</title>
+    <script>
+        function bubbleSort(inputArray){
+            var arraySize = inputArray.length;
+
+            if (arraySize < 2){
+                return inputArray;
+            }
+
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arraySize-1; i++){
+                    if (inputArray[i] > inputArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = inputArray[i];
+                        inputArray[i] = inputArray[i+1];
+                        inputArray[i+1] = temp;
+                    }
+                }
+            } while (sortDone == false)
+
+            return inputArray;
+        }
+
+        function getOutputString(inputArray){
+            var arraySize = inputArray.length;
+            var output = "";
+
+            for (var i=0; i<arraySize; i++){
+                output += inputArray[i] + "<br>";
+            }
+
+            return output;
+        }
+
+        function sortColors(){
+            var colorArray = ["red", "green", "blue", "aqua", "orange", "yellow"];
+            var sortedArray = bubbleSort(colorArray);
+
+            idDivOutput.innerHTML = getOutputString(sortedArray);
+        }
+
+        function sortNumbers(){
+            var numberArray = [15, 2, 7, 100, 25, 36];
+            var sortedArray = bubbleSort(numberArray);
+
+            idDivOutput.innerHTML = getOutputString(sortedArray);
+        }
+    </script>
+</head>
+
+<body>
+    <input type="button" value="Click here to see an example of a bubble sort!" onClick="sortColors()">
+    <input type="button" value="Click here to see another example of a bubble sort!" onClick="sortNumbers()">
+    <div id="idDivOutput"></div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<html>
+<head>
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+
+		var output = "x:0 | y:0";
+		var output2 = "width:200 | height:100";
+		var output3 = "re-draws:0";
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){ curkeys[e.keyCode] = true; }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		class rectClass{
+            constructor(cRectX, cRectY, cRectWidth, cRectHeight){
+                this.x = cRectX;
+                this.y = cRectY;
+                this.width = cRectWidth;
+                this.height = cRectHeight;
+				this.color = "rgb(255, 0, 0)";
+				this.numUpdate = 0;
+            }
+
+            draw(){
+				c.fillStyle = this.color;
+                c.fillRect(this.x, this.y, this.width, this.height);
+				output = "x:" + this.x + " | y:" + this.y;
+				output2 = "width:" + this.width + " | height:" + this.height;
+				output3 = "re-draws:" + this.numUpdate;
+				if (this.height > 0){
+					this.height -= 2;
+					this.y += 1;
+				}
+				if (this.width > 0){
+					this.width -= 2;
+					this.x += 1;
+				}
+				if (this.width == -1){
+					this.width += 1;
+				}
+				if (this.height == -1){
+					this.height += 1;
+				}
+            }
+
+			update(){
+				this.numUpdate += 1;
+				this.x = getRandInt(20, 100);
+				this.y = getRandInt(20, 100);
+				this.width = getRandInt(200, 500);
+				this.height = getRandInt(50, 200);
+				this.color = "rgb(" + getRandInt(0, 255) + ", " + getRandInt(0, 255) + ", " + getRandInt(0, 255) + ")";
+			}
+        }
+
+		function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+		var rect1 = new rectClass(0, 0, 0, 0);
+
+		function gameUpdate(){
+			if (curkeys[82]){
+				rect1.update();
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			rect1.draw();
+
+            c.font = "24px Calibri";
+			c.fillStyle = "red";
+
+            c.fillText(output, 590, 30);
+			c.fillText(output2, 545, 60);
+			c.fillText(output3, 590, 90);
+		}
+	</script>
+</head>
+
+<body onload="gameFrameworkInit()">
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

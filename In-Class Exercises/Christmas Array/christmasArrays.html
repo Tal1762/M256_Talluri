@@ -1,0 +1,75 @@
+<html>
+<head>
+    <title>Christmas Arrays</title>
+
+    <script>
+        var names = [];
+        function addNames(){
+            if (names.length == 10){
+                window.alert("That's enough names! Start delivering gifts.");
+                var arrayLength = names.length;
+                var output = "";
+
+                for (var i=0; i<=arrayLength-1; i++){
+                output += names[i] + "<br>";
+                }
+
+                idDivNamesLeft.innerHTML = output;
+                idDivNumLeft.innerHTML = "Names left: " + names.length;
+            }
+            else{
+                names.push(idTxtName.value);
+            }
+        }
+
+        function deliverGifts(){
+                var num = Number(idTxtMax.value) - Number(idTxtMin.value);
+                if (Number.isInteger(num/2)){
+                    names.pop();
+                    names.pop();
+                }
+                else{
+                    names.pop();
+                }
+
+                var arrayLength = names.length;
+                var output = "";
+
+                for (var i=0; i<=arrayLength-1; i++){
+                    output += names[i] + "<br>";
+                }
+
+                idDivNamesLeft.innerHTML = output;
+                idDivNumLeft.innerHTML = "Names left: " + names.length;
+
+                if (names.length == 0){
+                    window.alert("Congratulations! You have finished delivering the gifts!");
+                    names = [];
+                    idDivNumLeft.innerHTML = "";
+                    idDivNamesLeft.innerHTML = "";
+                    idTxtName.value = "";
+                    idTxtMin.value = "";
+                    idTxtMax.value = "";
+                }
+        }
+    </script>
+</head>
+
+<body>
+    Type in a name:
+    <input type="text" id="idTxtName">
+    <br>
+    Type in a minimum number:
+    <input type="text" id="idTxtMin">
+    <br>
+    Type in a maximum number:
+    <input type="text" id="idTxtMax">
+    <br>
+    <input type="button" value="Add Names/Display Array" onClick="addNames()">
+    <input type="button" value="Deliver Gifts" onClick="deliverGifts()">
+    <br><br>
+    <div id="idDivNumLeft"></div>
+    <br><br>
+    <div id="idDivNamesLeft"></div>
+</body>
+</html>

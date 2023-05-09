@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script>
+        class studentClass{
+            constructor(studentID, studentName, studentGradYear){
+                this.ID = studentID;
+                this.name = studentName;
+                this.gradYear = studentGradYear;
+            }
+
+            showInfo(){
+                var output = "ID: " + this.ID + "\n";
+                output += "Name: " + this.name + "\n";
+                output += "Grad Year: " + this.gradYear;
+
+                alert(output);
+            }
+        }
+
+        var st1 = new studentClass(499123, "Alice", 2017);
+        var st2 = new studentClass(511999, "Bob", 2018);
+
+        function showst1(){
+            st1.showInfo();
+        }
+
+        function showst2(){
+            st2.showInfo();
+        }
+
+        function changeID(){
+            if (isNaN(idTxtInput.value) == false && idTxtInput.value.length == 6){
+                st1.ID = idTxtInput.value;
+            }
+            else{
+                window.alert("That is not a valid ID number!");
+                return
+            }
+
+            st1.showInfo();
+        }
+    </script>
+</head>
+
+<body onLoad="showst1(), showst2()">
+    <input type="text" id="idTxtInput">
+    <br>
+    <input type="button" value="Change ID/Show Info" onClick="changeID()">
+</body>
+</html>

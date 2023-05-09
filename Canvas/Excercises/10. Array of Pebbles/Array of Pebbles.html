@@ -1,0 +1,233 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+
+		class birdClass{
+			constructor(){
+				// CONSTRUCTOR CODE
+				this.x = 50;
+				this.y = 405;
+				this.width = 100;
+				this.height = 100;
+
+				this.img = new Image();
+				this.img.src = "bird.png";
+
+				this.bInAir = false;
+				this.curYspeed = 0;
+			}
+
+
+			jump(){
+				// Can initiate jump only if bird is currently on the ground
+				if (this.bInAir == false){
+					this.bInAir = true;
+					this.curYspeed = -20;
+				}
+			}
+
+			update(){
+				// If the bird is currently mid-jump, update the
+				// vertical position and vertical speed
+				if (this.bInAir == true){
+					this.y += this.curYspeed;
+					this.curYspeed++;
+
+					// Check to see if the bird landed
+					if (this.y == 405){
+						this.bInAir = false;
+						this.curYspeed = 0;
+					}
+				}
+			}
+
+
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+
+		var bird = new birdClass();
+
+
+		class pebbleClass{
+
+			constructor(pebbleX, pebbleY){
+				// CONSTRUCTOR CODE
+				this.x = pebbleX;
+				this.y = pebbleY;
+				this.width = 30;
+				this.height = 30;
+				this.img = new Image();
+				this.img.src = "pebble.png";
+				this.bVisible = false;
+			}
+
+
+			// If this pebble is visible, then move it to the right.
+			// If the pebble goes off the screen, mark it invisible.
+			update(){
+				if (this.bVisible == true){
+					this.x += 10;
+					if (this.x > 800){
+						this.bVisible = false;
+					}
+				}
+			}
+
+			// If this pebble is visible, then draw it on the screen.
+			draw(){
+				if (this.bVisible == true){
+					c.drawImage(this.img, this.x, this.y, this.width, this.height);	
+				}
+			}
+		}
+
+	
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		var pebbleArray = [];
+		for (var i=0; i<100; i++){
+			pebbleArray[i] = new pebbleClass(0, 0);
+		}
+
+
+		function gameUpdate(){
+			// YOUR CODE GOES HERE
+			if (curkeys[32]){		// SPACE
+				bird.jump();
+			}
+			if (curkeys[39]){
+				bird.x += 5;
+			}
+			if (curkeys[37]){
+				bird.x -= 5;
+			}
+
+
+			// Right now, the following code fires off one pebble when you press enter, and doesn't
+			// allow you to fire again until the first pebble goes off-screen. This is where we left
+			// off from the previous exercise.
+			if (curkeys[13]){		// ENTER
+				var isSpawned = false;
+
+				for (var i=0; i<pebbleArray.length; i++){
+					if (pebbleArray[i].bVisible == false && isSpawned == false){
+						pebbleArray[i].x = bird.x + 90;
+						pebbleArray[i].y = bird.y + 50;
+						pebbleArray[i].bVisible = true;
+						isSpawned = true;
+					}
+				}
+			}
+
+
+			// Update bird & pebble(s)
+			bird.update();
+			for (var i=0; i<pebbleArray.length; i++){
+				pebbleArray[i].update();
+			}
+
+
+			// DO NOT ADD OR MODIFY ANY CODE BELOW HERE
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			// Draw the background
+			var bg = new Image();
+			bg.src = "background.png";
+			c.drawImage(bg, 0, 0, 800, 600);
+
+			// Draw the bird & pebble(s)
+			bird.draw();
+			for (var i=0; i<pebbleArray.length; i++){
+				pebbleArray[i].draw();
+			}
+		}
+
+
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>

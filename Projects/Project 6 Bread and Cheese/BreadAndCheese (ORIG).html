@@ -1,0 +1,995 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+		class timerClass{
+			constructor(timeIntervalMS){
+				// Initialize oldTime to be the time of creation
+				this.oldTime = new Date();
+
+				// Set interval to elapse before the timer fires
+				this.interval = timeIntervalMS;
+				
+				// Keeps track of the # of milliseconds accumulated since the last firing
+				this.accum = 0;
+			}
+
+			// This method returns true if the timer is ready to fire, false otherwise
+			// If it returns true, then resets fire interval
+			isReady(){
+				var curTime = new Date();
+				var delta = curTime - this.oldTime;
+
+				this.accum += delta;
+				this.oldTime = curTime;
+				if (this.accum > this.interval){
+					this.accum = 0;
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+
+		// This class is for the user-controlled bread object
+		class breadClass{
+
+			// Constructor
+			constructor(){
+				this.x = 325;
+				this.y = 500;
+				this.width = 150;
+				this.height = 40;
+
+				this.img = new Image();
+				this.img.src = "Bread.png";
+			}
+
+			// Movement methods - don't let bread move off the screen
+			moveRight(){
+				if (this.x + this.width < cWidth-5){
+					this.x += 5;
+				}
+			}
+			moveLeft(){
+				if (this.x > 5){
+					this.x -= 5;
+				}
+			}
+			moveUp(){
+				if (this.y >= 305){
+					this.y -= 5;
+				}
+			}
+			moveDown(){
+				if (this.y + this.height < cHeight-5){
+					this.y += 5;
+				}
+			}
+
+			// Draw method
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+
+		// This class is for the cheese object
+		class cheeseClass{
+			// Constructor
+			constructor(){
+				this.x = 50;
+				this.y = 100;
+				this.width = 40;
+				this.height = 40;
+
+				// dx and dy represent the cheese object's speed in
+				// the x- and y-direction respectively
+				this.dx = 5;
+				this.dy = 5;
+
+				this.img = new Image();
+				this.img.src = "Cheese.png";
+			}
+
+			// This function returns true if this cheese intersects "obj", where "obj" is
+			// either a tomato object or a bread object. Returns false otherwise.
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+
+			// Main update function for cheese, takes care of:
+			//		1. cheese movement
+			//		2. edge logic (bounce off of edges, die at the bottom edge)
+			//		3. bounce off of bread
+			//		4. eliminate tomatoes that we hit
+			update(){
+				// Move
+				this.x += this.dx;
+				this.y += this.dy;
+
+
+				// Bounce off of left wall
+				if (this.x < 0 && this.dx < 0){
+					this.dx *= -1;
+				}
+
+				// Bounce off of right wall
+				if (this.x + this.width > cWidth && this.dx > 0){
+					this.dx *= -1;
+				}
+
+				// Bounce off of top
+				if (this.y < 0 && this.dy < 0){
+					this.dy *= -1;
+				}
+
+				// Bottom edge: cheese dies, start new cheese
+				if (this.y + this.height > cHeight && this.dy > 0){
+					if (lifeCount > 1){
+						lifeCount -= 1;
+						cheese.x = 50;
+
+						if (gameWins == 0){
+							cheese.y = 100;
+						}
+						else if (gameWins == 1){
+							cheese.y = 110;
+						}
+						else if (gameWins >= 2){
+							cheese.y = 160;
+						}
+
+						cheese.dx = 5;
+						cheese.dy = 5;
+						sndOops.currentTime = 0;
+						sndOops.play();
+					}
+					else if (lifeCount == 1){
+						sndOops.currentTime = 0;
+						sndOops.play();
+						lifeCount = 3;
+						gameState = "gameover";
+					}
+				}
+
+				// bounce off of bread
+				if (this.intersects(bread)){
+					sndBoing.currentTime = 0;
+					sndBoing.play();
+					this.dy *= -1
+				}
+
+				// eliminate tomatoes that we hit
+				for (i = 0; i < 16; i++){
+					if (tomatoArray[i].bVisible == true &&
+						this.intersects(tomatoArray[i]) &&
+						tomatoArray[i].freeze == false)
+					{
+						sndSplat.currentTime = 0;
+						sndSplat.play();
+						gamePoints += 10;
+						tomatoArray[i].hits -= 1;
+						if (this.dy < 0){
+							this.dy *= -1;	
+						}
+						
+					}
+					else if (tomatoArray[i].bVisible == true &&
+						this.intersects(tomatoArray[i]) &&
+						tomatoArray[i].freeze == true)
+					{
+						sndSplat.currentTime = 0;
+						sndSplat.play();
+						gamePoints += 10;
+						tomatoArray[i].hits -= 1;
+						if (this.dy < 0){
+							this.dy *= -1;
+						}
+
+						freezeTimer.accum = 0;
+						freezeTimer.oldTime = new Date();
+						if (this.dx != 2.5){
+							this.dx /= 2;
+						}
+						if (this.dy != 2.5){
+							this.dy /= 2;
+						}
+						cheese.img.src = "frozencheese.png";
+						isFrozen = true;
+					}
+
+					if (gameWins == 1){
+						if (tomatoArray2[i].bVisible == true &&
+							this.intersects(tomatoArray2[i]) &&
+							tomatoArray2[i].freeze == false)
+						{
+							sndSplat.currentTime = 0;
+							sndSplat.play();
+							gamePoints += 10;
+							tomatoArray2[i].hits -= 1;
+							if (this.dy < 0){
+								this.dy *= -1;	
+							}
+							
+						}
+						else if (tomatoArray2[i].bVisible == true &&
+							this.intersects(tomatoArray2[i]) &&
+							tomatoArray2[i].freeze == true)
+						{
+							sndSplat.currentTime = 0;
+							sndSplat.play();
+							gamePoints += 10;
+							tomatoArray2[i].hits -= 1;
+							
+							freezeTimer.accum = 0;
+							freezeTimer.oldTime = new Date();
+							if (this.dx != 2.5){
+								this.dx /= 2;
+							}
+							if (this.dy != 2.5){
+								this.dy /= 2;
+							}
+							cheese.img.src = "frozencheese.png";
+							isFrozen = true;
+						}
+					}
+
+					if (gameWins > 1){
+						if (tomatoArray2[i].bVisible == true &&
+							this.intersects(tomatoArray2[i]) &&
+							tomatoArray2[i].freeze == false)
+						{
+							sndSplat.currentTime = 0;
+							sndSplat.play();
+							gamePoints += 10;
+							tomatoArray2[i].hits -= 1;
+							if (this.dy < 0){
+								this.dy *= -1;	
+							}
+							
+						}
+						else if (tomatoArray2[i].bVisible == true &&
+							this.intersects(tomatoArray2[i]) &&
+							tomatoArray2[i].freeze == true)
+						{
+							sndSplat.currentTime = 0;
+							sndSplat.play();
+							gamePoints += 10;
+							tomatoArray2[i].hits -= 1;
+							if (this.dy < 0){
+								this.dy *= -1;
+							}
+							
+							freezeTimer.accum = 0;
+							freezeTimer.oldTime = new Date();
+							if (this.dx != 2.5){
+								this.dx /= 2;
+							}
+							if (this.dy != 2.5){
+								this.dy /= 2;
+							}
+							cheese.img.src = "frozencheese.png";
+							isFrozen = true;
+						}
+
+						if (tomatoArray3[i].bVisible == true &&
+							this.intersects(tomatoArray3[i]) &&
+							tomatoArray3[i].freeze == false)
+						{
+							sndSplat.currentTime = 0;
+							sndSplat.play();
+							gamePoints += 10;
+							tomatoArray3[i].hits -= 1;
+							if (this.dy < 0){
+								this.dy *= -1;	
+							}
+							
+						}
+						else if (tomatoArray3[i].bVisible == true &&
+							this.intersects(tomatoArray3[i]) &&
+							tomatoArray3[i].freeze == true)
+						{
+							sndSplat.currentTime = 0;
+							sndSplat.play();
+							gamePoints += 10;
+							tomatoArray3[i].hits -= 1;
+							if (this.dy < 0){
+								this.dy *= -1;
+							}
+							
+							freezeTimer.accum = 0;
+							freezeTimer.oldTime = new Date();
+							if (this.dx != 2.5){
+								this.dx /= 2;
+							}
+							if (this.dy != 2.5){
+								this.dy /= 2;
+							}
+							cheese.img.src = "frozencheese.png";
+							isFrozen = true;
+						}
+					}
+				}
+			}
+
+
+			// Draw method
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+
+
+		// This class is for the on-screen tomato objects
+		class tomatoClass{
+			// Constructor
+			constructor(tomatoX, tomatoY){
+				this.x = tomatoX;
+				this.y = tomatoY;
+				this.width = 40;
+				this.height = 40;
+				this.bVisible = true;	// tomatoes start off being visible
+
+				if (getRandInt(1, 10) == 10){
+					this.tough = true;
+					this.hits = 2;
+				}
+				else{
+					this.tough = false;
+					this.hits = 1;
+				}
+
+				if (this.tough == false){
+					if (getRandInt(1, 15) == 15){
+						this.freeze = true;
+					}
+					else{
+						this.freeze = false;
+					}
+				}
+				else if (this.tough == true){
+					this.freeze = false;
+				}
+
+				this.img = new Image();
+				this.img.src = "Tomato.png";
+			}
+
+			// Draw method
+			draw(){
+				if (this.hits == 0){
+					this.bVisible = false;
+				}
+
+				if (this.bVisible){
+					if (this.hits == 2){
+						this.img.src = "metaltomato.png";
+					}
+					else if (this.hits == 1){
+						this.img.src = "Tomato.png";
+					}
+
+					if (this.freeze == true){
+						this.img.src = "icetomato.png";
+					}
+
+					c.drawImage(this.img, this.x, this.y, this.width, this.height);
+				}
+			}
+
+			check(){
+				if (this.tough == true){
+					this.hits = 2;
+				}
+				else{
+					this.hits = 1;
+				}
+			}
+		}
+
+		class imageClass{
+			constructor(iX, iY, iWidth, iHeight, iImage){
+				this.x = iX;
+				this.y = iY;
+				this.width = iWidth;
+				this.height = iHeight;
+
+				this.image = new Image();
+				this.image.src = iImage;
+			}
+
+			draw(){
+				c.drawImage(this.image, this.x, this.y, this.width, this.height);
+			}
+		}
+
+
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+
+
+		// Our global variables (bread, cheese, tomatoes)
+		var bread, cheese;
+		var tomatoArray = [];
+		var tomatoArray2 = [];
+		var tomatoArray3 = [];
+
+		// The current game state, can be one of: "play", "gameover"
+		var gameState = "intro";
+
+		var gamePoints = 0;
+		var lifeCount = 3;
+		var gameWins = 0;
+
+		var introPizza = new imageClass(393, 300, 14, 6, "pizza.png");
+		var introTxtReady = false;
+		var introTimer = new timerClass(1000);
+
+		var sndBoing = new Audio("boing.wav");
+		var sndOops = new Audio("oops.mp3");
+		var sndSplat = new Audio("splat.mp3");
+		var sndBGM = new Audio("bgmusic.mp3");
+
+		var freezeTimer = new timerClass(5000);
+		var isFrozen = false;
+
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Initialize global variables for our game
+			bread = new breadClass();
+			cheese = new cheeseClass();
+
+			// Populate tomatoArray[] with 16 tomatoes spread out near the top of the canvas
+			for (i = 0; i < 16; i++){
+				tomatoArray[i] = new tomatoClass(50*i, 20);
+				tomatoArray2[i] = new tomatoClass(50*i, 70);
+				tomatoArray3[i] = new tomatoClass(50*i, 120);
+			}
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+
+		// Main update loop for the entire game
+		function gameUpdate(){
+			if (gameState == "intro"){
+				if (introPizza.height <= 690){
+					introPizza.height += 5;
+					introPizza.width += 9;
+					introPizza.x -= 4.5;
+					introPizza.y -= 2.5;
+
+					introTimer.accum = 0;
+					introTimer.oldTime = new Date();
+				}
+				else{
+					introTxtReady = true;
+
+					if (introTimer.isReady()){
+						gameState = "start";
+					}
+				}
+			}
+			else if (gameState == "start"){
+				if (newkeys[13]){
+					for (var i=0; i<16; i++){
+						tomatoArray[i].check();
+						tomatoArray[i].bVisible = true;
+					}
+					gamePoints = 0;
+					bread.x = 325;
+					bread.y = 500;
+					cheese.x = 50;
+					cheese.y = 100;
+					cheese.dx = 5;
+					cheese.dy = 5;
+					sndBGM.currentTime = 0;
+					sndBGM.play();
+					gameState = "play";
+				}
+
+				if (cheese.x < bread.x){
+					bread.moveLeft();
+				}
+				else if (cheese.x > bread.x){
+					bread.moveRight();
+				}
+
+				cheese.update();
+
+				if (freezeTimer.isReady() && isFrozen == true){
+					if (cheese.dx > 0){
+						cheese.dx = 5;
+					}
+					else if (cheese.dx < 0){
+						cheese.dx = -5;
+					}
+					if (cheese.dy > 0){
+						cheese.dy = 5;
+					}
+					else if (cheese.dy < 0){
+						cheese.dy = -5;
+					}
+
+					cheese.img.src = "Cheese.png";
+					isFrozen = false;
+				}
+			}
+			else if (gameState == "play"){
+				// Right arrow key
+				if (curkeys[39]){
+					bread.moveRight();
+				}
+
+				// Up arrow key
+				if (curkeys[38]){
+					bread.moveUp();
+				}
+
+				// Down arrow key
+				if (curkeys[40]){
+					bread.moveDown();
+				}
+
+				// Left arrow key
+				if (curkeys[37]){
+					bread.moveLeft();
+				}
+
+				cheese.update();
+
+				if (freezeTimer.isReady() && isFrozen == true){
+					if (cheese.dx > 0){
+						cheese.dx = 5;
+					}
+					else if (cheese.dx < 0){
+						cheese.dx = -5;
+					}
+					if (cheese.dy > 0){
+						cheese.dy = 5;
+					}
+					else if (cheese.dy < 0){
+						cheese.dy = -5;
+					}
+
+					cheese.img.src = "Cheese.png";
+					isFrozen = false;
+				}
+
+				if (curkeys[38] && cheese.intersects(bread)){
+					cheese.y = bread.y - cheese.height;
+				}
+
+				var visibleCount = 0;
+
+				for (var i=0; i<16; i++){
+					if (tomatoArray[i].bVisible == false){
+						visibleCount += 1;
+					}
+
+					if (gameWins == 1){
+						if (tomatoArray2[i].bVisible == false){
+							visibleCount += 1;
+						}
+					}
+					else if (gameWins > 1){
+						if (tomatoArray2[i].bVisible == false){
+							visibleCount += 1;
+						}
+
+						if (tomatoArray3[i].bVisible == false){
+							visibleCount += 1;
+						}
+					}
+				}
+
+				if (gameWins == 0){
+					if (visibleCount == 16){
+						gameWins += 1;
+
+						for (var i=0; i<16; i++){
+							if (getRandInt(1, 10) == 10){
+								tomatoArray[i].tough = true;
+								tomatoArray[i].hits = 2;
+							}
+							else{
+								tomatoArray[i].tough = false;
+								tomatoArray[i].hits = 1;
+							}
+
+							if (tomatoArray[i].tough == false){
+								if (getRandInt(1, 20) == 20){
+									tomatoArray[i].freeze = true;
+								}
+								else{
+									tomatoArray[i].freeze = false;
+								}
+							}
+
+							tomatoArray[i].check();
+							tomatoArray[i].bVisible = true;
+						}
+
+						cheese.x = 50;
+						cheese.y = 110;
+						cheese.dx = 5;
+						cheese.dy = 5;
+						bread.x = 325;
+						bread.y = 500;
+						cheese.img.src = "Cheese.png";
+						isFrozen = false;
+					}
+				}
+				else if (gameWins == 1){
+					if (visibleCount == 32){
+						gameWins += 1;
+
+						for (var i=0; i<16; i++){
+							if (getRandInt(1, 10) == 10){
+								tomatoArray[i].tough = true;
+								tomatoArray[i].hits = 2;
+							}
+							else{
+								tomatoArray[i].tough = false;
+								tomatoArray[i].hits = 1;
+							}
+
+							if (tomatoArray[i].tough == false){
+								if (getRandInt(1, 20) == 20){
+									tomatoArray[i].freeze = true;
+								}
+								else{
+									tomatoArray[i].freeze = false;
+								}
+							}
+							tomatoArray[i].bVisible = true;
+
+							if (getRandInt(1, 10) == 10){
+								tomatoArray2[i].tough = true;
+								tomatoArray2[i].hits = 2;
+							}
+							else{
+								tomatoArray2[i].tough = false;
+								tomatoArray2[i].hits = 1;
+							}
+
+							if (tomatoArray2[i].tough == false){
+								if (getRandInt(1, 20) == 20){
+									tomatoArray2[i].freeze = true;
+								}
+								else{
+									tomatoArray2[i].freeze = false;
+								}
+							}
+							tomatoArray2[i].bVisible = true;
+						}
+
+						cheese.x = 50;
+						cheese.y = 160;
+						cheese.dx = 5;
+						cheese.dy = 5;
+						bread.x = 325;
+						bread.y = 500;
+						cheese.img.src = "Cheese.png";
+						isFrozen = false;
+					}
+				}
+				else if (gameWins > 1){
+					if (visibleCount == 48){
+						gameWins += 1;
+
+						for (var i=0; i<16; i++){
+							if (getRandInt(1, 10) == 10){
+								tomatoArray[i].tough = true;
+								tomatoArray[i].hits = 2;
+							}
+							else{
+								tomatoArray[i].tough = false;
+								tomatoArray[i].hits = 1;
+							}
+
+							if (tomatoArray[i].tough == false){
+								if (getRandInt(1, 20) == 20){
+									tomatoArray[i].freeze = true;
+								}
+								else{
+									tomatoArray[i].freeze = false;
+								}
+							}
+							tomatoArray[i].bVisible = true;
+
+							if (getRandInt(1, 10) == 10){
+								tomatoArray2[i].tough = true;
+								tomatoArray2[i].hits = 2;
+							}
+							else{
+								tomatoArray2[i].tough = false;
+								tomatoArray2[i].hits = 1;
+							}
+
+							if (tomatoArray2[i].tough == false){
+								if (getRandInt(1, 20) == 20){
+									tomatoArray2[i].freeze = true;
+								}
+								else{
+									tomatoArray2[i].freeze = false;
+								}
+							}
+							tomatoArray2[i].bVisible = true;
+
+							if (getRandInt(1, 10) == 10){
+								tomatoArray3[i].tough = true;
+								tomatoArray3[i].hits = 2;
+							}
+							else{
+								tomatoArray3[i].tough = false;
+								tomatoArray3[i].hits = 1;
+							}
+
+							if (tomatoArray[i].tough == false){
+								if (getRandInt(1, 20) == 20){
+									tomatoArray3[i].freeze = true;
+								}
+								else{
+									tomatoArray3[i].freeze = false;
+								}
+							}
+							tomatoArray3[i].bVisible = true;
+						}
+
+						cheese.x = 50;
+						cheese.y = 160;
+						cheese.dx = 5;
+						cheese.dy = 5;
+						bread.x = 325;
+						bread.y = 500;
+						cheese.img.src = "Cheese.png";
+						isFrozen = false;
+					}
+				}
+			}
+			else if (gameState == "gameover"){
+				sndBGM.pause();
+				if (newkeys[13]){
+					cheese.x = 50;
+					cheese.y = 100;
+					cheese.dx = 5;
+					cheese.dy = 5;
+					bread.x = 325;
+					bread.y = 500;
+					cheese.img.src = "Cheese.png";
+					isFrozen = false;
+
+					for (var i=0; i<16; i++){
+						if (getRandInt(1, 10) == 10){
+							tomatoArray[i].tough = true;
+							tomatoArray[i].hits = 2;
+						}
+						else{
+							tomatoArray[i].tough = false;
+							tomatoArray[i].hits = 1;
+						}
+
+						if (tomatoArray[i].tough == false){
+							if (getRandInt(1, 20) == 20){
+								tomatoArray[i].freeze = true;
+							}
+							else{
+								tomatoArray[i].freeze = false;
+							}
+						}
+						tomatoArray[i].bVisible = true;
+
+						if (getRandInt(1, 10) == 10){
+							tomatoArray2[i].tough = true;
+							tomatoArray2[i].hits = 2;
+						}
+						else{
+							tomatoArray2[i].tough = false;
+							tomatoArray2[i].hits = 1;
+						}
+
+						if (tomatoArray2[i].tough == false){
+							if (getRandInt(1, 20) == 20){
+								tomatoArray2[i].freeze = true;
+							}
+							else{
+								tomatoArray2[i].freeze = false;
+							}
+						}
+						tomatoArray2[i].bVisible = true;
+
+						if (getRandInt(1, 10) == 10){
+							tomatoArray3[i].tough = true;
+							tomatoArray3[i].hits = 2;
+						}
+						else{
+							tomatoArray3[i].tough = false;
+							tomatoArray3[i].hits = 1;
+						}
+
+						if (tomatoArray3[i].tough == false){
+							if (getRandInt(1, 20) == 20){
+								tomatoArray3[i].freeze = true;
+							}
+							else{
+								tomatoArray3[i].freeze = false;
+							}
+						}
+						tomatoArray3[i].bVisible = true;
+					}
+
+					gameWins = 0;
+					gamePoints = 0;
+					sndBGM.currentTime = 0;
+					sndBGM.play();
+					gameState = "play";
+				}
+			}
+
+
+
+
+			// DO NOT ADD OR MODIFY ANY CODE BELOW HERE
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		// Main draw loop for the entire game
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0, 0, cWidth, cHeight);
+
+			if (gameState == "intro"){
+				introPizza.draw();
+
+				if (introTxtReady == true){
+					c.fillStyle = "darkgoldenrod";
+					c.font = "48px Impact";
+					c.fillText("Bread and Cheese", 230, 285);
+					c.fillStyle = "darkred";
+					c.fillText("(& tomatoes)", 280, 335);
+				}
+			}
+			else if (gameState == "start"){
+				bread.draw();
+				cheese.draw();
+				for (i = 0; i < 16; i++){
+					tomatoArray[i].draw();
+				}
+
+				c.fillStyle = "gray";
+				c.font = "24px Calibri";
+				c.fillText("Instructions: Move the bread using the arrow", 190, 250);
+				c.fillText("keys, and make sure the cheese doesn't fall", 200, 275);
+				c.fillText("off of the bottom edge of the screen. Meanwhile, ", 175, 300);
+				c.fillText("use the cheese to splat the tomatoes!", 220, 325);
+				c.fillText("Press [enter] to start playing!", 270, 375);
+			}
+			else if (gameState == "play"){
+				bread.draw();
+				cheese.draw();
+				for (i = 0; i < 16; i++){
+					tomatoArray[i].draw();
+
+					if (gameWins == 1){
+						tomatoArray2[i].draw();
+					}
+					else if (gameWins >= 2){
+						tomatoArray2[i].draw();
+						tomatoArray3[i].draw();
+					}
+				}
+
+				if (bread.y == 300){
+					c.fillStyle = "rgba(255, 0, 0, 0.5)";
+					c.fillRect(0, 295, 800, 5);
+				}
+				else{
+					c.fillStyle = "rgba(250, 250, 250, 0.5)";
+					c.fillRect(0, 295, 800, 5);
+				}
+
+				c.fillStyle = "gray";
+				c.font = "24px Calibri";
+				var level = gameWins + 1;
+				c.fillText("Level " + level, 650, 540);
+				c.fillText("Lives left: " + lifeCount, 650, 565);
+				c.fillText("Points: " + gamePoints, 650, 590);
+			}
+			else if (gameState == "gameover"){
+				c.fillStyle = "red";
+				c.fillText("You lost! Press [enter] to play again.", 220, 250);
+				c.fillStyle = "gray";
+				c.fillText("Points: " + gamePoints, 345, 300);
+			}
+		}
+
+
+	</script>
+
+
+</head>
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+</html>

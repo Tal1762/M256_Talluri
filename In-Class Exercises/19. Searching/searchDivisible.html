@@ -1,0 +1,99 @@
+<html>
+<head>
+    <title> Search Divisible </title>
+
+    <script>
+        var birthYears = [];
+
+        function onLoad(){
+            var num = 0;
+            var output = "Here is a list of the randomly generated birth years: <br>";
+
+            for (var i=0; i<20; i++){
+                num = Math.floor(Math.random() * 101) + 1922;
+                birthYears.push(num);   
+            }
+
+            output += birthYears[0];
+
+            for (var i=1; i<20; i++){
+                output += ", " + birthYears[i];
+            }
+
+            idDivBirthYears.innerHTML = output;
+            console.log(birthYears);
+        }
+
+        function alertSeniorCount(){
+            var seniorCount = 0;
+
+            for (var i=0; i<20; i++){
+                if (birthYears[i] <= 1967){
+                    seniorCount += 1;
+                }
+            }
+
+            var output = "In our group of 20 individuals, ";
+            output += seniorCount + " of them are eligible for senior citizen discounts.";
+            window.alert(output);
+        }
+
+        function countBirthYear(birthYear){
+            var count = 0;
+
+            for (var i=0; i<20; i++){
+                if (birthYears[i] == birthYear){
+                    count += 1;
+                }
+            }
+
+            var age = 2022-birthYear;
+            if (count == 1){
+                var output = "There is " + count + " " + age + "-year-old in our group!";
+            }
+            else{
+                var output = "There are " + count + " " + age + "-year-olds in our group!";
+            }
+            
+            return output
+        }
+
+        function alertNewBaby(){
+            window.alert(countBirthYear(2022));
+        }
+
+        function duplicatesPresent(){
+            var count = 0;
+            var year = "";
+            var output = "In our group of 20 individuals";
+
+            for (var i=1922; i<=2022; i++){
+                for (var j=0; j<20; j++){
+                    if (birthYears[j] == i){
+                        count += 1;
+                    }
+                }
+                if (count >= 2){
+                    output += ", " + count + " individuals were born in " + i;
+                }
+                count = 0;
+            }
+
+            if (output.length == 30){
+                output += ", we don't have any 2 individuals with the same birth year";
+            }
+            
+            output += ".";
+
+            window.alert(output);
+        }
+    </script>
+</head>
+
+<body onLoad="onLoad()">
+    <div id="idDivBirthYears"></div>
+    <input type="button" value="Count Seniors" onClick="alertSeniorCount()">
+    <input type="button" value="Count New Babies" onClick="alertNewBaby()">
+    <input type="button" value="Check For Duplicates" onClick="duplicatesPresent()">
+</body>
+</html>

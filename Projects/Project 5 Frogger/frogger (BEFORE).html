@@ -1,0 +1,1055 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+		class timerClass{
+			constructor(timeIntervalMS){
+				// Initialize oldTime to be the time of creation
+				this.oldTime = new Date();
+
+				// Set interval to elapse before the timer fires
+				this.interval = timeIntervalMS;
+				
+				// Keeps track of the # of milliseconds accumulated since the last firing
+				this.accum = 0;
+			}
+
+			// This method returns true if the timer is ready to fire, false otherwise
+			// If it returns true, then resets fire interval
+			isReady(){
+				var curTime = new Date();
+				var delta = curTime - this.oldTime;
+
+				this.accum += delta;
+				this.oldTime = curTime;
+				if (this.accum > this.interval){
+					this.accum = 0;
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+
+		// This class represents a log object
+		class logClass{
+			constructor(logX, logY,				// Location
+						logWidth, logHeight)	// Dimensions
+			{
+				this.x = logX;
+				this.y = logY;
+				this.width = logWidth;
+				this.height = logHeight;
+				this.image = new Image();
+				this.image.src = "log.jpg";
+				this.speed = getRandInt(2, 4);
+			}
+
+
+			// This method will be called by the gameUpdate function.
+			// It should take care of all movement, including wrapping
+			// (the gameUpdate() function should not have to worry about wrapping)
+			move(){
+				this.x -= this.speed;
+
+				if (this.x <= -125){
+					this.x = 800;
+				}
+			}
+
+
+			// This method will be called by the gameDraw function.
+			// It should draw a picture of the log on the screen.
+			draw(){
+				c.drawImage(this.image, this.x, this.y, this.width, this.height);
+			}
+
+		}
+
+		class crabClass{
+			constructor(crabX, crabY,
+						crabWidth, crabHeight,
+						crabDifficulty)
+			{
+				this.x = crabX;
+				this.y = crabY;
+				this.width = crabWidth;
+				this.height = crabHeight;
+				this.difficulty = crabDifficulty;
+				this.image = new Image();
+				this.image.src = "crab.jpg";
+			}
+
+
+			// This method will be called by the gameUpdate function.
+			// It should take care of all movement, including wrapping
+			// (the gameUpdate() function should not have to worry about wrapping)
+			move(){
+				if (this.difficulty == 1){
+					if (easyTimer.isReady()){
+						if (this.x < frog.x){
+							this.x += 25;
+						}
+						else if (this.x > frog.x){
+							this.x -= 25;
+						}
+						
+						if (this.y > frog.y){
+							this.y -= 25;
+						}
+						else if (this.y < frog.y){
+							this.y += 25;
+						}
+					}
+				}
+				else if (this.difficulty == 2){
+					if (hardTimer.isReady()){
+						if (this.x < frog.x){
+							this.x += 25;
+						}
+						else if (this.x > frog.x){
+							this.x -= 25;
+						}
+						
+						if (this.y > frog.y){
+							this.y -= 25;
+						}
+						else if (this.y < frog.y){
+							this.y += 25;
+						}
+					}
+				}
+				else if (this.difficulty == 3){
+					if (extremeTimer.isReady()){
+						if (this.x < frog.x){
+							this.x += 25;
+						}
+						else if (this.x > frog.x){
+							this.x -= 25;
+						}
+						
+						if (this.y > frog.y){
+							this.y -= 25;
+						}
+						else if (this.y < frog.y){
+							this.y += 25;
+						}
+					}
+				}
+			}
+
+
+			// This method will be called by the gameDraw function.
+			// It should draw a picture of the log on the screen.
+			draw(){
+				if (this.difficulty == 1){
+					this.image.src = "crabEasy.png";
+				}
+				else if (this.difficulty == 2){
+					this.image.src = "crabHard.png";
+				}
+				else if (this.difficulty == 3){
+					this.image.src = "crabExtreme.png";
+				}
+
+				this.width = 80;
+				this.height = 50;
+
+				c.drawImage(this.image, this.x, this.y, this.width, this.height);
+			}
+
+		}
+
+
+		// This class represents a log object
+		class carClass{
+			constructor(carX, carY,				// Location
+						carWidth, carHeight,
+						carDirection)	// Dimensions
+			{
+				this.x = carX;
+				this.y = carY;
+				this.width = carWidth;
+				this.height = carHeight;
+				this.direction = carDirection;
+
+				if (this.direction == true){
+					this.image = new Image();
+					this.image.src = "carLeft.jpg";
+				}
+				else if (this.direction == false){
+					this.image = new Image();
+					this.image.src = "carRight.jpg";
+				}
+
+				this.speed = getRandInt(3, 5);
+			}
+
+
+			// This method will be called by the gameUpdate function.
+			// It should take care of all movement, including bouncing
+			// (the gameUpdate() function should not have to worry about bouncing)
+			move(){
+				if (this.direction == true){
+					this.x -= this.speed;
+					this.image.src = "carLeft.jpg";
+				}
+				else if (this.direction == false){
+					this.x += this.speed;
+					this.image.src = "carRight.jpg";
+				}
+
+				if (this.x >= 800-this.width && this.direction == false){
+					this.direction = true;
+				}
+				if (this.x <= 0 && this.direction == true){
+					this.direction = false;
+				}
+			}
+
+
+			// This method will be called by the gameDraw function.
+			// It should draw a picture of the car on the screen.
+			draw(){
+				c.drawImage(this.image, this.x, this.y, this.width, this.height);
+			}
+
+		}
+
+
+
+		// This class represents the frog
+		class frogClass{
+			constructor(frogX, frogY,			// Location
+						frogWidth, frogHeight,	// Dimensions
+						frogDirection)			// Can be "Up", "Down", "Left", or "Right"
+			{
+				this.x = frogX;
+				this.y = frogY;
+				this.width = frogWidth;
+				this.height = frogHeight;
+				this.direction = frogDirection;
+
+				if (this.direction == "up"){
+					this.image = new Image();
+					this.image.src = "frogUp.jpg";
+				}
+				else if (this.direction == "down"){
+					this.image = new Image();
+					this.image.src = "frogDown.jpg";
+				}
+				else if (this.direction == "right"){
+					this.image = new Image();
+					this.image.src = "frogRight.jpg";
+				}
+				else if (this.direction == "left"){
+					this.image = new Image();
+					this.image.src = "frogLeft.jpg";
+				}
+			}
+
+
+			// Methods for frog movement
+			hopLeft(){
+				this.direction = "left";
+				this.x -= 25;
+			}
+			hopRight(){
+				this.direction = "right";
+				this.x += 25;
+			}
+			hopUp(){
+				this.direction = "up";
+				this.y -= 25;
+			}
+			hopDown(){
+				this.direction = "down";
+				this.y += 25;
+			}
+
+
+			// This method will be called by the gameDraw function.
+			// It should draw a picture of the frog on the screen.
+			draw(){
+				if (this.direction == "up"){
+					this.image = new Image();
+					this.image.src = "frogUp.jpg";
+				}
+				else if (this.direction == "down"){
+					this.image = new Image();
+					this.image.src = "frogDown.jpg";
+				}
+				else if (this.direction == "right"){
+					this.image = new Image();
+					this.image.src = "frogRight.jpg";
+				}
+				else if (this.direction == "left"){
+					this.image = new Image();
+					this.image.src = "frogLeft.jpg";
+				}
+
+				c.drawImage(this.image, this.x, this.y, this.width, this.height);
+			}
+
+
+			// This function returns true if this frog intersects "obj",
+			// where "obj" is either a car object or a log object.
+			// Returns false otherwise.
+			// Example: if (frog1.intersects(log1)){ ... }
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+	
+		class rectClass{
+			constructor(rectX, rectY,
+						rectWidth, rectHeight,
+						rectColor)
+			{
+				this.x = rectX;
+				this.y = rectY;
+				this.width = rectWidth;
+				this.height = rectHeight;
+				this.color = rectColor;
+			}
+
+			draw(){
+				c.fillStyle = this.color;
+				c.fillRect(this.x, this.y, this.width, this.height);
+			}
+		}
+
+		class powerupClass{
+			constructor(powerWidth, powerHeight,
+						powerImage)
+			{
+				var randInt = getRandInt(1, 4);
+
+				if (randInt == 1){
+					this.y = 425;
+				}
+				else if (randInt == 2){
+					this.y = 325;
+				}
+				else if (randInt == 3){
+					this.y = 200;
+				}
+				else if (randInt == 4){
+					this.y = 75;
+				}
+
+				this.x = getRandInt(0, 765);
+
+				this.width = powerWidth;
+				this.height = powerHeight;
+				this.image = new Image();
+				this.image.src = powerImage;
+			}
+
+			draw(){
+				c.drawImage(this.image, this.x, this.y, this.width, this.height);
+			}
+
+			update(){
+				var randInt = getRandInt(1, 4);
+
+				if (randInt == 1){
+					this.y = 425;
+				}
+				else if (randInt == 2){
+					this.y = 325;
+				}
+				else if (randInt == 3){
+					this.y = 200;
+				}
+				else if (randInt == 4){
+					this.y = 75;
+				}
+
+				this.x = getRandInt(0, 765);
+				this.width = 35;
+				this.height = 50;
+			}
+		}
+	
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+		var log1 = new logClass(250, 375, 125, 50);
+		var log2 = new logClass(250, 475, 125, 50);
+		var car1 = new carClass(250, 125, 125, 75, false);
+		var car2 = new carClass(250, 250, 125, 75, true);
+		var car3 = new carClass(250, 0, 125, 75, false);
+		var frog = new frogClass(375, 550, 50, 50, "up");
+		var rect1 = new rectClass(0, 375, 800, 50, "blue");
+		var rect2 = new rectClass(0, 475, 800, 50, "blue");
+		var rect3 = new rectClass(0, 425, 800, 50, "lightgreen");
+		var rect4 = new rectClass(0, 525, 800, 75, "lightgreen");
+		var rect5 = new rectClass(0, 0, 800, 375, "lightgreen");
+		var rect6 = new rectClass(0, 125, 800, 75, "tan");
+		var rect7 = new rectClass(0, 250, 800, 75, "tan");
+		var rect8 = new rectClass(0, 0, 800, 75, "tan");
+		var crabEasy = new crabClass(0, 550, 0, 0, 1);
+		var crabHard = new crabClass(0, 550, 0, 0, 2);
+		var crabExtreme = new crabClass(0, 550, 0, 0, 3);
+		var timePower = new powerupClass(35, 50, "hourglass.png");
+
+		var timeStop = false;
+
+		var winCount = 0;
+		var loseCount = 0;
+
+		var timerOn = false;
+		var gameTimer = new timerClass(10000);
+		var timeOutput = 10;
+
+		var easyTimer = new timerClass(1000);
+		var hardTimer = new timerClass(650);
+		var extremeTimer = new timerClass(400);
+
+		var stopTimer = new timerClass(5000);
+		var timeOutput2 = 5;
+
+		var num1 = getRandInt(0, 51) * 5;
+		var direction1 = false;
+		var num2 = getRandInt(0, 51) * 5;
+		var direction2 = true;
+		var num3 = getRandInt(0, 51) * 5;
+		var direction3 = false;
+
+		// The current game state, can be one of: "play", "win", "lose"
+		// You won't be working with this until Task #4
+		var gameState = "play";
+
+
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		// Main update loop for the entire game
+		function gameUpdate(){
+			if (gameState == "play"){
+				log1.move();
+				log2.move();
+				car1.move();
+				car2.move();
+				car3.move();
+
+				// Right arrow key
+				if (newkeys[39]){
+					if (frog.x < 750){
+						frog.hopRight();
+					}
+				}
+
+				// Up arrow key
+				if (newkeys[38]){
+					if (frog.y > 0){
+						frog.hopUp();
+					}
+				}
+
+				// Down arrow key
+				if (newkeys[40]){
+					if (frog.y < 550){
+						frog.hopDown();
+					}
+				}
+
+				// Left arrow key
+				if (newkeys[37]){
+					if (frog.x > 0){
+						frog.hopLeft();
+					}
+				}
+
+				if (frog.intersects(log1)){
+					frog.x -= log1.speed;
+					if (frog.x <= 0 - frog.width){
+						frog.x = 800 + frog.x * -1;
+					}
+				}
+
+				if (frog.intersects(log2)){
+					frog.x -= log2.speed;
+					if (frog.x <= 0 - frog.width){
+						frog.x = 800 + frog.x * -1;
+					}
+				}
+
+				if (frog.intersects(rect1) && !frog.intersects(log1)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(rect2) && !frog.intersects(log2)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(car1)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(car2)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(car3)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.y == 0){
+					gameState = "win";
+					winCount += 1;
+				}
+
+				if (frog.x < 0){
+					frog.x = 0;
+				}
+				if (frog.x + frog.width > 800){
+					frog.x = 800 - frog.width;
+				}
+
+				if (newkeys[84]){
+					if (timerOn == false){
+						timerOn = true;
+						gameTimer.accum = 0;
+                        gameTimer.oldTime = new Date();
+                        timeOutput = 10;
+					}
+					else if (timerOn == true){
+						timerOn = false;
+					}
+				}
+
+				if (timerOn == true){
+					if (timeOutput > 0){
+                        timeOutput = 5000 - gameTimer.accum;
+                        timeOutput = timeOutput / 1000;
+                        timeOutput = Math.trunc(timeOutput * 10) / 10;
+                    }
+                    if (gameTimer.isReady() == true){
+                        gameState = "lose";
+                        loseCount += 1;
+                    }
+				}
+
+				if (winCount >= 3 && winCount < 5){
+					crabEasy.move();
+				}
+				else if (winCount >= 5 && winCount < 10){
+					crabHard.move();
+				}
+				else if (winCount >= 10){
+					crabExtreme.move();
+				}
+
+				if (frog.intersects(crabEasy)){
+					gameState = "lose";
+                    loseCount += 1;
+				}
+				if (frog.intersects(crabHard)){
+					gameState = "lose";
+                    loseCount += 1;
+				}
+				if (frog.intersects(crabExtreme)){
+					gameState = "lose";
+                    loseCount += 1;
+				}
+
+				if (frog.intersects(timePower)){
+					timePower.width = 0;
+					timePower.height = 0;
+					timeStop = true;
+				}
+
+				if (newkeys[71]){
+					if (timeStop == true){
+						timeStop = false;
+						stopTimer.accum = 0;
+                		stopTimer.oldTime = new Date();
+						timeOutput2 = 5;
+						gameState = "timestop";
+					}
+				}
+			}
+			else if (gameState == "win"){
+				if (timerOn == true){
+					gameTimer.accum = 0;
+                	gameTimer.oldTime = new Date();
+				}
+
+				if (newkeys[32]){
+					frog.x = 375;
+					frog.y = 550;
+					frog.direction = "up";
+					crabEasy.x = 0;
+					crabEasy.y = 550;
+					crabHard.x = 0;
+					crabHard.y = 550;
+					crabExtreme.x = 0;
+					crabExtreme.y = 550;
+					log1.speed += getRandInt(1, 4) / 4;
+					car1.speed += getRandInt(1, 4) / 4;
+					log2.speed += getRandInt(1, 4) / 4;
+					car2.speed += getRandInt(1, 4) / 4;
+					car3.speed += getRandInt(1, 4) / 4;
+
+					if (Number.isInteger(winCount / 5)){
+						timePower.update();
+					}
+
+					if (timerOn == true){
+						gameTimer.accum = 0;
+                        gameTimer.oldTime = new Date();
+                        timeOutput = 10;
+					}
+
+					gameState = "play";
+				}
+			}
+			else if (gameState == "lose"){
+				if (timerOn == true){
+					gameTimer.accum = 0;
+                	gameTimer.oldTime = new Date();
+				}
+
+				if (newkeys[13]){
+					frog.x = 375;
+					frog.y = 550;
+					frog.direction = "up";
+					crabEasy.x = 0;
+					crabEasy.y = 550;
+					crabHard.x = 0;
+					crabHard.y = 550;
+					crabExtreme.x = 0;
+					crabExtreme.y = 550;
+
+					if (timerOn == true){
+						gameTimer.accum = 0;
+                        gameTimer.oldTime = new Date();
+                        timeOutput = 10;
+					}
+
+					gameState = "play";
+				}
+			}
+			else if (gameState == "timestop"){
+				// Right arrow key
+				if (newkeys[39]){
+					if (frog.x < 750){
+						frog.hopRight();
+					}
+				}
+
+				// Up arrow key
+				if (newkeys[38]){
+					if (frog.y > 0){
+						frog.hopUp();
+					}
+				}
+
+				// Down arrow key
+				if (newkeys[40]){
+					if (frog.y < 550){
+						frog.hopDown();
+					}
+				}
+
+				// Left arrow key
+				if (newkeys[37]){
+					if (frog.x > 0){
+						frog.hopLeft();
+					}
+				}
+
+				if (frog.intersects(rect1) && !frog.intersects(log1)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(rect2) && !frog.intersects(log2)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(car1)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(car2)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.intersects(car3)){
+					gameState = "lose";
+					loseCount += 1;
+				}
+
+				if (frog.y == 0){
+					gameState = "win";
+					winCount += 1;
+				}
+
+				if (frog.x < 0){
+					frog.x = 0;
+				}
+				if (frog.x + frog.width > 800){
+					frog.x = 800 - frog.width;
+				}
+
+				if (newkeys[84]){
+					if (timerOn == false){
+						timerOn = true;
+						gameTimer.accum = 0;
+                        gameTimer.oldTime = new Date();
+                        timeOutput = 10;
+					}
+					else if (timerOn == true){
+						timerOn = false;
+					}
+				}
+
+				if (timerOn == true){
+					if (timeOutput > 0){
+                        timeOutput = 10000 - gameTimer.accum;
+                        timeOutput = timeOutput / 1000;
+                        timeOutput = Math.trunc(timeOutput * 10) / 10;
+                    }
+                    if (gameTimer.isReady() == true){
+                        gameState = "lose";
+                        loseCount += 1;
+                    }
+				}
+
+				if (frog.intersects(crabEasy)){
+					gameState = "lose";
+                    loseCount += 1;
+				}
+				if (frog.intersects(crabHard)){
+					gameState = "lose";
+                    loseCount += 1;
+				}
+				if (frog.intersects(crabExtreme)){
+					gameState = "lose";
+                    loseCount += 1;
+				}
+
+				if (frog.intersects(timePower)){
+					timePower.width = 0;
+					timePower.height = 0;
+					timeStop = true;
+				}
+
+				if (newkeys[71]){
+					if (timeStop == true){
+						timeStop = false;
+						stopTimer.accum = 0;
+                		stopTimer.oldTime = new Date();
+						timeOutput2 = 5;
+						gameState = "timestop";
+					}
+				}
+
+				if (timeOutput2 > 0){
+					timeOutput2 = 5000 - stopTimer.accum;
+					timeOutput2 = timeOutput2 / 1000;
+					timeOutput2 = Math.trunc(timeOutput2 * 10) / 10;
+				}
+				if (stopTimer.isReady() == true){
+					gameState = "play";
+				}
+			}
+
+
+			//
+			// DO NOT ADD ANY CODE BELOW THIS, OR MODIFY ANY CODE BELOW THIS
+			//
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		// Main draw loop for the entire game
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			c.font = "24px Calibri";
+
+			if (gameState == "play"){
+				rect1.draw();
+				rect2.draw();
+				rect3.draw();
+				rect4.draw();
+				rect5.draw();
+				rect6.draw();
+				rect7.draw();
+				rect8.draw();
+				log1.draw();
+				log2.draw();
+				car1.draw();
+				car2.draw();
+				car3.draw();
+				frog.draw();
+				timePower.draw();
+
+				if (winCount >= 3 && winCount < 5){
+					crabEasy.draw();
+				}
+				else if (winCount >= 5 && winCount < 10){
+					crabHard.draw();
+				}
+				else if (winCount >= 10){
+					crabExtreme.draw();
+				}
+				c.fillStyle = "gray";
+				if (timerOn == true){
+					c.fillText("Time left: " + timeOutput, 635, 565);
+				}
+				else if (timerOn == false){
+					c.fillText("(Press T to add a timer!)", 543, 565);
+				}
+
+				c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 590);
+
+				if (timeStop == true){
+					if (direction1 == false){
+						num1 += 5;
+
+						if (num1 >= 255){
+							direction1 = true;
+						}
+					}
+					else if (direction1 == true){
+						num1 -= 5;
+
+						if (num1 <= 0){
+							direction1 = false;
+						}
+					}
+
+					if (direction2 == false){
+						num2 += 5;
+
+						if (num2 >= 255){
+							direction2 = true;
+						}
+					}
+					else if (direction2 == true){
+						num2 -= 5;
+
+						if (num2 <= 0){
+							direction2 = false;
+						}
+					}
+
+					if (direction3 == false){
+						num3 += 5;
+
+						if (num3 >= 255){
+							direction3 = true;
+						}
+					}
+					else if (direction3 == true){
+						num3 -= 5;
+
+						if (num3 <= 0){
+							direction3 = false;
+						}
+					}
+
+					c.fillStyle = "rgb(" + num1 + ", " + num2 + ", " + num3 + ")";
+					c.fillText("PRESS G TO STOP TIME", 0, 590);
+				}
+			}
+			else if (gameState == "win"){
+				c.fillStyle = "green";
+				c.fillText("You win! Press space to play again.", 235, 275);
+				c.fillStyle = "gray";
+				c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 590);
+			}
+			else if (gameState == "lose"){
+				c.fillStyle = "red";
+				c.fillText("You lost... Press enter to play again.", 235, 275)
+				c.fillStyle = "gray";
+				c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 590);
+			}
+			else if (gameState == "timestop"){
+				rect1.draw();
+				rect2.draw();
+				rect3.draw();
+				rect4.draw();
+				rect5.draw();
+				rect6.draw();
+				rect7.draw();
+				rect8.draw();
+				log1.draw();
+				log2.draw();
+				car1.draw();
+				car2.draw();
+				car3.draw();
+				frog.draw();
+				timePower.draw();
+
+				if (winCount >= 3 && winCount < 5){
+					crabEasy.draw();
+				}
+				else if (winCount >= 5 && winCount < 10){
+					crabHard.draw();
+				}
+				else if (winCount >= 10){
+					crabExtreme.draw();
+				}
+
+				c.fillStyle = "gray";
+
+				if (timerOn == true){
+					c.fillText("Time left: " + timeOutput, 635, 565);
+				}
+				else if (timerOn == false){
+					c.fillText("(Press T to add a timer!)", 543, 565);
+				}
+				c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 590);
+
+				c.fillStyle = "rgb(" + num1 + ", " + num2 + ", " + num3 + ")";
+				c.fillText("Time resumes in: " + timeOutput2, 0, 590);
+
+				if (direction1 == false){
+					num1 += 5;
+
+					if (num1 >= 255){
+						direction1 = true;
+					}
+				}
+				else if (direction1 == true){
+					num1 -= 5;
+
+					if (num1 <= 0){
+						direction1 = false;
+					}
+				}
+
+				if (direction2 == false){
+					num2 += 5;
+
+					if (num2 >= 255){
+						direction2 = true;
+					}
+				}
+				else if (direction2 == true){
+					num2 -= 5;
+
+					if (num2 <= 0){
+						direction2 = false;
+					}
+				}
+
+				if (direction3 == false){
+					num3 += 5;
+
+					if (num3 >= 255){
+						direction3 = true;
+					}
+				}
+				else if (direction3 == true){
+					num3 -= 5;
+
+					if (num3 <= 0){
+						direction3 = false;
+					}
+				}
+			}
+		}
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>

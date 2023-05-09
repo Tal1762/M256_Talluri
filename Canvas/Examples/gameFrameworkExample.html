@@ -1,0 +1,176 @@
+<html>
+<head>
+    <style>
+        canvas{
+            background: #dddddd;
+        }
+    </style>
+
+    <script>
+        // Canvas context; used to call Canvas methods
+        var c;
+
+        // Canvas width and height
+        var cWidth, cHeight;
+
+        // Stores the current keyboard state
+        var curkeys = [];
+
+        var rectX = 0;
+        var rectY = 0;
+
+        var rect2X = 750;
+        var rect2Y = 550;
+
+        // Dimensions of the rectangle
+        var rectWidth = "50";
+        var rectLength = "50";
+
+        var rect2Width = "50";
+        var rect2Length = "50";
+
+        // Color of rectangle
+        var color1 = "maroon";
+        var color2 = "green";
+
+        // Speed of the rectangle
+        var rectSpeed = 3;
+
+        // Initializes entire game framework. This method should only be called
+        // once, by the body onload event handler.
+        function gameFrameworkInit(){
+            // Initialize global vaiables for canvas
+            c = myCanvas.getContext('2d');
+            cWidth = myCanvas.width;
+            cHeight = myCanvas.height;
+
+            // Start listeners for getting keyboard state
+            window.addEventListener('keydown',
+                                    function(e){ curkeys[e.keyCode] = true; }
+                                    );
+
+            window.addEventListener('keyup',
+                                    function(e){ curkeys[e.keyCode] = false; }
+                                    );
+
+            // Schedule the update function to be called right before the next repaint
+            // (At the end of the update function, it will schedule it self to be called
+            // again before the NEXT repaint, and so on.)
+            window.requestAnimationFrame(gameUpdate);
+        }
+
+        function gameUpdate(){
+            // D key and Right arrow key
+            if (curkeys[68]){
+                rect2X += rectSpeed;
+            }
+            if (curkeys[39]){
+                rectX += rectSpeed;
+            }
+
+            // W key and Up arrow key
+            if (curkeys[87]){
+                rect2Y -= rectSpeed;
+            }
+            if (curkeys[38]){
+                rectY -= rectSpeed;
+            }
+
+            // S key and Down arrow key
+            if (curkeys[83]){
+                rect2Y += rectSpeed;
+            }
+            if (curkeys[40]){
+                rectY += rectSpeed;
+            }
+
+            // A key and Left arrow key
+            if (curkeys[65]){
+                rect2X -= rectSpeed;
+            }
+            if (curkeys[37]){
+                rectX -= rectSpeed;
+            }
+
+            // Shift key
+            if (curkeys[16]){
+                rectSpeed = 15;
+            }
+            else{
+                rectSpeed = 3;
+            }
+
+            // L key
+            if (curkeys[76]){
+                if (rectLength < 600 && rect2Length < 600){
+                    rectLength++;
+                    rect2Length++;
+                }
+            }
+
+            // K key
+            if (curkeys[75]){
+                if (rectWidth < 600 && rect2Width < 600){
+                    rectWidth++;
+                    rect2Width++;
+                }
+            }
+
+            // T key
+            if (curkeys[84]){
+                color1 = "red";
+                color2 = "lightgreen";
+            }
+
+            // Y key
+            if (curkeys[89]){
+                color1 = "maroon";
+                color2 = "green";
+            }
+
+            // O key
+            if (curkeys[79]){
+                if (rectWidth < 600 && rectLength < 600 && rect2Width < 600 && rect2Length < 600){
+                    rectWidth++;
+                    rectLength++;
+                    rect2Width++;
+                    rect2Length++;
+                }
+            }
+
+            // I key
+            if (curkeys[73]){
+                if (rectLength > 1 && rectWidth > 1 && rect2Length > 1 && rect2Width > 1){
+                    rectWidth -= 1;
+                    rectLength -= 1;
+                    rect2Width -= 1;
+                    rect2Length -= 1;
+                }
+            }
+
+            // AT THE END of the update function, repaint the screen
+            gameDraw();
+
+            // Last thing the update function does is to schedule itself to be called
+            // again before the next repaint
+            window.requestAnimationFrame(gameUpdate);
+        }
+
+        function gameDraw(){
+            // Before we draw anything, we must first clear
+            // the canvas. After that, we'll draw the current frame
+            c.clearRect(0, 0, cWidth, cHeight);
+
+            c.fillStyle = color1;
+            c.fillRect(rectX, rectY, rectWidth, rectLength);
+
+            c.fillStyle = color2;
+            c.fillRect(rect2X, rect2Y, rect2Width, rect2Length);
+        }
+    </script>
+</head>
+
+<body onload="gameFrameworkInit()">
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

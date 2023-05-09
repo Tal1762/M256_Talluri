@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title> Assessment 4 Review </title>
+
+    <script>
+        var numArray = [];
+
+        function onLoadFxn(){
+            var num = 0;
+            for (i=0; i<10; i++){
+                num = Math.floor(Math.random() * 51);
+                numArray.push(num);
+            }
+        }
+
+        function smallToLarge(){
+            var output = "";
+            
+            var arraySize = numArray.length;
+
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arraySize-1; i++){
+                    if (numArray[i] > numArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = numArray[i];
+                        numArray[i] = numArray[i+1];
+                        numArray[i+1] = temp;
+                    }
+                }
+            } while (sortDone == false)
+
+            for (i=0; i<10; i++){
+                output += numArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+            var num1 = numArray[arraySize-1];
+            var num2 = numArray[0];
+            var alert = num1 - num2;
+            window.alert(alert);
+        }
+
+        function largeToSmall(){
+            var output = "";
+            
+            var arraySize = numArray.length;
+
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arraySize-1; i++){
+                    if (numArray[i] < numArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = numArray[i];
+                        numArray[i] = numArray[i+1];
+                        numArray[i+1] = temp;
+                    }
+                }
+            } while (sortDone == false)
+
+            for (i=0; i<10; i++){
+                output += numArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+            var num1 = numArray[arraySize-1];
+            var num2 = numArray[0];
+            var alert = num1 + num2;
+            window.alert(alert);
+        }
+    </script>
+</head>
+
+<body onLoad="onLoadFxn()">
+    <input type="button" value="Function 1" onClick="smallToLarge()">
+    <input type="button" value="Function 2" onClick="largeToSmall()">
+    <div id="idDivOutput"></div>
+</body>
+</html>

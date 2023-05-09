@@ -1,0 +1,102 @@
+<html>
+<head>
+    <title>Global Variables</title>
+    <style>
+        body{
+            background-color: darkgoldenrod;
+            color: forestgreen;
+            font-family: Times New Roman;
+            font-size: 32px;
+        }
+        #idBtnEven{
+            background-color: darkturquoise;
+            color: darkgreen;
+            border-radius: 4px;
+            font-size: 17px;
+            font-family: Lucida Sans;
+            display: inline-block;
+            cursor: pointer;
+            box-shadow: 0 3px #999;
+            padding: 5px 10px;
+            user-select: none;
+        }
+        #idBtnOdd{
+            background-color: green;
+            color: powderblue;
+            border-radius: 4px;
+            font-size: 17px;
+            font-family: Lucida Sans;
+            display: inline-block;
+            cursor: pointer;
+            box-shadow: 0 3px #999;
+            padding: 5px 10px;
+            user-select: none;
+        }
+        #idBtnEven:hover {background-color: rgb(0, 176, 179)}
+        #idBtnEven:active {
+            background-color: rgb(0, 176, 179);
+            box-shadow: 0 1px #666;
+            transform: translateY(4px);
+        }
+        #idBtnOdd:hover {background-color: darkgreen;}
+        #idBtnOdd:active {
+            background-color: darkgreen;
+            box-shadow: 0 1px #666;
+            transform: translateY(4px);
+        }
+    </style>
+
+    <script>
+        var countOdd = 0;
+        var countEven = 0;
+        
+        function generateRandom(){
+            idDivNum.innerHTML = Math.floor(Math.random() * 1001);
+        }
+        function updateEven(){
+            if (Number.isInteger(Number(idDivNum.innerHTML) / 2) == false){
+                window.alert("You know that's not even... >:(");
+                return
+            }
+            countEven += 1;
+            idDivNum.innerHTML = Math.floor(Math.random() * 1001);
+            if (countOdd < countEven){
+                idDivSummary.innerHTML = "Total number of odd numbers: " + countOdd + "<br>Total number of even numbers: " + countEven + "<br>The even numbers are winning!";
+            }
+            else if (countOdd > countEven){
+                idDivSummary.innerHTML = "Total number of odd numbers: " + countOdd + "<br>Total number of even numbers: " + countEven + "<br>The odd numbers are winning!";
+            }
+            else{
+                idDivSummary.innerHTML = "Total number of odd numbers: " + countOdd + "<br>Total number of even numbers: " + countEven + "<br>They are tied!";
+            }
+        }
+        function updateOdd(){
+            if (Number.isInteger(Number(idDivNum.innerHTML) / 2) == true){
+                window.alert("You know that's not odd... >:(");
+                return
+            }
+            countOdd += 1;
+            idDivNum.innerHTML = Math.floor(Math.random() * 1001);
+            if (countOdd < countEven){
+                idDivSummary.innerHTML = "Total number of odd numbers: " + countOdd + "<br>Total number of even numbers: " + countEven + "<br>The even numbers are winning!";
+            }
+            else if (countOdd > countEven){
+                idDivSummary.innerHTML = "Total number of odd numbers: " + countOdd + "<br>Total number of even numbers: " + countEven + "<br>The odd numbers are winning!";
+            }
+            else{
+                idDivSummary.innerHTML = "Total number of odd numbers: " + countOdd + "<br>Total number of even numbers: " + countEven + "<br>They are tied!";
+            }
+        }
+    </script>
+</head>
+
+<body onLoad="generateRandom()">
+    <form>
+        <div id="idDivNum"></div>
+        <input type="button" value="This is even" id="idBtnEven" onClick="updateEven()">
+        <input type="button" value="This is odd" id="idBtnOdd" onClick="updateOdd()">
+        <br><br>
+        <div id="idDivSummary">Total number of even numbers: 0<br>Total number of odd numbers: 0<br>They are tied!</div>
+    </form>
+</body>
+</html>

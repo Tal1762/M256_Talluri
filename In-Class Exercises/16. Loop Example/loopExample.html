@@ -1,0 +1,89 @@
+<html>
+<head>
+    <title> Let's count to 10 using loops </title>
+    <script>
+
+        function countFor(){
+            var startNum = Number(idTxtStartNum.value);
+            var endNum = Number(idTxtEndNum.value);
+            var increment = Number(idTxtIncrement.value);
+            var output = "<h1>I can count to 10!</h1><br>";
+            output += "<h2>Here is counting to 10 using a for loop:</h2><h5>";
+
+            if (startNum > endNum){
+                for(var i=startNum; i>=endNum; i+=increment){
+                    output = output + i + "<br>";
+                }
+            }
+            else{
+                for(var i=startNum; i<=endNum; i+=increment){
+                    output = output + i + "<br>";
+                }
+            }
+
+            output += "</h5>";
+            document.getElementById("idLoopOutput").innerHTML = output;
+        }
+
+        function countWhile(){
+            var startNum = Number(idTxtStartNum.value);
+            var endNum = Number(idTxtEndNum.value);
+            var increment = Number(idTxtIncrement.value);
+            var output = "<h1>I can count to 10!</h1><br>";
+            output += "<h2>Here is counting to 10 using a while loop:</h2><h5>";
+
+            var loopCounter = startNum;
+
+            if (startNum > endNum){
+                while(loopCounter >= endNum){
+                    output = output + loopCounter + "<br>";
+                    loopCounter += increment;
+                }
+            }
+            else{
+                while(loopCounter <= endNum){
+                    output = output + loopCounter + "<br>";
+                    loopCounter += increment;
+                }
+            }
+            
+            output += "</h5>";
+            document.getElementById("idLoopOutput").innerHTML = output;
+        }
+
+        function whileConfirm(){
+            var answer = false;
+
+            while (answer == false){
+                answer = confirm("Do you want to exit the loop?");
+            }
+        }
+
+        function checkPassword(){
+            var pwGuess = prompt("Please enter the password");
+
+            while(pwGuess != "qwertyuiopasdfghjklzxcvbnm"){
+                window.alert("Your password is incorrect, please try again.")
+                pwGuess = prompt("Please type in your 4-digit password to access the site.");
+            }
+
+            window.alert("Welcome to the site!");
+        }
+    </script>
+</head>
+
+<body>
+    Input a starting number: <input type="text" id="idTxtStartNum">
+    <br>
+    Input an ending number: <input type="text" id="idTxtEndNum">
+    <br>
+    Input an increment amount: <input type="text" id="idTxtIncrement">
+    <br>
+    <input type="button" value="Count using a for loop" onClick="countFor()">
+    <input type="button" value="Count using a while loop" onClick="countWhile()">
+    <input type="button" value="Confirm" onClick="whileConfirm()">
+    <input type="button" value="Guess Password" id="idBtnPwCheck" onClick="checkPassword()">
+
+    <div id="idLoopOutput"></div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<html>
+<head>
+    <title>Decision Statements 4</title>
+    <style>
+        body{
+            background-color: darkkhaki;
+            color: navy;
+            font-size: 24px;
+            font-family: Cochin;
+        }
+    </style>
+
+    <script>
+        function displaySummary(){
+            var cubsScore = Number(idTxtCubs.value);
+            var soxScore = Number(idTxtWS.value);
+            var combinedScore = Number(cubsScore + soxScore);
+            var output = "";
+            if (isNaN(cubsScore) == true || isNaN(soxScore) == true){
+                window.alert("Scores have to be numbers :(");
+                return
+            }
+            if (Number.isInteger(cubsScore) == false || Number.isInteger(soxScore) == false){
+                window.alert("Scores can't be decimals :(");
+                return
+            }
+            
+            if (cubsScore > soxScore){
+                output += "The Cubs are winning. ";
+            }
+            else if (cubsScore < soxScore){
+                output += "The White Sox are winning. ";
+            }
+            else if (cubsScore == soxScore){
+                output += "The game is tied. ";
+            }
+
+            if (cubsScore > 7){
+                output += "The Cubs are high-scoring. ";
+            }
+            else if (soxScore > 7){
+                output += "The White Sox are high-scoring. ";
+            }
+            else if (cubsScore < 8 && soxScore < 8){
+                output += "Neither team is high-scoring. ";
+            }
+
+            if (combinedScore > 11){
+                output += "The game is high-scoring. ";
+            }
+            else if (combinedScore < 12){
+                output += "The game is not high-scoring. ";
+            }
+
+            if (Number.isInteger(cubsScore / 2) == true){
+                output += "The Cubs have an even score. ";
+            }
+            else if (Number.isInteger(cubsScore / 2) == false){
+                output += "The Cubs have an odd score. ";
+            }
+
+            if (Number.isInteger(soxScore / 2) == true){
+                output += "The White Sox have an even score. ";
+            }
+            else if (Number.isInteger(soxScore / 2) == false){
+                output += "The White Sox have an odd score. ";
+            }
+
+            if (Number.isInteger(combinedScore / 2) == true){
+                output += "The combined score is an even number.";
+            }
+            else if (Number.isInteger(combinedScore / 2) == false){
+                output += "The combined score is an odd number.";
+            }
+            window.alert(output);
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Enter a score for the Cubs:
+        <input type="text" id="idTxtCubs">
+        <br>
+        Enter a score for the White Sox:
+        <input type="text" id="idTxtWS">
+        <br>
+        <input type="button" value="Display Summary" onClick="displaySummary()">
+    </form>
+</body>
+</html>

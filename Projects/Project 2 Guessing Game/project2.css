@@ -1,0 +1,118 @@
+body{
+    background-color: forestgreen;
+    color: mediumturquoise;
+    font-family: Geneva;
+    font-size: 24px;
+    text-align: center;
+}
+
+div{
+    color: yellow;
+    font-family: Geneva;
+    text-align: center;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+fieldset{
+    margin-left: 29%;
+    margin-right: 29%;
+    border-style: dotted;
+    border-color: orange;
+}
+
+#idFldSet2{
+    animation-duration: 4s;
+    animation-iteration-count: 1;
+    animation-name: animation2;
+    position: relative;
+    animation-delay: 3s;
+}
+
+#idDivInstructions{
+    font-size: 20px;
+}
+
+@keyframes animation1 {
+  0% {transform: rotate(-5deg);}
+  50% {transform: rotate(5deg);}
+  100% {transform: rotate(-5deg);}
+}
+
+@keyframes animation2 {
+  25% {transform: translateX(250px);}
+  50% {transform: translateX(-250px);}
+  100% {transform: translateX(250px); transform: rotate(360deg);}
+}
+
+#idFldSet1{
+    border-color: red;
+    margin-left: 20%;
+    margin-right: 20%;
+    border-style: outset;
+    animation-duration: 4s;
+    animation-iteration-count: 4;
+    animation-name: animation1;
+    position: relative;
+}
+
+#idFldSet3{
+    border-color: blue;
+    border-style: dashed;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+#idBtnCheck{
+    background-image: linear-gradient(red, orange);
+    color: black;
+    border-radius: 8px;
+    font-size: 17px;
+    font-family: Lucida Sans;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: 0 3px #999;
+    padding: 2.5px 5px;
+    user-select: none;
+}
+#idBtnRestart{
+    background-image: radial-gradient(blue, purple);
+    color: orange;
+    border-radius: 8px;
+    font-size: 17px;
+    font-family: Lucida Sans;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: 0 3px #999;
+    padding: 2.5px 5px;
+    user-select: none;
+}
+#idBtnCheck:hover {background-image: linear-gradient(rgb(128, 0, 0), rgb(182, 119, 2))}
+#idBtnCheck:active {
+  background-image: linear-gradient(rgb(128, 0, 0), rgb(160, 104, 1));
+  box-shadow: 0 1px #666;
+  transform: translateY(2px);
+}
+#idBtnRestart:hover {background-image: radial-gradient(darkblue, rgb(95, 0, 95))}
+#idBtnRestart:active {
+  background-image: radial-gradient(darkblue, rgb(95, 0, 95));
+  box-shadow: 0 1px #666;
+  transform: translateY(2px);
+}
+#idBtnCheat{
+  background-image: linear-gradient(black, green, black);
+  color: greenyellow;
+  border-radius: 8px;
+  font-size: 17px;
+  font-family: Lucida Sans;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 3px #999;
+  padding: 2.5px 5px;
+}
+#idBtnCheat:hover {background-image: linear-gradient(black, rgb(0, 92, 0), black)}
+#idBtnCheat:active {
+  background-image: linear-gradient(black, rgb(0, 92, 0), black);
+  box-shadow: 0 1px #666;
+  transform: translateY(2px);
+}

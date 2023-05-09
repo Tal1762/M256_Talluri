@@ -1,0 +1,60 @@
+<html>
+<head>
+    <title>Decision Statements 2</title>
+    <style>
+        body{
+            background-color: darkslategray;
+            color: lawngreen;
+            font-family: Gill Sans MT;
+            font-size: 24px;
+        }
+    </style>
+
+    <script>
+        function displayCalulation(){
+            var num1 = Number(idTxtNum1.value);
+            var operator = idTxtOperator.value;
+            var num2 = Number(idTxtNum2.value);
+            if (isNaN(num1) == true || isNaN(num2) == true){
+                window.alert("One or both of your inputs are not numbers.");
+                return
+            }
+            if (operator == "+"){
+                var input = num1 + num2;
+                window.alert(num1 + operator + num2 + "=" + input);
+            }
+            else if (operator == "-"){
+                var input = num1 - num2;
+                window.alert(num1 + operator + num2 + "=" + input);
+            }
+            else if (operator == "*"){
+                var input = num1 * num2;
+                window.alert(num1 + operator + num2 + "=" + input);
+            }
+            else if (operator == "/"){
+                var input = num1 / num2;
+                window.alert(num1 + operator + num2 + "=" + input);
+            }
+            else if (operator == "^"){
+                var input = num1 ** num2;
+                window.alert(num1 + operator + num2 + "=" + input);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Enter a number:
+        <input type="text" id="idTxtNum1">
+        <br>
+        Enter an arithmetic operator (+,-,*,/,^):
+        <input type="text" id="idTxtOperator">
+        <br>
+        Enter another number:
+        <input type="text" id="idTxtNum2">
+        <br><br>
+        <input type="button" value="Run the Equation" onClick="displayCalulation()">
+    </form>
+</body>
+</html>

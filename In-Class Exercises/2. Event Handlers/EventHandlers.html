@@ -1,0 +1,144 @@
+<html>
+<head>
+        <title> Event Handlers Excercise</title>
+        <style type=text/css>
+            body{
+                    background-color:skyblue;
+                    color:navy;
+                    font-family: Rockwell;
+            }
+        </style>
+
+        <script>
+            function clearName(){
+                document.getElementById("idTxtName").value=("");
+            }
+            function alertMessage(){
+                window.alert("Hello there");
+            }
+            function redPassword(){
+                document.getElementById("idPwID").style.color="red";
+            }
+            function blackPassword(){
+                document.getElementById("idPwID").style.color="black";
+                document.getElementById("idImgScooby").src="sus.jpg";
+            }
+            function maleResponse(){
+                window.alert("sup");
+            }
+            function femaleResponse(){
+                window.alert("nice to meet you");
+            }
+            function selectBoxColorChange(){
+                document.getElementById("idSlctClass").style.backgroundColor="yellow";
+            }
+            function geometryEw(){
+                window.alert("you have your opinion, i have mine");
+            }
+            function lastWords(){
+                document.getElementById("idTxtArea").value="no don't delete me";
+            }
+            function changeImage(){
+                document.getElementById("idImgScooby").src="scooby2.jpg";
+            }
+            function changeImgBack(){
+                document.getElementById("idImgScooby").src="scooby.gif";
+            }
+            function submitAlert(){
+                if (document.getElementById("idTxtName").value=="Ritej Talluri"){
+                    window.alert("AHHHHH WHY DO YOU KNOW MY NAME AHHHHHHHHHHHHHHHH");
+                }
+                else{
+                   window.alert("now what should I do with all this info...")
+                }
+            }
+            function clickBtnChange(){
+                document.getElementById("idBtnClick").value="hahaha i'm ALIVE";
+            }
+            function clickBtnChangeBack(){
+                document.getElementById("idBtnClick").value="Click here";
+            }
+            function clickPicture(){
+                document.getElementById("idImgScooby").src="flowers.jpg";
+            }
+            function algebraChange(){
+                document.getElementById("idImgScooby").src="algebra.jpg";
+            }
+            function aliveFontChange(){
+                document.getElementById("idSlctClass").style.fontFamily="Lucida Handwriting";
+                document.getElementById("idSlctClass").style.color="pink";
+            }
+            function trigFontChange(){
+                document.getElementById("idBtnClick").style.fontFamily="Papyrus";
+                document.getElementById("idSubmitDone").style.fontFamily="Papyrus";
+            }
+            function slctFontChange(){
+                document.getElementById("idTxtArea").style.fontFamily="Brush Script MT";
+            }
+            function txtAreaFntChange(){
+                document.getElementById("idResetClear").style.fontFamily="Lucida Console";
+            }
+            function startOverAgain(){     
+                if (document.getElementById("idSlctClass").style.color=="pink"){
+                    document.getElementById("idCkTrig").outerText="AAAAAAAAAAAAAAAAAAHHHHHHHHHHHTOOOOMANYYYYYYFONNNNNTTTTTSSSSS";
+                }
+                document.getElementById("idResetClear").style.fontFamily="Arial";
+                document.getElementById("idTxtArea").style.fontFamily="Rockwell";
+                document.getElementById("idBtnClick").style.fontFamily="Arial";
+                document.getElementById("idSubmitDone").style.fontFamily="Arial";
+                document.getElementById("idSlctClass").style.fontFamily="Arial";
+                document.getElementById("idSlctClass").style.color="black";
+            }
+            function susBtnClick(){
+                document.getElementById("idImgScooby").src="sus.jpg";
+            }
+            function susBtnChangeBack(){
+                document.getElementById("idImgScooby").src="scooby.gif";
+            }
+        </script>
+</head>
+
+<body onLoad="alertMessage()">
+        <form onSubmit="submitAlert()">
+            Student Name:
+            <input type="text" id="idTxtName" value="Enter name" onClick="clearName()">
+            <br><br>
+
+            Student ID:
+            <input type="password" id="idPwID" onFocus="redPassword()" onBlur="blackPassword()">
+            <br><br>
+
+            Sex:
+            <input type="radio" id="idRdMale"   name="rdSex" value="M" onClick="maleResponse()"> Male
+            <input type="radio" id="idRdFemale" name="rdSex" value="F" onClick="femaleResponse()"> Female
+            <br><br>
+
+            What year are you graduating?
+            <select id="idSlctClass" onMouseDown="selectBoxColorChange()" onBlur="slctFontChange()">
+                <option> 2022 </option>
+                <option> 2023 </option>
+                <option> 2024 </option>
+                <option> 2025 </option>
+            </select>
+            <br><br>
+
+
+            I like the following math classes (check all that apply): <br>
+            <input type="checkbox" id="idCkAlg" value="A" onClick="algebraChange()" onDblClick="changeImgBack()">Algebra<br>
+            <input type="checkbox" id="idCkGeo" value="G" onClick="geometryEw()">Geometry<br>
+            <input type="checkbox" id="idCkTrig" vallue="T" onClick="trigFontChange()">Trig<br>
+            <br><br>
+
+            <textarea rows="4" cols="50" id="idTxtArea" onDblClick="lastWords()" onBlur="txtAreaFntChange()">Anything else you'd like to add?</textarea>
+            <br><br>
+
+            <input type=button value="Click here" id="idBtnClick" onMouseOver="clickBtnChange()" onMouseOut="clickBtnChangeBack()" onClick="aliveFontChange()" onMouseDown="susBtnClick()" onMouseUp="susBtnChangeBack()">
+            <input type=submit value="I'm done" id="idSubmitDone" >
+            <input type=reset value="Clear the form" id="idResetClear" onClick="startOverAgain()">
+            <br><br>
+
+            <img src="scooby.gif" id="idImgScooby" width=100 onMouseOver="changeImage()" onMouseOut="changeImgBack()" onClick="clickPicture()">
+
+        </form>
+</body>
+</html>

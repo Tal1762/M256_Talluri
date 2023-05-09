@@ -1,0 +1,63 @@
+<html>
+<head>
+        <title>Function Practice</title>
+        <style type=text/css>
+            body{
+                background-color: khaki;
+                color:orangered;
+                font-family: Rockwell;
+            }
+            </style>
+        
+    <script>
+        function showSummary(inputForm){
+            var favNumber = Number(document.getElementById("idTxtFavNumber").value);
+            var favAnimal = document.getElementById("idSlctFavAnimal").value;
+            window.alert(getFavNumberComment(favNumber) + getFavAnimal(favAnimal));
+        }
+
+        function getFavNumberComment(num){
+            if (num < 0){
+                return "Your favorite number is negative!"
+            }
+            else if (num == 0){
+                return "Your favorite number is zero!"
+            }
+            else if (num > 0){
+                return "Your favorite number is positive!"
+            }
+            else{
+                return "That's not a number, but at least"
+            }
+        }
+
+        function getFavAnimal(selectValue){
+            if (selectValue == "cat"){
+                return " Your favorite animal meows!"
+            }
+            else if (selectValue == "dog"){
+                return " Your favorite animal barks!"
+            }
+            else{
+                return " Your favorite animal hops!"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <form name="frmInfo">
+        Type in your favorite number!
+        <input type="text" id="idTxtFavNumber">
+        <br><br>
+        Select your favorite animal!
+        <select id="idSlctFavAnimal">
+            <option value="cat">cat</option>
+            <option value="dog">dog</option>
+            <option value="rabbit">rabbit</option>
+        </select>
+        <br><br>
+        <input type="submit" onClick="showSummary(frmInfo)" value="Done">
+    </form>
+</body>
+</html>

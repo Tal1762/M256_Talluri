@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title> Assessment 3 Review </title>
+
+    <script>
+        var numArray = [];
+        function initializeArray(){
+            for(var i=0; i<300; i++){
+                numArray.push(i*2);
+            }
+        }
+
+        function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+        function displayRandomInt(){
+            idDivOutput.innerHTML = numArray[getRandInt(0, 299)];
+        }
+    </script>
+</head>
+
+<body onLoad="initializeArray()">
+    <input type="button" value="Generate Random Even Integer" onClick="displayRandomInt()">
+    <div id="idDivOutput"></div>
+</body>
+</html>

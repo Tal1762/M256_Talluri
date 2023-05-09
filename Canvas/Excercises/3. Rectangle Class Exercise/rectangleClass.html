@@ -1,0 +1,130 @@
+<html>
+<head>
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		var c;
+
+		var cWidth, cHeight;
+
+		var color1 = "maroon";
+
+		var curkeys = [];
+
+		function gameFrameworkInit(){
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+	        window.addEventListener('keydown',
+	        						 function(e){ curkeys[e.keyCode] = true; }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+        class rectClass{
+            constructor(cRectX, cRectY, cRectWidth, cRectHeight, rectImg, rectWalk){
+                this.x = cRectX;
+                this.y = cRectY;
+                this.width = cRectWidth;
+                this.height = cRectHeight;
+
+                this.image = new Image();
+                this.image.src = rectImg;
+
+                this.walk = rectWalk;
+            }
+
+            draw(){
+                c.drawImage(this.image, this.x, this.y, this.width, this.height);
+                c.drawImage(this.image, this.x, this.y, this.width, this.height);
+            }
+
+            moveLeft(){
+                this.x = this.x - 5;
+            }
+
+            moveRight(){
+                this.x = this.x + 5;
+            }
+
+            moveDown(){
+                this.y = this.y + 5;
+            }
+
+            moveUp(){
+                this.y = this.y - 5;
+            }
+        }
+
+        var rect1 = new rectClass(0, 0, 200, 200, "luigi.jpg", false);
+        var rect2 = new rectClass(600, 400, 200, 200, "mario.jpg", false);
+
+		function gameUpdate(){
+            if (curkeys[39]){
+                rect1.moveRight();
+            }
+            if (curkeys[38]){
+                rect1.moveUp();
+            }
+            if (curkeys[40]){
+                rect1.moveDown();
+            }
+            if (curkeys[37]){
+                rect1.moveLeft();
+            }
+
+            if (curkeys[68]){
+                rect2.moveRight();
+                rect2.walk = true;
+            }
+            if (curkeys[87]){
+                rect2.moveUp();
+            }
+            if (curkeys[83]){
+                rect2.moveDown();
+            }
+            if (curkeys[65]){
+                rect2.moveLeft();
+                rect2.walk = false;
+            }
+
+            if (rect2.walk == true){
+                rect2.width = 350;
+                rect2.image.src = "mario2.jpg";
+            }
+            else{
+                rect2.width = 200;
+                rect2.image.src = "mario.jpg";
+            }
+
+			gameDraw();
+
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameDraw(){
+			c.clearRect(0,0,cWidth,cHeight);
+			c = myCanvas.getContext('2d');
+			
+			c.fillStyle = color1;
+
+			rect1.draw();
+            rect2.draw();
+		}
+	</script>
+</head>
+
+<body onload="gameFrameworkInit()">
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

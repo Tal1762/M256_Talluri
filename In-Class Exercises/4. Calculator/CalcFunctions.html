@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>Calc Functions Exercise</title>
+    <style type=text/css>
+        body{
+            background-color: lightsteelblue;
+            color:navy;
+            font-family: Rockwell;
+        }
+    </style>
+
+    <script>
+        function findSum(){
+            var input1 = Number(document.getElementById("idTxtInput1").value);
+            var input2 = Number(document.getElementById("idTxtInput2").value);
+
+            document.getElementById("idTxtOutput").value = input1 + input2;
+        }
+        function findDifference(){
+            var input1 = Number(document.getElementById("idTxtInput1").value);
+            var input2 = Number(document.getElementById("idTxtInput2").value);
+
+            document.getElementById("idTxtOutput").value = input1 - input2;
+        }
+        function findProduct(){
+            var input1 = Number(document.getElementById("idTxtInput1").value);
+            var input2 = Number(document.getElementById("idTxtInput2").value);
+
+            document.getElementById("idTxtOutput").value = input1 * input2;
+        }
+        function findQuotient(){
+            var input1 = Number(document.getElementById("idTxtInput1").value);
+            var input2 = Number(document.getElementById("idTxtInput2").value);
+
+            document.getElementById("idTxtOutput").value = input1 / input2;
+        }
+        function findIfEqual(){
+            var input1 = Number(document.getElementById("idTxtInput1").value);
+            var input2 = Number(document.getElementById("idTxtInput2").value);
+            if (input1 == input2){
+                document.getElementById("idTxtOutput").value = "These two numbers are equal";
+            }
+            else{
+                document.getElementById("idTxtOutput").value = "These two numbers are not equal";
+            }
+        }
+        function findMaximumNumber(){
+            var input1 = Number(document.getElementById("idTxtInput1").value);
+            var input2 = Number(document.getElementById("idTxtInput2").value);
+            if (input1 > input2){
+                document.getElementById("idTxtOutput").value = "The maximum value is " + input1 + ".";
+            }
+            else{
+                document.getElementById("idTxtOutput").value = "The maximum value is " + input2 + ".";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        <input type="text" id="idTxtInput1">
+        <input type="text" id="idTxtInput2">
+
+        <br><br>
+        <input type="button" id="idBtnAdd" value="ADD" onclick="findSum()">
+        <input type="button" id="idBtnSub" value="SUBTRACT" onclick="findDifference()">
+        <input type="button" id="idBtnMult" value="MULTIPLY" onclick="findProduct()">
+        <input type="button" id="idBtnDivi" value="DIVIDE" onclick="findQuotient()">
+        <input type="button" id="idBtnEqual" value="CHECK EQUIVALENCY" onclick="findIfEqual()">
+        <input type="button" id="idBtnHighValue" value="MAXIMUM VALUE" onclick="findMaximumNumber()">
+
+        <br><br>
+        <input type="text" id="idTxtOutput">
+    </form>
+</body>
+</html>

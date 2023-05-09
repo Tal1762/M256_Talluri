@@ -1,0 +1,77 @@
+<html>
+<head>
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		var c;
+
+		var cWidth, cHeight;
+
+		var color1 = "maroon";
+
+		var curkeys = [];
+
+		var rectX = 0, rectY = 0;
+		var rectWidth = 200, rectHeight = 100;
+
+		function gameFrameworkInit(){
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+	        window.addEventListener('keydown',
+	        						 function(e){ curkeys[e.keyCode] = true; }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameUpdate(){
+			// Right
+            if (curkeys[39]){
+                rectX += rectSpeed;
+            }
+
+			// Up
+            if (curkeys[38]){
+                rectY -= rectSpeed;
+            }
+
+			// Down
+            if (curkeys[40]){
+                rectY += rectSpeed;
+            }
+
+			// Left
+            if (curkeys[37]){
+                rectX -= rectSpeed;
+            }
+
+			gameDraw();
+
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameDraw(){
+			c.clearRect(0,0,cWidth,cHeight);
+			c = myCanvas.getContext('2d');
+			
+			c.fillStyle = color1;
+
+			c.fillRect(rectX, rectY, rectWidth, rectHeight);
+		}
+	</script>
+</head>
+
+<body onload="gameFrameworkInit()">
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

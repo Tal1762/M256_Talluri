@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <title>Form Practice</title>
+
+        <style type="text/css">
+            body{
+                color:red;
+                background-color: aquamarine;
+                font-size: 16pt;
+                font-family: garamond;
+            }
+
+            legend{
+                font-family: Segoe UI;
+                font-size: 20pt;
+            }
+            fieldset{
+                color:darkorchid
+            }
+        </style>
+
+        <script>
+            function alertMessage(){
+                window.alert(document.getElementById("idTxtInput").value)
+            }
+            function alertRadio(){
+                if (document.getElementById("idRdCubs").checked){
+                    window.alert("Welcome To The Cubs!")
+                }
+                if (document.getElementById("idRdWhiteSox").checked){
+                    window.alert("Welcome To The White Sox!")
+                }
+            }
+            function alertSelect(){
+                window.alert(document.getElementById("idSlctPets").value + " is your pick huh")
+            }
+        </script>
+    </head>
+
+    <body>
+        <h2>Create an account</h2>
+        <form action="">
+            <fieldset>
+                <legend>Account Info</legend>
+                First Name:
+                <input type="text" name="firstname" value="Peter">
+                <br>
+                Last Name:
+                <input type="text" name="lastname" value="Parker">
+                <br>
+                Create a username:
+                <input type="text" name="username" value="NotSp1dey">
+                <br>
+                Create a password:
+                <input type="password" name="psw">
+                <br>
+                <input type="submit">
+                <input type="reset">
+            </fieldset>
+        </form>
+
+        <form action="">
+            <fieldset>
+                <legend>Tell me about yourself!</legend>
+                What is your gender?
+                <br>
+                <input type="radio" name="gender" value="M"> Male <br>
+                <input type="radio" name="gender" value="F"> Female <br>
+                <input type="radio" name="gender" value="O"> Other
+                <br>
+                When is your birthday?
+                <input type="date">
+                <br>
+                How are you feeling?
+                <input type="text" value="Tell me here">
+                <br>
+                Which period is your favorite?
+                <select>
+                    <option> 1 </option>
+                    <option> 2 </option>
+                    <option> 3 </option>
+                    <option> 4 </option>
+                    <option> 5 </option>
+                    <option> 6 </option>
+                    <option> 7 </option>
+                    <option> 8 </option>
+                    <option> After-School </option>
+                </select>
+                <br>
+                What subject do you have for that period?
+                <select>
+                    <option> Math </option>
+                    <option> Science </option>
+                    <option> English </option>
+                    <option> Wellness </option>
+                    <option> Lunch </option>
+                    <option> Study Hall </option>
+                    <option> Elective </option>
+                </select>
+                <br>
+                What's your favorite color?
+                <input type="color">
+                <br>
+                <input type="submit">
+            </fieldset>
+        </form>
+
+        <form action="">
+            <fieldset>
+                <legend>Pets + Sports = Ports</legend>
+                <input type="text" id="idTxtInput">
+                <br>
+                <input type="button" value="Click Here" onClick="alertMessage()">
+                <br>
+                <br>
+                Select A Team! <br>
+                <input type="radio" id="idRdCubs" name="rdBaseball" value="CUBS">Cubs <br>
+                <input type="radio" id="idRdWhiteSox" name="rdBaseball" value="WS">White Sox
+                <br>
+                <input type="button" value="Confirm Team Selection" onClick="alertRadio()"> <br>
+                <br>
+                What is your favorite pet? <br>
+                <select id="idSlctPets">
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Fish">Fish</option>
+                    <option value="Snake">Snake</option>
+                    <option value="Hamster">Hamster</option>
+                    <option value="Bird">Bird</option>
+                </select>
+                <br>
+                <input type="button" value="Confirm Pet Choice" onClick="alertSelect()">
+            </fieldset>
+        </form>
+    </body>
+</html>

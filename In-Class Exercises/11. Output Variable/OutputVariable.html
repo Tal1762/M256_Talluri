@@ -1,0 +1,80 @@
+<html>
+<head>
+    <title>Output Excercise</title>
+    <link rel=stylesheet type="text/css" href="myStyle.css">
+
+    <script>
+        function produceStory(){
+            var nameInput = document.getElementById("idTxtName").value;
+            var food1Input = document.getElementById("idTxtFood1").value;
+            var food2Input = document.getElementById("idTxtFood2").value;
+            var output = "<wonky>" + nameInput + "</wonky>";
+            output += " loves " + "<wonky>" + food1Input + "</wonky>";
+            output += "! But " + "<wonky>" + nameInput + "</wonky>" + " doesn't like ";
+            output += "<wonky>" + food2Input + "</wonky>" + " as much.";
+            document.getElementById("idDivOutput").innerHTML = output;
+            
+            if (food1Input == "pizza"){
+                document.getElementById("idImgFood1").src = "pizza.jpg"
+            }
+            else if (food1Input == "chocolate"){
+                document.getElementById("idImgFood1").src = "chocolate.jpg"
+            }
+            else if (food1Input == "chicken"){
+                document.getElementById("idImgFood1").src = "chicken.jpg"
+            }
+            else if (food1Input == "fruit" || food1Input == "fruits"){
+                document.getElementById("idImgFood1").src = "fruit.jpg"
+            }
+            else if (food1Input == "sushi"){
+                document.getElementById("idImgFood1").src = "sushi.jpg"
+            }
+            else{
+                document.getElementById("idImgFood1").src = "question_mark.jpg"
+            }
+            // This comment is to show where the first if statement ends
+            if (food2Input == "pizza"){
+                document.getElementById("idImgFood2").src = "pizza.jpg"
+            }
+            else if (food2Input == "chocolate"){
+                document.getElementById("idImgFood2").src = "chocolate.jpg"
+            }
+            else if (food2Input == "chicken"){
+                document.getElementById("idImgFood2").src = "chicken.jpg"
+            }
+            else if (food2Input == "fruit" || food2Input == "fruits"){
+                document.getElementById("idImgFood2").src = "fruit.jpg"
+            }
+            else if (food2Input == "sushi"){
+                document.getElementById("idImgFood2").src = "sushi.jpg"
+            }
+            else{
+                document.getElementById("idImgFood2").src = "question_mark.jpg"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Type in your name (or any name): 
+        <input type="text" id="idTxtName">
+        <br><br>
+        Select a food: 
+        <input type="text" id="idTxtFood1">
+        <br><br>
+        Select another food: 
+        <input type="text" id="idTxtFood2">
+        <br><br>
+        <div id="idDivOutput"></div>
+        <br>
+        <input type="button" value="Generate Story!" onClick="produceStory()">
+        <br><br><br>
+        <img src="transparent2.jpg" id="idImgFood1" width=200>
+        <img src="Checkmark.jpg" id="idCheckMark" width=100>
+        <br>
+        <img src="transparent2.jpg" id="idImgFood2" width=200>
+        <img src="X_mark.jpg" id="idXMark" width=100>
+    </form>
+</body>
+</html>

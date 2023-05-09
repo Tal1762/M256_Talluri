@@ -1,0 +1,137 @@
+<html>
+<head>
+    <title>Math Object Practice</title>
+    <style>
+        body{
+        background-color: purple;
+        color: chartreuse;
+        font-family: Cochin;
+        font-size: 24px;
+    }
+    </style>
+
+    <script>
+        //Alerts a random decimal between 0 and 1
+        function task1Function(){
+            window.alert(Math.random());
+        }
+
+        //Alerts a random whole number between 1 and 6
+        function task2Function(){
+            window.alert(Math.floor(Math.random() * 6) + 1);
+        }
+
+        //Alerts a random integer between 14 and 52
+        function task3Function(){
+            window.alert(Math.floor(Math.random() * 39) + 14);
+        }
+
+        //Rounds the number in the first text box to the nearest tenth
+        //then puts it in an innerHTML element
+        function task4Function(){
+            if (document.getElementById("idTxtInput").value.length < 1){
+                window.alert("You need to type in a number!");
+                return
+            }
+            if (isNaN(document.getElementById("idTxtInput").value) == true){
+                window.alert("You need to enter a number!");
+                return
+            }
+            var input = document.getElementById("idTxtInput").value;
+            var output = Math.round(input * 10)/10;
+            document.getElementById("idDivOutput").innerHTML = output;
+        }
+
+        //Rounds the number in the first text box to the nearest hundreth
+        //then puts it in an innerHTML element
+        function task5Function(){
+            if (document.getElementById("idTxtInput").value.length < 1){
+                window.alert("You need to type in a number!");
+                return
+            }
+            if (isNaN(document.getElementById("idTxtInput").value) == true){
+                window.alert("You need to enter a number!");
+                return
+            }
+            var input = document.getElementById("idTxtInput").value;
+            var output = Math.round(input * 100)/100;
+            document.getElementById("idDivOutput").innerHTML = output;
+        }
+
+        //Alerts a random integer between a specified minimum and maximum value
+        function task6Function(){
+            var minimum = Number(document.getElementById("idTxtMinimum").value);
+            var maximum = Number(document.getElementById("idTxtMaximum").value);
+            if (document.getElementById("idTxtMaximum").value.length < 1 || document.getElementById("idTxtMinimum").value.length < 1){
+                window.alert("You need to type in a number!");
+                return
+            }
+            if (isNaN(document.getElementById("idTxtMaximum").value) == true || isNaN(document.getElementById("idTxtMinimum").value) == true){
+                window.alert("You need to enter a number!");
+                return
+            }
+            if (Number.isInteger(minimum) == false || Number.isInteger(maximum) == false){
+                window.alert("The minimum and maximum need to be whole numbers.");
+                return
+            }
+            maximum -= minimum;
+            maximum += 1;
+            window.alert(Math.floor(Math.random() * maximum) + minimum);
+        }
+
+        //Alerts a specified number rounded to a specified decimal place
+        function task7Function(){
+            if (document.getElementById("idTxtDecimal").value.length < 1 || document.getElementById("idTxtInput").value.length < 1){
+                window.alert("You need to type in a number!");
+                return
+            }
+            if (isNaN(document.getElementById("idTxtDecimal").value) == true || isNaN(document.getElementById("idTxtInput").value) == true){
+                window.alert("You need to enter a number!");
+                return
+            }
+            var originalNum = Number(document.getElementById("idTxtInput").value);
+            var decimalRound = Number(document.getElementById("idTxtDecimal").value);
+            if (Number.isInteger(decimalRound) == false){
+                window.alert("The decimal place to round to needs to be a whole number.");
+                return
+            }
+            if (isNaN(originalNum) == true){
+                window.alert("You need to type in a number!");
+                return
+            }
+            var outputNum = Math.round(originalNum * 10**decimalRound);
+            outputNum = outputNum/10**decimalRound;
+            window.alert(outputNum);
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Type in a decimal: 
+        <input type="text" id="idTxtInput">
+        <br><br>
+        <div id="idDivOutput"></div>
+        <br>
+        <input type="button" value="Task1" onClick="task1Function()">
+        <input type="button" value="Task2" onClick="task2Function()">
+        <input type="button" value="Task3" onClick="task3Function()">
+        <input type="button" value="Task4" onClick="task4Function()">
+        <input type="button" value="Task5" onClick="task5Function()">
+        <br><br>
+        Minimum:
+        <input type="text" id="idTxtMinimum">
+        <br>
+        Maximum:
+        <input type="text" id="idTxtMaximum">
+        <br>
+        <input type="button" value="Task6" onClick="task6Function()">
+        <br>
+        <br>
+        Type in the amount of decimal places to round to: 
+        <input type="text" id="idTxtDecimal">
+        <br>
+        <input type="button" value="Task7" onClick="task7Function()">
+    </form>
+</body>
+</html>

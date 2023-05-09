@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title> DOM Practice! </title>
+    <link rel=stylesheet type="text/css" href="style1.css">
+
+    <script>
+        function inputToDiv(){
+            var textBox = document.getElementById("idTxtInput").value;
+            var textArea = document.getElementById("idTxtArea").value;
+            document.getElementById("idDivOutput").innerHTML = textBox + ", " + textArea;
+        }
+        function moveToTxtArea(){
+            var textBox = document.getElementById("idTxtInput").value;
+            document.getElementById("idTxtArea").value = "This is what you entered: " + '"' + textBox + '"' + " Anything else you want to add?";
+        }
+        function txtAreaBGColor(){
+            document.getElementById("idTxtArea").style.backgroundColor = document.getElementById("idSlctColor").value;
+        }
+        function putOnNewWebpage(){
+            var output = "<html>";
+            output += "<head>";
+            output += "<title> DOM Practice! </title>";
+            output += '<link rel=stylesheet type="text/css" href="style1.css"></head>';
+            output += "<body><div>" + document.getElementById("idTxtArea").value;
+            output += "</div></body></html>";
+
+            var newWindow = window.open("","",width=250,height=250);
+            newWindow.document.write(output);
+        }
+    </script>
+</head>
+
+<body>
+    <form name="frmInfo">
+        <input type=text id="idTxtInput">
+        <br><br>
+        <textarea rows="4" cols="50" id="idTxtArea"></textarea>
+        <br><br>
+        <select id="idSlctColor">
+            <option value="red">red</option>
+            <option value="green">green</option>
+            <option value="blue">blue</option>
+        </select>
+        <br><br>
+        <input type=button id="idBtnT1" value="Task1" onClick="inputToDiv()">
+        <input type=button id="idBtnT2" value="Task2" onClick="moveToTxtArea()">
+        <input type=button id="idBtnT3" value="Task3" onClick="txtAreaBGColor()">
+        <input type=button id="idBtnT4" value="Task4" onClick="putOnNewWebpage()">
+        <br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div id="idDivOutput"></div>
+    </form>
+</body>

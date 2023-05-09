@@ -1,0 +1,94 @@
+<html>
+<head>
+    <title> DOM Practice! </title>
+    <style type=text/css>
+        body{
+            background-color: aquamarine;
+            color: saddlebrown;
+            font-family: Gill Sans;
+        }
+    </style>
+
+    <script>
+        function alertSubmission(inputForm){
+            var textInput = document.getElementById("idTxtOutput").value;
+            var colorInput = document.getElementById("idSlctColor").value;
+            if (document.getElementById("idRdMale").checked){
+                var genderInput = "your gender is male."
+            }
+            if (document.getElementById("idRdFemale").checked){
+                var genderInput = "your gender is female."
+            }
+            if (document.getElementById("idRdOther").checked){
+                var genderInput = "you are of an unspecified gender."
+            }
+            else{
+                var genderInput = "you are of an unspecified gender."
+            }
+            document.getElementById("idTxtResult").value = textInput + ", your favorite color is " + colorInput + ", and " + genderInput;
+            var clickCount = Number(document.getElementById("idTxtDoneCount").value) + 1;
+            document.getElementById("idTxtDoneCount").value = clickCount;
+        }
+        function bruhWhyClick(){
+            document.body.style.backgroundColor = "green";
+            document.getElementById("idTxtOutput").value = "Why did you click that?";
+        }
+        function fontChange(){
+            document.getElementById("idTxtOutput").style.fontFamily="Impact";
+            document.getElementById("idTxtOutput").style.fontSize=30;
+        }
+        function areYouSure(){
+            document.getElementById("idBtnDone").value="Are you sure?";
+        }
+        function backToDone(){
+            document.getElementById("idBtnDone").value="Done";
+        }
+        function dontClickMe(){
+            window.alert("Don't click here!");
+        }
+        function doneClick(){
+            document.getElementById("idTxtDoneCount").value = 0;
+        }
+        function floweyImg(){
+            document.getElementById("idImgSus").src="flowey.jpg";
+        }
+        function backToSus(){
+            document.getElementById("idImgSus").src="sus.jpg";
+        }
+        function sonicImg(){
+            document.getElementById("idImgSus").src="sonic.jpg";
+        }
+    </script>
+</head>
+
+<body onClick="dontClickMe()" onLoad="doneClick()">
+    <form name="frmInfo">
+        Type anything you want (that's appropriate of course)!
+        <input type=text id="idTxtOutput" onFocus="fontChange()">
+        <br><br>
+        Pick a color!
+        <select id="idSlctColor">
+            <option>red</option>
+            <option>green</option>
+            <option>blue</option>
+        </select>
+        <br><br>
+        What's your gender?
+        <br>
+        <input type=radio id="idRdMale" name="genderPick" value="M">Male
+        <input type=radio id="idRdFemale" name="genderPick" value="F">Female
+        <input type=radio id="idRdOther" name="genderPick" value="O">Other
+        <br><br>
+        <input type=button value="Done" id="idBtnDone" onClick="alertSubmission(frmInfo)" onMouseOver="areYouSure()" onMouseOut="backToDone()">
+        <input type=button value="Change" onClick="bruhWhyClick()">
+        <br><br><br>
+        <img src="sus.jpg" id="idImgSus" width=100 onMouseOver="floweyImg()" onMouseOut="backToSus()" onDrag="sonicImg()">
+        <br><br><br>
+        Your input : 
+        <input type=text id="idTxtResult">
+        <br><br>
+        Your done click count: 
+        <input type=text id="idTxtDoneCount">
+    </form>
+</body>
+</html>

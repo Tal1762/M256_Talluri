@@ -1,0 +1,57 @@
+body{
+    background-color: blueviolet;
+    font-family: Arial Narrow Bold;
+    font-size: 25px;
+    color: goldenrod;
+    text-align: center;
+}
+
+#idDivOutcome{
+    font-family: 'Segoe UI';
+    font-size: 40px;
+    transition-duration: 0.25s;
+}
+
+wonky1{
+    color: chartreuse;
+}
+wonky2{
+    color: red;
+}
+wonky3{
+    color: yellow;
+}
+
+fieldset{
+    margin-left: 37%;
+    margin-right: 37%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-style: dashed;
+    border-color: turquoise;
+    border-width: 3px;
+}
+#idFieldSet2{
+    margin-left: -21px;
+    margin-right: -21px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-bottom: -2px;
+    margin-top: -2px;
+    border-style: dotted;
+    border-color: greenyellow;
+    background-image: radial-gradient(orange, purple, orange);
+}
+#idFieldSet3{
+    margin-left: 45%;
+    margin-right: 45%;
+    border-width: 2px;
+    background-image: linear-gradient(black, forestgreen, black);
+    border-style: ridge;
+    border-color: darkgreen;
+    opacity: 2%;
+    transition-duration: 0.4s;
+}
+#idFieldSet3:hover{
+    opacity: 100%;
+}

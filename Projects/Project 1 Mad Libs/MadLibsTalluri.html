@@ -1,0 +1,127 @@
+<html>
+<head>
+    <title>Mad Libs Project!</title>
+    <link rel=stylesheet type=text/css href="style1.css">
+
+    <script>
+        function generateStory(){
+            if (document.getElementById("idTxtHero").value < 1 || document.getElementById("idTxtVillain").value < 1){
+                window.alert("Fill in ALL the boxes!");
+                return;
+            }
+            if (document.getElementById("idTxtPlace").value < 1 || document.getElementById("idTxtFood").value < 1){
+                window.alert("Fill in ALL the boxes!");
+                return;
+            }
+            if (document.getElementById("idTxtAdverb").value < 1 || document.getElementById("idTxtAdjective1").value < 1){
+                window.alert("Fill in ALL the boxes!");
+                return;
+            }
+            if (document.getElementById("idTxtAdjective2").value < 1){
+                window.alert("Fill in ALL the boxes!");
+                return;
+            }
+            var hero = document.getElementById("idTxtHero").value;
+            var villain = document.getElementById("idTxtVillain").value;
+            var place = document.getElementById("idTxtPlace").value;
+            var food = document.getElementById("idTxtFood").value;
+            var verb = document.getElementById("idSlctVerb").value;
+            var adverb = document.getElementById("idTxtAdverb").value;
+            var adjective1 = document.getElementById("idTxtAdjective1").value;
+            var adjective2 = document.getElementById("idTxtAdjective2").value;
+            var a1 = "a"
+            if (adjective1.charAt(0) == "a" || adjective1.charAt(0) == "e" || adjective1.charAt(0) == "i" || adjective1.charAt(0) == "o" || adjective1.charAt(0) == "u"){
+                a1 = "an"
+            }
+            if (hero == "amog us" && villain == "amog us" && place == "amog us" && food == "amog us" && verb == "laugh" && adverb == "amog us" && adjective1 == "amog us" && adjective2 == "amog us"){
+                var secret = "<html>";
+                secret += "<head>";
+                secret += "<title> !@(*&$@**#@#^$%#?#>$# </title>";
+                secret += '<link rel=stylesheet type="text/css" href="style1.css">';
+                secret += "<script>"
+                secret += "function timeToTroll(){"
+                secret += "document.getElementById('idImgTroll').src = 'Trollface.jpg'";
+                secret += "}<";
+                secret += "/script>";
+                secret += "<body><form>";
+                secret += "<input type='button' id='idBtnSecret' value='!@83*#*!^%$*!@&#<@|!#%#!*$&' onClick='timeToTroll()'>";
+                secret += "<br><br><img src='fulltransparent.jpg' id='idImgTroll' width=200>";
+                secret += "</form></body>";
+                secret += "</html>";
+                var secretWindow = window.open("","",width=250,height=250);
+            secretWindow.document.write(secret);
+            }
+            var output = "<html>";
+            output += "<head>";
+            output += "<title> Your Mad Libs Story! </title>";
+            output += '<link rel=stylesheet type="text/css" href="style1.css"></head>';
+            output += "<body><div>"; 
+            output += "Once upon a time, there was " + a1 + " " + "<omg>" + adjective1 + "</omg>" + " ostrich named " + "<omg>" + villain + "</omg>" + ".";
+            output += " He enjoyed kicking farmers while they were doing their work,";
+            output += " until one day the farmers called a beaver named " + "<omg>" + hero + "</omg>" + ".";
+            output += " " + "<omg>" + hero + "</omg>" + " came from a place called " + "<omg>" + place + "</omg>" + ".";
+            output += " " + "<omg>" + hero + "</omg>" + " was a very strong beaver because he had eaten " + "<omg>" + food + "</omg>";
+            output += " for breakfast his entire life.";
+            output += " " + "<omg>" + hero + "</omg>" + " could not stand " + "<omg>" + villain + "</omg>" + " because " + "<omg>" + villain + "</omg>";
+            output += " ate iron, which " + "<omg>" + hero + "</omg>" + " needed to make " + "<omg>" + food + "</omg>" + ".";
+            output += " So, after " + "<omg>" + hero + "</omg>" + " was told where " + "<omg>" + villain + "</omg>" + " was by the farmers, he ";
+            output += "<omg>" + adverb + "</omg>" + " went to set " + "<omg>" + villain + "</omg>" + " in his place."
+            output += " When the two animals finally clashed, " + "<omg>" + hero + "</omg>" + " decided to ";
+            output += "<omg>" + verb + "</omg>" + " for no apparent reason.";
+            output += " Then, the " + "<omg>" + adjective2 + "</omg>" + " " + "<omg>" + villain + "</omg>" + " sat down and then went to live in a cave.";
+            output += "</div></body></html>";
+
+            var newWindow = window.open("","",width=250,height=250);
+            newWindow.document.write(output);
+        }
+        function showOriginalStory(){
+            var output = "Once upon a time, there was a stingy ostrich named Havoc.";
+            output += " He enjoyed kicking farmers while they were doing their work,";
+            output += " until one day the farmers called a beaver named Just. ";
+            output += "Just came from a place called Cee Es Es. ";
+            output += "Just was a very strong beaver because he had eaten steel for breakfast his entire life. ";
+            output += "Just could not stand Havoc because Havoc ate iron, which Just needed to make steel. ";
+            output += "So, after Just was told where Havoc was by the farmers, he immediately went to set Havoc in his place. ";
+            output += "When the two animals finally clashed, Just decided to fly for no apparent reason. ";
+            output += "Then, the scared Havoc sat down and then went to live in a cave.";
+            document.getElementById("idDivOriginal").innerHTML = output;
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Type in a name: 
+        <input type="text" id="idTxtHero">
+        <br>
+        Type in another name:
+        <input type="text" id="idTxtVillain">
+        <br>
+        Type in a location:
+        <input type="text" id="idTxtPlace">
+        <br>
+        Type in a food:
+        <input type="text" id="idTxtFood">
+        <br>
+        Select a verb: 
+        <select id="idSlctVerb">
+            <option value="spontaneously combust">Spontaneously Combust</option>
+            <option value="cough">Cough</option>
+            <option value="laugh">Laugh</option>
+            <option value="cry">Cry</option>
+        </select>
+        <br>
+        Type in an adverb:
+        <input type="text" id="idTxtAdverb">
+        <br>
+        Type in two different adjectives:
+        <input type="text" id="idTxtAdjective1">
+        <input type="text" id="idTxtAdjective2">
+        <br>
+        <p onClick="generateStory()" id="idBtnNewStory">Generate Your Story</p>
+        <p onClick="showOriginalStory()" id="idBtnOriginalStory">Look At The Original</p>
+        <br><br>
+        <div id="idDivOriginal"></div>
+    </form>
+</body>
+</html>

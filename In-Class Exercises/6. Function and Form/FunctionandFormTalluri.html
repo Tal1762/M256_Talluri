@@ -1,0 +1,109 @@
+<html>
+<head>
+        <title>Function & Form Example</title>
+        <style type=text/css>
+            body{
+                background-color: pink;
+                color:navy;
+                font-family: Rockwell;
+            }
+
+            #idDivMessage{
+                color:blue;
+                font-size: 20px;
+            }
+        </style>
+
+        <script>
+            function getSleepComment(numHours){
+                if (numHours < 7){
+                    return "You need more sleep!"
+                }
+                else if (numHours < 9){
+                    return "You're getting the right amount of sleep!";
+                }
+                else{
+                    return "You're getting too much sleep!"
+                }
+            }
+
+            function checkInfo(inputForm){
+                var displayText = "";
+
+                if (inputForm.idTxtName.value.length < 1){
+                    alert("Please fill in your name!");
+                    document.getElementById("idTxtName").focus();
+                    return;
+                }
+
+                var name = inputForm.idTxtName.value;
+                displayText = displayText + "Name: " + name + "<br>";
+
+                var bedtime = document.getElementById("idSlctBedTime").value;
+                displayText = displayText + "Bed Time: " + bedtime + "<br>";
+
+                var sleepAmount = eval(document.getElementById("idTxtNumSleepHours").value);
+                displayText += getSleepComment(sleepAmount) + "<br>";
+
+                if (inputForm.idSlctFavSnack.value == "error"){
+                    alert("Please choose a favorite snack!");
+                    document.getElementById("idSlctFavSnack").focus();
+                    return;
+                }
+
+                var favSnack = document.getElementById("idSlctFavSnack").value;
+                displayText += getFavSnackMessage(favSnack) + "<br>";
+
+                document.getElementById("idDivMessage").innerHTML = displayText;
+            }
+
+            function getFavSnackMessage(snack){
+                if (snack == "Doritos"){
+                    return "Original or Cool Ranch?";
+                }
+                else if (snack == "Cheetos"){
+                    return "Chester is one cool cat.";
+                }
+                else{
+                    return "Welch's or Mott's?";
+                }
+            }
+
+        </script>
+</head>
+
+<body>
+    <form name=frmStudentInfo>
+        Name: <input type="text" id="idTxtName">
+        <br><br>
+
+        When is your school night bedtime?
+        <select id="idSlctBedTime">
+            <option>9:00 or earlier</option>
+            <option>9:30</option>
+            <option>10:00</option>
+            <option>10:30</option>
+            <option>11:00</option>
+            <option>11:30 or later</option>
+        </select>
+        <br><br>
+
+        Approximately how many hours of sleep do you get on a school night?
+        <input type="text" id="idTxtNumSleepHours">
+        <br><br>
+        What is your favorite snack?
+        <select id="idSlctFavSnack">
+            <option value="error">Choose your favorite snack</option>
+            <option value="Doritos">Doritos</option>
+            <option value="Cheetos">Cheetos</option>
+            <option value="Fruit Snacks">Fruit Snacks</option>
+        </select>
+        <br><br>
+
+        <input type=button id="idBtnDone" value="I'm done" onClick="checkInfo(frmStudentInfo)">
+        <br><br>
+
+        <div name="textPlace" id="idDivMessage"> </div>
+    </form>
+</body>
+</html>

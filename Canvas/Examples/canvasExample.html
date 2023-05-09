@@ -1,0 +1,50 @@
+<html>
+<head>
+    <style>
+        canvas{
+            background: #dddddd;
+        }
+    </style>
+
+    <script>
+        function drawRectangle(){
+            // This variable is our "handle" on the canvas object
+            // Use this to perform all canvas operations
+            var c = myCanvas.getContext('2d');
+
+            // Question 1: What does this next line do?
+            c.fillStyle = "#FF0000";
+
+            // Question 2: What do the four numbers on the next line mean?
+            c.fillRect(100, 50, 300, 200);
+
+            c.fillStyle = "darkblue";
+
+            c.fillRect(400, 300, 100, 200);
+        }
+
+        function outputText(){
+            var c = myCanvas.getContext('2d');
+
+            c.fillStyle = "#00FF00";
+
+            // Question 3: What does the next line do?
+            c.font = "24px Arial";
+
+            // Question 4: What do the three parameters on the next line mean?
+            c.fillText("Hello World", 200, 150);
+
+            c.font = "36px Impact";
+
+            c.fillText("My name is Ritej", 400, 350);
+        }
+    </script>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+    <br>
+    <input type="button" value="Draw Rectangle" onClick="drawRectangle()">
+    <input type="button" value="Hello World" onClick="outputText()">
+</body>
+</html>

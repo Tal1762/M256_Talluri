@@ -1,0 +1,158 @@
+<html>
+<head>
+    <style>
+        canvas{
+            background: #dddddd;
+        }
+    </style>
+
+    <script>
+        // Canvas context; used to call Canvas methods
+        var c;
+
+        // Canvas width and height
+        var cWidth, cHeight;
+
+        // Stores the current keyboard state
+        var curkeys = [];
+
+        var rectX = 0, rectY = 0;
+		var rectWidth = 200, rectHeight = 100;
+
+        var rectImg = new Image();
+        rectImg.src = "thisisfine.jpg";
+
+        var bPicHorMove = false;
+        var bPicVertMove = false;
+        var bPicBounce = false;
+        var bPicHorDirection = false;
+        var bPicVertDirection = false;
+
+        // Initializes entire game framework. This method should only be called
+        // once, by the body onload event handler.
+        function gameFrameworkInit(){
+            // Initialize global vaiables for canvas
+            c = myCanvas.getContext('2d');
+            cWidth = myCanvas.width;
+            cHeight = myCanvas.height;
+
+            // Start listeners for getting keyboard state
+            window.addEventListener('keydown',
+                                    function(e){ curkeys[e.keyCode] = true; }
+                                    );
+
+            window.addEventListener('keyup',
+                                    function(e){ curkeys[e.keyCode] = false; }
+                                    );
+
+            // Schedule the update function to be called right before the next repaint
+            // (At the end of the update function, it will schedule it self to be called
+            // again before the NEXT repaint, and so on.)
+            window.requestAnimationFrame(gameUpdate);
+        }
+
+        function gameUpdate(){
+            if (curkeys[72]){
+                bPicHorMove = true;
+            }
+            if (curkeys[86]){
+                bPicVertMove = true;
+            }
+            if (curkeys[83]){
+                bPicHorMove = false;
+                bPicVertMove = false;
+            }
+
+            if (curkeys[66]){
+                bPicBounce = true;
+            }
+            if (curkeys[87]){
+                bPicBounce = false;
+            }
+
+            if (bPicHorMove == true && bPicBounce == false && bPicHorDirection == false){
+                rectX++;
+                if (rectX >= 800){
+                    rectX = -200;
+                }
+            }
+
+            if (bPicHorMove == true && bPicBounce == false && bPicHorDirection == true){
+                rectX--;
+                if (rectX <= -200){
+                    rectX = 800;
+                }
+            }
+
+            if (bPicVertMove == true && bPicBounce == false && bPicVertDirection == false){
+                rectY++;
+                if (rectY >= 600){
+                    rectY = -100;
+                }
+            }
+
+            if (bPicVertMove == true && bPicBounce == false && bPicVertDirection == true){
+                rectY--;
+                if (rectY <= -100){
+                    rectY = 600;
+                }
+            }
+
+            if (bPicBounce == true && bPicHorMove == true){
+                if (rectX <= 0 && bPicHorDirection == true){
+                    bPicHorDirection = false;
+                }
+
+                if (rectX >= 600 && bPicHorDirection == false){
+                    bPicHorDirection = true;
+                }
+
+                if (bPicHorDirection == false){
+                    rectX++;
+                }
+
+                if (bPicHorDirection == true){
+                    rectX--;
+                }
+            }
+
+            if (bPicBounce == true && bPicVertMove == true){
+                if (rectY <= 0 && bPicVertDirection == true){
+                    bPicVertDirection = false;
+                }
+
+                if (rectY >= 500 && bPicVertDirection == false){
+                    bPicVertDirection = true;
+                }
+
+                if (bPicVertDirection == false){
+                    rectY++;
+                }
+
+                if (bPicVertDirection == true){
+                    rectY--;
+                }
+            }
+
+            // AT THE END of the update function, repaint the screen
+            gameDraw();
+
+            // Last thing the update function does is to schedule itself to be called
+            // again before the next repaint
+            window.requestAnimationFrame(gameUpdate);
+        }
+
+        function gameDraw(){
+            // Before we draw anything, we must first clear
+            // the canvas. After that, we'll draw the current frame
+            c.clearRect(0, 0, cWidth, cHeight);
+
+            c.drawImage(rectImg, rectX, rectY, rectWidth, rectHeight);
+        }
+    </script>
+</head>
+
+<body onload="gameFrameworkInit()">
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

@@ -1,0 +1,4267 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+		class timerClass{
+			constructor(timeIntervalMS){
+				// Initialize oldTime to be the time of creation
+				this.oldTime = new Date();
+
+				// Set interval to elapse before the timer fires
+				this.interval = timeIntervalMS;
+				
+				// Keeps track of the # of milliseconds accumulated since the last firing
+				this.accum = 0;
+			}
+
+			// This method returns true if the timer is ready to fire, false otherwise
+			// If it returns true, then resets fire interval
+			isReady(){
+				var curTime = new Date();
+				var delta = curTime - this.oldTime;
+
+				this.accum += delta;
+				this.oldTime = curTime;
+				if (this.accum > this.interval){
+					this.accum = 0;
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+
+		class mainPfClass{
+			constructor(){
+				this.x = 175;
+				this.y = 400;
+				this.width = 450;
+				this.height = 75;
+				this.img = new Image();
+				this.img.src = "mainplatform1.png";
+			}
+
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		class p1Class{
+			constructor(chX, chY, chWidth, chHeight, chChar){
+				this.x = chX;
+				this.y = chY;
+				this.width = chWidth;
+				this.height = chHeight,
+				this.char = chChar;
+
+				if (this.char == "goku"){
+					this.img = new Image();
+					this.img.src = "gokuidle.png";
+				}
+				else if (this.char == "naruto"){
+					this.img = new Image();
+					this.img.src = "narutoidle.png";
+				}
+
+				this.direction = "right";
+				this.charState = "idle";
+				this.jumps = 5;
+				this.curYspeed = 0;
+				this.bInAir = false;
+				this.usingMove = "none";
+				this.damage = 0;
+				this.lives = 3;
+			}
+
+			jump(){
+				if (this.jumps > 0){
+					this.jumps -= 1;
+					this.bInAir = true;
+					this.curYspeed = -20;
+				}
+			}
+
+			update(){
+				if (this.bInAir == true && this.usingMove != "hurtgrab"){
+					this.y += this.curYspeed;
+					this.curYspeed++;
+
+					if (this.y + this.height >= mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height && this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+						this.jumps = 5;
+						this.bInAir = false;
+					}
+
+					if (this.curYspeed > 0 && this.intersects(mainPlatform) && this.y + this.height > mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height){
+						this.curYspeed = 0;
+						this.jumps = 5;
+						this.bInAir = false;
+						this.y = mainPlatform.y - this.height + 4;
+					}
+					else if (this.intersects(mainPlatform) && this.y + this.height >= mainPlatform.y + mainPlatform.height){
+						this.curYspeed = 0;
+						this.y = mainPlatform.y + mainPlatform.height;
+					}
+
+					if (this.x > 800 && this.y <= 600 && this.y >= 0){
+						offScreen1Right = true;
+						offScreen1Up = false;
+						offScreen1Left = false;
+						offScreen1Down = false;
+					}
+					else if (this.x < 0 && this.y <= 600 && this.y >= 0){
+						offScreen1Left = true;
+						offScreen1Up = false;
+						offScreen1Right = false;
+						offScreen1Down = false;
+					}
+					else if (this.y > 600){
+						offScreen1Down = true;
+						offScreen1Up = false;
+						offScreen1Right = false;
+						offScreen1Left = false;
+					}
+					else if (this.y < 0){
+						offScreen1Up = true;
+						offScreen1Right = false;
+						offScreen1Left = false;
+						offScreen1Down = false;
+					}
+					else{
+						offScreen1Up = false;
+						offScreen1Right = false;
+						offScreen1Left = false;
+						offScreen1Down = false;
+					}
+
+					if (this.x > 1000 && this.y <= 600 && this.y >= 0){
+						ko1Up = false;
+						ko1Right = true;
+						ko1Left = false;
+						ko1Down = false;
+					}
+					else if (this.x < -200 && this.y <= 600 && this.y >= 0){
+						ko1Up = false;
+						ko1Right = false;
+						ko1Left = true;
+						ko1Down = false;
+					}
+					else if (this.y > 900){
+						ko1Up = false;
+						ko1Right = false;
+						ko1Left = false;
+						ko1Down = true;
+					}
+					else if (this.y < -300){
+						ko1Up = true;
+						ko1Right = false;
+						ko1Left = false;
+						ko1Down = false;
+					}
+					else{
+						ko1Up = false;
+						ko1Right = false;
+						ko1Left = false;
+						ko1Down = false;
+					}
+
+					if (ko1Up == true || ko1Left == true || ko1Right == true || ko1Down == true){
+						this.lives -= 1;
+						isKo1 = true;
+						koTimer.oldTime = new Date();
+						koTimer.accum = 0;
+					}
+				}
+				else if (this.bInAir == false){
+					if (this.y + this.height > mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height && this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+						this.y = mainPlatform.y - this.height + 4;
+					}
+
+					if (this.bInAir == false && this.y < mainPlatform.y && this.intersects(mainPlatform) == false){
+						this.bInAir = true;
+						this.charState = "jump";
+					}
+				}
+			}
+
+			knockback(){
+				this.curYspeed = -1*(this.damage/3);
+				this.bInAir = true;
+				xKnockback1 = this.damage / 3;
+				if (gameState == "playversus"){
+					punchDirection1 = player2.direction;
+				}
+				else if (gameState == "playtraining"){
+					punchDirection1 = cpu.direction;
+				}
+			}
+
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+			draw(){
+				if (this.char == "goku"){
+					if (this.direction == "right"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "gokuidle.png";
+						}
+						else if (this.charState == "right" && this.bInAir == false){
+							this.img.src = "gokuright.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "gokujump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "gokupunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "gokuhurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "gokublast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "gokugrab.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "gokublock.png";
+						}
+					}
+					else if (this.direction == "left"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "lgokuidle.png";
+						}
+						else if (this.charState == "left" && this.bInAir == false){
+							this.img.src = "gokuleft.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "lgokujump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "lgokupunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "lgokuhurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "lgokublast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "lgokugrab.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "lgokublock.png";
+						}
+					}
+				}
+				else if (this.char = "naruto"){
+					if (this.direction == "right"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "narutoidle.png";
+						}
+						else if (this.charState == "right" && this.bInAir == false){
+							this.img.src = "narutoright.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "narutojump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "narutopunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "narutohurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "narutoblast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "narutograb.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "narutoblock.png";
+						}
+					}
+					else if (this.direction == "left"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "lnarutoidle.png";
+						}
+						else if (this.charState == "left" && this.bInAir == false){
+							this.img.src = "narutoleft.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "lnarutojump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "lnarutopunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "lnarutohurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "lnarutoblast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "lnarutograb.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "lnarutoblock.png";
+						}
+					}
+				}
+
+				var oldWidth = this.width;
+				var oldHeight = this.height;
+
+				if (this.char == "goku"){
+					if (this.charState == "idle" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 30;
+							this.height = 90;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 30;
+							this.height = 90;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "jump" || this.bInAir == true){
+						if (this.direction == "left"){
+							this.width = 40;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 40;
+							this.height = 80;
+						}
+					}
+					else if (this.charState == "blast"){
+						if (this.direction == "left"){
+							this.width = 65;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 65;
+							this.height = 80;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "block"){
+						if (this.direction == "left"){
+							this.width = 40;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 40;
+							this.height = 80;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "hurt"){
+						if (this.direction == "left"){
+							this.width = 50;
+							this.height = 85;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 50;
+							this.height = 85;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "punch"){
+						if (this.direction == "left"){
+							this.width = 65;
+							this.height = 85;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 65;
+							this.height = 85;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "grab"){
+						if (this.direction == "left"){
+							this.width = 85;
+							this.height = 70;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 85;
+							this.height = 70;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "left" && this.bInAir == false || this.charState == "right" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 75;
+							this.height = 70;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 75;
+							this.height = 70;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+				}
+				else if (this.char == "naruto"){
+					if (this.charState == "idle" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 52.5;
+							this.height = 81;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 52.5;
+							this.height = 81;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "jump" || this.bInAir == true){
+						if (this.direction == "left"){
+							this.width = 58.5;
+							this.height = 79.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 58.5;
+							this.height = 79.5;
+						}
+					}
+					else if (this.charState == "blast"){
+						if (this.direction == "left"){
+							this.width = 84;
+							this.height = 60;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 84;
+							this.height = 60;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "block"){
+						if (this.direction == "left"){
+							this.width = 48;
+							this.height = 67.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 48;
+							this.height = 67.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "hurt"){
+						if (this.direction == "left"){
+							this.width = 63;
+							this.height = 66;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 63;
+							this.height = 66;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "punch"){
+						if (this.direction == "left"){
+							this.width = 70.5;
+							this.height = 75;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 70.5;
+							this.height = 75;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "grab"){
+						if (this.direction == "left"){
+							this.width = 142.5;
+							this.height = 61.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 142.5;
+							this.height = 61.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "left" && this.bInAir == false || this.charState == "right" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 60;
+							this.height = 70.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 60;
+							this.height = 70.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+				}
+
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		class p2Class{
+			constructor(chX, chY, chWidth, chHeight, chChar){
+				this.x = chX;
+				this.y = chY;
+				this.width = chWidth;
+				this.height = chHeight,
+				this.char = chChar;
+
+				if (this.char == "goku"){
+					this.img = new Image();
+					this.img.src = "lgokuidle.png";
+				}
+
+				this.direction = "left";
+				this.charState = "idle";
+				this.jumps = 5;
+				this.curYspeed = 0;
+				this.bInAir = false;
+				this.usingMove = "none";
+				this.damage = 0;
+				this.lives = 3;
+			}
+
+			jump(){
+				if (this.jumps > 0){
+					this.jumps -= 1;
+					this.bInAir = true;
+					this.curYspeed = -20;
+				}
+			}
+
+			update(){
+				if (this.bInAir == true && this.usingMove != "hurtgrab"){
+					this.y += this.curYspeed;
+					this.curYspeed++;
+
+					if (this.y + this.height >= mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height && this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+						this.jumps = 5;
+						this.bInAir = false;
+					}
+
+					if (this.curYspeed > 0 && this.intersects(mainPlatform) && this.y + this.height > mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height){
+						this.curYspeed = 0;
+						this.jumps = 5;
+						this.bInAir = false;
+						this.y = mainPlatform.y - this.height + 4;
+					}
+					else if (this.intersects(mainPlatform) && this.y + this.height >= mainPlatform.y + mainPlatform.height){
+						this.curYspeed = 0;
+						this.y = mainPlatform.y + mainPlatform.height;
+					}
+
+					if (this.x > 800 && this.y <= 600 && this.y >= 0){
+						offScreen2Right = true;
+						offScreen2Up = false;
+						offScreen2Left = false;
+						offScreen2Down = false;
+					}
+					else if (this.x < 0 && this.y <= 600 && this.y >= 0){
+						offScreen2Left = true;
+						offScreen2Up = false;
+						offScreen2Right = false;
+						offScreen2Down = false;
+					}
+					else if (this.y > 600){
+						offScreen2Down = true;
+						offScreen2Up = false;
+						offScreen2Right = false;
+						offScreen2Left = false;
+					}
+					else if (this.y < 0){
+						offScreen2Up = true;
+						offScreen2Right = false;
+						offScreen2Left = false;
+						offScreen2Down = false;
+					}
+					else{
+						offScreen2Up = false;
+						offScreen2Right = false;
+						offScreen2Left = false;
+						offScreen2Down = false;
+					}
+
+					if (this.x > 1000 && this.y <= 600 && this.y >= 0){
+						ko2Up = false;
+						ko2Right = true;
+						ko2Left = false;
+						ko2Down = false;
+					}
+					else if (this.x < -200 && this.y <= 600 && this.y >= 0){
+						ko2Up = false;
+						ko2Right = false;
+						ko2Left = true;
+						ko2Down = false;
+					}
+					else if (this.y > 900){
+						ko2Up = false;
+						ko2Right = false;
+						ko2Left = false;
+						ko2Down = true;
+					}
+					else if (this.y < -300){
+						ko2Up = true;
+						ko2Right = false;
+						ko2Left = false;
+						ko2Down = false;
+					}
+					else{
+						ko2Up = false;
+						ko2Right = false;
+						ko2Left = false;
+						ko2Down = false;
+					}
+
+					if (ko2Up == true || ko2Left == true || ko2Right == true || ko2Down == true){
+						this.lives -= 1;
+						isKo2 = true;
+						koTimer2.oldTime = new Date();
+						koTimer2.accum = 0;
+					}
+				}
+				else if (this.bInAir == false){
+					if (this.y + this.height > mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height && this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+						this.y = mainPlatform.y - this.height + 4;
+					}
+
+					if (this.bInAir == false && this.y < mainPlatform.y && this.intersects(mainPlatform) == false){
+						this.bInAir = true;
+						this.charState = "jump";
+					}
+				}
+			}
+
+			knockback(){
+				this.curYspeed = -1*(this.damage/3);
+				this.bInAir = true;
+				xKnockback2 = this.damage / 3;
+				punchDirection2 = player1.direction;
+			}
+
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+			draw(){
+				if (this.char == "goku"){
+					if (this.direction == "right"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "gokuidle.png";
+						}
+						else if (this.charState == "right" && this.bInAir == false){
+							this.img.src = "gokuright.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "gokujump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "gokupunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "gokuhurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "gokublast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "gokugrab.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "gokublock.png";
+						}
+					}
+					else if (this.direction == "left"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "lgokuidle.png";
+						}
+						else if (this.charState == "left" && this.bInAir == false){
+							this.img.src = "gokuleft.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "lgokujump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "lgokupunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "lgokuhurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "lgokublast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "lgokugrab.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "lgokublock.png";
+						}
+					}
+				}
+				else if (this.char = "naruto"){
+					if (this.direction == "right"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "narutoidle.png";
+						}
+						else if (this.charState == "right" && this.bInAir == false){
+							this.img.src = "narutoright.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "narutojump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "narutopunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "narutohurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "narutoblast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "narutograb.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "narutoblock.png";
+						}
+					}
+					else if (this.direction == "left"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "lnarutoidle.png";
+						}
+						else if (this.charState == "left" && this.bInAir == false){
+							this.img.src = "narutoleft.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "lnarutojump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "lnarutopunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "lnarutohurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "lnarutoblast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "lnarutograb.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "lnarutoblock.png";
+						}
+					}
+				}
+
+				var oldWidth = this.width;
+				var oldHeight = this.height;
+
+				if (this.char == "goku"){
+					if (this.charState == "idle" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 30;
+							this.height = 90;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 30;
+							this.height = 90;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "jump" || this.bInAir == true){
+						if (this.direction == "left"){
+							this.width = 40;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 40;
+							this.height = 80;
+						}
+					}
+					else if (this.charState == "blast"){
+						if (this.direction == "left"){
+							this.width = 65;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 65;
+							this.height = 80;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "block"){
+						if (this.direction == "left"){
+							this.width = 40;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 40;
+							this.height = 80;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "hurt"){
+						if (this.direction == "left"){
+							this.width = 50;
+							this.height = 85;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 50;
+							this.height = 85;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "punch"){
+						if (this.direction == "left"){
+							this.width = 65;
+							this.height = 85;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 65;
+							this.height = 85;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "grab"){
+						if (this.direction == "left"){
+							this.width = 85;
+							this.height = 70;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 85;
+							this.height = 70;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "left" && this.bInAir == false || this.charState == "right" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 75;
+							this.height = 70;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 75;
+							this.height = 70;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+				}
+				else if (this.char == "naruto"){
+					if (this.charState == "idle" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 52.5;
+							this.height = 81;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 52.5;
+							this.height = 81;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "jump" || this.bInAir == true){
+						if (this.direction == "left"){
+							this.width = 58.5;
+							this.height = 79.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 58.5;
+							this.height = 79.5;
+						}
+					}
+					else if (this.charState == "blast"){
+						if (this.direction == "left"){
+							this.width = 84;
+							this.height = 60;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 84;
+							this.height = 60;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "block"){
+						if (this.direction == "left"){
+							this.width = 48;
+							this.height = 67.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 48;
+							this.height = 67.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "hurt"){
+						if (this.direction == "left"){
+							this.width = 63;
+							this.height = 66;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 63;
+							this.height = 66;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "punch"){
+						if (this.direction == "left"){
+							this.width = 70.5;
+							this.height = 75;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 70.5;
+							this.height = 75;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "grab"){
+						if (this.direction == "left"){
+							this.width = 142.5;
+							this.height = 61.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 142.5;
+							this.height = 61.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "left" && this.bInAir == false || this.charState == "right" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 60;
+							this.height = 70.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 60;
+							this.height = 70.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+				}
+
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		class cpuClass{
+			constructor(chX, chY, chWidth, chHeight, chChar){
+				this.x = chX;
+				this.y = chY;
+				this.width = chWidth;
+				this.height = chHeight,
+				this.char = chChar;
+
+				if (this.char == "goku"){
+					this.img = new Image();
+					this.img.src = "lgokuidle.png";
+				}
+
+				this.direction = "left";
+				this.charState = "idle";
+				this.jumps = 5;
+				this.curYspeed = 0;
+				this.bInAir = false;
+				this.usingMove = "none";
+				this.damage = 0;
+				this.lives = 3;
+			}
+
+			jump(){
+				if (this.jumps > 0){
+					this.jumps -= 1;
+					this.bInAir = true;
+					this.curYspeed = -20;
+				}
+			}
+
+			update(){
+				if (this.bInAir == true && this.usingMove != "hurtgrab"){
+					this.y += this.curYspeed;
+					this.curYspeed++;
+
+					if (this.y + this.height >= mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height && this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+						this.jumps = 5;
+						this.bInAir = false;
+					}
+
+					if (this.curYspeed > 0 && this.intersects(mainPlatform) && this.y + this.height > mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height){
+						this.curYspeed = 0;
+						this.jumps = 5;
+						this.bInAir = false;
+						this.y = mainPlatform.y - this.height + 4;
+					}
+					else if (this.intersects(mainPlatform) && this.y + this.height >= mainPlatform.y + mainPlatform.height){
+						this.curYspeed = 0;
+						this.y = mainPlatform.y + mainPlatform.height;
+					}
+
+					if (this.x > 800 && this.y <= 600 && this.y >= 0){
+						offScreen3Right = true;
+						offScreen3Up = false;
+						offScreen3Left = false;
+						offScreen3Down = false;
+					}
+					else if (this.x < 0 && this.y <= 600 && this.y >= 0){
+						offScreen3Left = true;
+						offScreen3Up = false;
+						offScreen3Right = false;
+						offScreen3Down = false;
+					}
+					else if (this.y > 600){
+						offScreen3Down = true;
+						offScreen3Up = false;
+						offScreen3Right = false;
+						offScreen3Left = false;
+					}
+					else if (this.y < 0){
+						offScreen3Up = true;
+						offScreen3Right = false;
+						offScreen3Left = false;
+						offScreen3Down = false;
+					}
+					else{
+						offScreen3Up = false;
+						offScreen3Right = false;
+						offScreen3Left = false;
+						offScreen3Down = false;
+					}
+
+					if (this.x > 1000 && this.y <= 600 && this.y >= 0){
+						ko2Up = false;
+						ko2Right = true;
+						ko2Left = false;
+						ko2Down = false;
+					}
+					else if (this.x < -200 && this.y <= 600 && this.y >= 0){
+						ko2Up = false;
+						ko2Right = false;
+						ko2Left = true;
+						ko2Down = false;
+					}
+					else if (this.y > 900){
+						ko2Up = false;
+						ko2Right = false;
+						ko2Left = false;
+						ko2Down = true;
+					}
+					else if (this.y < -300){
+						ko2Up = true;
+						ko2Right = false;
+						ko2Left = false;
+						ko2Down = false;
+					}
+					else{
+						ko2Up = false;
+						ko2Right = false;
+						ko2Left = false;
+						ko2Down = false;
+					}
+
+					if (ko2Up == true || ko2Left == true || ko2Right == true || ko2Down == true){
+						this.lives -= 1;
+						isKo2 = true;
+						koTimer2.oldTime = new Date();
+						koTimer2.accum = 0;
+					}
+				}
+				else if (this.bInAir == false){
+					if (this.y + this.height > mainPlatform.y && this.y + this.height < mainPlatform.y + mainPlatform.height && this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+						this.y = mainPlatform.y - this.height + 4;
+					}
+
+					if (this.bInAir == false && this.y < mainPlatform.y && this.intersects(mainPlatform) == false){
+						this.bInAir = true;
+						this.charState = "jump";
+					}
+				}
+			}
+
+			knockback(){
+				this.curYspeed = -1*(this.damage/3);
+				this.bInAir = true;
+				xKnockback2 = this.damage / 3;
+				punchDirection2 = player1.direction;
+			}
+
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+			draw(){
+				if (this.char == "goku"){
+					if (this.direction == "right"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "gokuidle.png";
+						}
+						else if (this.charState == "right" && this.bInAir == false){
+							this.img.src = "gokuright.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "gokujump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "gokupunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "gokuhurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "gokublast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "gokugrab.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "gokublock.png";
+						}
+					}
+					else if (this.direction == "left"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "lgokuidle.png";
+						}
+						else if (this.charState == "left" && this.bInAir == false){
+							this.img.src = "gokuleft.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "lgokujump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "lgokupunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "lgokuhurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "lgokublast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "lgokugrab.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "lgokublock.png";
+						}
+					}
+				}
+				else if (this.char = "naruto"){
+					if (this.direction == "right"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "narutoidle.png";
+						}
+						else if (this.charState == "right" && this.bInAir == false){
+							this.img.src = "narutoright.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "narutojump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "narutopunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "narutohurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "narutoblast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "narutograb.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "narutoblock.png";
+						}
+					}
+					else if (this.direction == "left"){
+						if (this.charState == "idle" && this.bInAir == false){
+							this.img.src = "lnarutoidle.png";
+						}
+						else if (this.charState == "left" && this.bInAir == false){
+							this.img.src = "narutoleft.png";
+						}
+						else if (this.charState == "jump" && this.bInAir == true){
+							this.img.src = "lnarutojump.png";
+						}
+						else if (this.charState == "punch"){
+							this.img.src = "lnarutopunch.png";
+						}
+						else if (this.charState == "hurt"){
+							this.img.src = "lnarutohurt.png";
+						}
+						else if (this.charState == "blast"){
+							this.img.src = "lnarutoblast.png";
+						}
+						else if (this.charState == "grab"){
+							this.img.src = "lnarutograb.png";
+						}
+						else if (this.charState == "block"){
+							this.img.src = "lnarutoblock.png";
+						}
+					}
+				}
+
+				var oldWidth = this.width;
+				var oldHeight = this.height;
+
+				if (this.char == "goku"){
+					if (this.charState == "idle" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 30;
+							this.height = 90;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 30;
+							this.height = 90;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "jump" || this.bInAir == true){
+						if (this.direction == "left"){
+							this.width = 40;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 40;
+							this.height = 80;
+						}
+					}
+					else if (this.charState == "blast"){
+						if (this.direction == "left"){
+							this.width = 65;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 65;
+							this.height = 80;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "block"){
+						if (this.direction == "left"){
+							this.width = 40;
+							this.height = 80;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 40;
+							this.height = 80;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "hurt"){
+						if (this.direction == "left"){
+							this.width = 50;
+							this.height = 85;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 50;
+							this.height = 85;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "punch"){
+						if (this.direction == "left"){
+							this.width = 65;
+							this.height = 85;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 65;
+							this.height = 85;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "grab"){
+						if (this.direction == "left"){
+							this.width = 85;
+							this.height = 70;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 85;
+							this.height = 70;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "left" && this.bInAir == false || this.charState == "right" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 75;
+							this.height = 70;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 75;
+							this.height = 70;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+				}
+				else if (this.char == "naruto"){
+					if (this.charState == "idle" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 52.5;
+							this.height = 81;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 52.5;
+							this.height = 81;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "jump" || this.bInAir == true){
+						if (this.direction == "left"){
+							this.width = 58.5;
+							this.height = 79.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 58.5;
+							this.height = 79.5;
+						}
+					}
+					else if (this.charState == "blast"){
+						if (this.direction == "left"){
+							this.width = 84;
+							this.height = 60;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 84;
+							this.height = 60;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "block"){
+						if (this.direction == "left"){
+							this.width = 48;
+							this.height = 67.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 48;
+							this.height = 67.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "hurt"){
+						if (this.direction == "left"){
+							this.width = 63;
+							this.height = 66;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 63;
+							this.height = 66;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "punch"){
+						if (this.direction == "left"){
+							this.width = 70.5;
+							this.height = 75;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 70.5;
+							this.height = 75;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "grab"){
+						if (this.direction == "left"){
+							this.width = 142.5;
+							this.height = 61.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 142.5;
+							this.height = 61.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+					else if (this.charState == "left" && this.bInAir == false || this.charState == "right" && this.bInAir == false){
+						if (this.direction == "left"){
+							this.width = 60;
+							this.height = 70.5;
+							this.x -= this.width - oldWidth;
+						}
+						else if (this.direction == "right"){
+							this.width = 60;
+							this.height = 70.5;
+						}
+						if (this.x > mainPlatform.x && this.x < mainPlatform.x + mainPlatform.width){
+							this.y = mainPlatform.y - this.height + 4;
+						}
+					}
+				}
+
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		class projectileClass{
+			constructor(pjDirection, pjplayer){
+				this.x = 0;
+				this.y = 0;
+				this.width = 25;
+				this.height = 15;
+				this.img = new Image();
+				this.img.src = "";
+				this.direction = pjDirection;
+				this.bVisible = false;
+				this.player = pjplayer;
+			}
+
+			update(){
+				if (this.direction == "right"){
+					if (this.bVisible == true){
+						this.x += 10;
+						if (this.x > 800){
+							this.bVisible = false;
+						}
+					}
+				}
+				else if (this.direction == "left"){
+					if (this.bVisible == true){
+						this.x -= 10;
+						if (this.x < 0){
+							this.bVisible = false;
+						}
+					}
+				}
+			}
+
+			draw(){
+				if (this.bVisible == true){
+					if (this.player == "goku"){
+						if (this.direction == "right"){
+							this.img.src = "gokuprojectile.png";
+						}
+						else if (this.direction == "left"){
+							this.img.src = "lgokuprojectile.png";
+						}
+						this.width = 25;
+						this.height = 15;
+					}
+					else if (this.player == "naruto"){
+						if (this.direction == "right"){
+							this.img.src = "narutoprojectile.png";
+						}
+						else if (this.direction == "left"){
+							this.img.src = "lnarutoprojectile.png";
+						}
+						this.width = 33;
+						this.height = 20;
+					}
+					c.drawImage(this.img, this.x, this.y, this.width, this.height);	
+				}
+			}
+		}
+
+		class imageClass{
+			constructor(imageX, imageY,
+						imageWidth, imageHeight,
+						image)
+			{
+				this.x = imageX;
+				this.y = imageY;
+				this.width = imageWidth;
+				this.height = imageHeight;
+				this.img = new Image();
+				this.img.src = image;
+			}
+
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		class cursorClass{
+			constructor(cursorX, cursorY, cursorImg){
+				this.x = cursorX;
+				this.y = cursorY;
+				this.width = 53.25;
+				this.height = 69.5;
+				this.img = new Image();
+				this.img.src = cursorImg;
+			}
+
+			moveRight(){
+				this.x += 5;
+			}
+
+			moveLeft(){
+				this.x -= 5;
+			}
+
+			moveDown(){
+				this.y += 5;
+			}
+
+			moveUp(){
+				this.y -= 5;
+			}
+
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+		var gameState = "intro";
+
+		var gameLogo1 = new imageClass(150, 175, 500, 250, "ANIME.png");
+		var logoZoom = false;
+		var introWidth = 0;
+
+		var mainPlatform = new mainPfClass();
+		var player1 = new p1Class(200, 315, 30, 90, "goku");
+		var player2 = new p2Class(575, 315, 30, 90, "goku");
+		var cpu = new cpuClass(575, 315, 30, 90, "goku");
+
+		var attackTimer = new timerClass(200);
+		var attackTimer2 = new timerClass(200);
+		var grabTimer = new timerClass(5000);
+		var grabTimer2 = new timerClass(5000);
+		var hitstunTimer = new timerClass(225);
+		var hitstunTimer2 = new timerClass(225);
+		var koTimer = new timerClass(2000);
+		var koTimer2 = new timerClass(2000);
+
+		var isKo1 = false;
+		var isKo2 = false;
+
+		var projArray1 = [];
+		var projArray2 = [];
+		var canHit1 = false;
+		var canHit2 = false;
+		var punchCount = 0;
+		var punchCount2 = 0;
+
+		var marker1Up = new Image();
+		marker1Up.src = "offscreenmarker1U.png";
+		var marker1Right = new Image();
+		marker1Right.src = "offscreenmarker1R.png";
+		var marker1Left = new Image();
+		marker1Left.src = "offscreenmarker1L.png";
+		var marker1Down = new Image();
+		marker1Down.src = "offscreenmarker1D.png";
+		var offScreen1Up = false;
+		var offScreen1Right = false;
+		var offScreen1Left = false;
+		var offScreen1Down = false;
+
+		var marker2Up = new Image();
+		marker2Up.src = "offscreenmarker2U.png";
+		var marker2Right = new Image();
+		marker2Right.src = "offscreenmarker2R.png";
+		var marker2Left = new Image();
+		marker2Left.src = "offscreenmarker2L.png";
+		var marker2Down = new Image();
+		marker2Down.src = "offscreenmarker2D.png";
+		var offScreen2Up = false;
+		var offScreen2Right = false;
+		var offScreen2Left = false;
+		var offScreen2Down = false;
+
+		var marker3Up = new Image();
+		marker3Up.src = "offscreenmarker3U.png";
+		var marker3Right = new Image();
+		marker3Right.src = "offscreenmarker3R.png";
+		var marker3Left = new Image();
+		marker3Left.src = "offscreenmarker3L.png";
+		var marker3Down = new Image();
+		marker3Down.src = "offscreenmarker3D.png";
+		var offScreen3Up = false;
+		var offScreen3Right = false;
+		var offScreen3Left = false;
+		var offScreen3Down = false;
+
+		var koImage = new Image();
+		koImage.src = "ko.png";
+		var ko1Up = false;
+		var ko1Right = false;
+		var ko1Left = false;
+		var ko1Down = false;
+
+		var cpuJumpTimer = new timerClass(750);
+		var cpuAttackTimer = new timerClass(500);
+		var cpuGrabTimer = new timerClass(300);
+
+		var ko2Up = false;
+		var ko2Right = false;
+		var ko2Left = false;
+		var ko2Down = false;
+
+		var xKnockback1 = 0;
+		var xKnockback2 = 0;
+		var punchDirection1 = "right";
+		var punchDirection2 = "left";
+
+		var cpuState = "P2";
+
+		for (var i=0; i<3; i++){
+			projArray1[i] = new projectileClass(player1.direction, "goku");
+		}
+		for (var i=0; i<3; i++){
+			projArray2[i] = new projectileClass(player2.direction, "goku");
+		}
+
+		var p1win = new imageClass(256.25, 0, 287.5, 87.5, "win1.png");
+		var p2win = new imageClass(256.25, 0, 287.5, 87.5, "win2.png");
+		var gokuwinbg = new imageClass(-25, -25, 850, 650, "gokuwinbg.jpg");
+		var gokuwinpose = new imageClass(338, 204, 124, 192, "gokuwinpose.png");
+		var gokuwinaura = new imageClass(220, 250, 375, 210, "gokuwinaura.png");
+
+		var narutowinanimation = new imageClass(320, 350, 144, 216, "narutowin1.png");
+		var narutoAnimFrame = 1;
+		var narutowinbg = new imageClass(-25, -25, 850, 650, "narutowinbg.png");
+
+		var narutoAnimTimer = new timerClass(250);
+		var shakeTimer = new timerClass(100);
+		var flashingTimer = new timerClass(400);
+		var txtVisible = true;
+
+		var p1cursor = new cursorClass(100, 275, "redcursor.png");
+		var p2cursor = new cursorClass(700, 275, "bluecursor.png");
+		var cpucursor = new cursorClass(700, 275, "graycursor.png");
+
+		var trainingBtn = new imageClass(300, 355, 203.75, 76.5, "trainingbutton.png");
+		var isOnTrainingBtn = false;
+
+		var versusBtn = new imageClass(300, 455, 203.75, 76.5, "versusbutton.png");
+		var isOnVersusBtn = false;
+
+		var howToPlayBtn = new imageClass(300, 255, 203.75, 76.5, "howtoplaybutton.png");
+		var isOnHowToPlayBtn = false;
+
+		var showInstructions = false;
+		var xbutton = new imageClass(605, 100, 50, 50, "xbutton.png");
+
+		var gokuCharSelect = new imageClass(100, 100, 200, 400, "gokucharselect.png");
+		var isOnGoku = false;
+
+		var narutoCharSelect = new imageClass(500, 125, 200, 350, "narutocharselect.png");
+		var isOnNaruto = false;
+
+		var p1SelectedChar = "";
+		var p2SelectedChar = "";
+
+		var p1markerX = 0;
+		var p1markerY = 0;
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+
+
+		function gameUpdate(){
+			if (gameState == "intro"){
+				var a = false;
+				var b = false;
+				var c = false;
+
+				if (gameLogo1.x < 205 || gameLogo1.width > 400){
+					gameLogo1.x += 1;
+					gameLogo1.width -= 2;
+				}
+				else{
+					a = true;
+				}
+
+				if (gameLogo1.y > 20){
+					gameLogo1.y -= 2;
+				}
+				else{
+					b = true;
+				}
+
+				if (gameLogo1.height > 200){
+					gameLogo1.height -= 2;
+				}
+				else{
+					c = true;
+				}
+
+				if (a == true && b == true && c == true){
+					logoZoom = true;
+				}
+			}
+			else if (gameState == "mainmenu"){
+				if (curkeys[87]){
+					p1cursor.moveUp();
+				}
+				
+				if (curkeys[83]){
+					p1cursor.moveDown();
+				}
+
+				if (curkeys[65]){
+					p1cursor.moveLeft();
+				}
+
+				if (curkeys[68]){
+					p1cursor.moveRight();
+				}
+
+				if (curkeys[38]){
+					p2cursor.moveUp();
+				}
+				
+				if (curkeys[40]){
+					p2cursor.moveDown();
+				}
+
+				if (curkeys[37]){
+					p2cursor.moveLeft();
+				}
+
+				if (curkeys[39]){
+					p2cursor.moveRight();
+				}
+
+				if (showInstructions == false){
+					if (p1cursor.intersects(trainingBtn) && isOnTrainingBtn == false || p2cursor.intersects(trainingBtn) && isOnTrainingBtn == false){
+						trainingBtn.width = 228.75;
+						trainingBtn.height = 86.5;
+						trainingBtn.x -= 12.5;
+						trainingBtn.y -= 5;
+						isOnTrainingBtn = true;
+					}
+					else if (p1cursor.intersects(trainingBtn) == false && p2cursor.intersects(trainingBtn) == false && isOnTrainingBtn == true){
+						trainingBtn.width = 203.75;
+						trainingBtn.height = 76.5;
+						trainingBtn.x += 12.5;
+						trainingBtn.y += 5;
+						isOnTrainingBtn = false;
+					}
+
+					if (p1cursor.intersects(versusBtn) && isOnVersusBtn == false || p2cursor.intersects(versusBtn) && isOnVersusBtn == false){
+						versusBtn.width = 228.75;
+						versusBtn.height = 86.5;
+						versusBtn.x -= 12.5;
+						versusBtn.y -= 5;
+						isOnVersusBtn = true;
+					}
+					else if (p1cursor.intersects(versusBtn) == false && p2cursor.intersects(versusBtn) == false && isOnVersusBtn == true){
+						versusBtn.width = 203.75;
+						versusBtn.height = 76.5;
+						versusBtn.x += 12.5;
+						versusBtn.y += 5;
+						isOnVersusBtn = false;
+					}
+
+					if (p1cursor.intersects(howToPlayBtn) && isOnHowToPlayBtn == false || p2cursor.intersects(howToPlayBtn) && isOnHowToPlayBtn == false){
+						howToPlayBtn.width = 228.75;
+						howToPlayBtn.height = 86.5;
+						howToPlayBtn.x -= 12.5;
+						howToPlayBtn.y -= 5;
+						isOnHowToPlayBtn = true;
+					}
+					else if (p1cursor.intersects(howToPlayBtn) == false && p2cursor.intersects(howToPlayBtn) == false && isOnHowToPlayBtn == true){
+						howToPlayBtn.width = 203.75;
+						howToPlayBtn.height = 76.5;
+						howToPlayBtn.x += 12.5;
+						howToPlayBtn.y += 5;
+						isOnHowToPlayBtn = false;
+					}
+
+					if (newkeys[70] && p1cursor.intersects(howToPlayBtn) && isOnHowToPlayBtn == true || newkeys[79] && p2cursor.intersects(howToPlayBtn) && isOnHowToPlayBtn == true){
+						showInstructions = true;
+					}
+					else if (newkeys[70] && p1cursor.intersects(trainingBtn) && isOnTrainingBtn == true || newkeys[79] && p2cursor.intersects(trainingBtn) && isOnTrainingBtn == true){
+						gameState = "charselecttraining";
+					}
+					else if (newkeys[70] && p1cursor.intersects(versusBtn) && isOnVersusBtn == true || newkeys[79] && p2cursor.intersects(versusBtn) && isOnVersusBtn == true){
+						gameState = "charselectversus";
+					}
+				}
+				else if (showInstructions == true){
+					if (newkeys[70] && p1cursor.intersects(xbutton) || newkeys[79] && p2cursor.intersects(xbutton)){
+						showInstructions = false;
+					}
+				}
+			}
+			else if (gameState == "charselecttraining"){
+				if (curkeys[87]){
+					p1cursor.moveUp();
+				}
+				
+				if (curkeys[83]){
+					p1cursor.moveDown();
+				}
+
+				if (curkeys[65]){
+					p1cursor.moveLeft();
+				}
+
+				if (curkeys[68]){
+					p1cursor.moveRight();
+				}
+
+				if (curkeys[38]){
+					cpucursor.moveUp();
+				}
+				
+				if (curkeys[40]){
+					cpucursor.moveDown();
+				}
+
+				if (curkeys[37]){
+					cpucursor.moveLeft();
+				}
+
+				if (curkeys[39]){
+					cpucursor.moveRight();
+				}
+
+				if (p1cursor.intersects(gokuCharSelect) && isOnGoku == false || cpucursor.intersects(gokuCharSelect) && isOnGoku == false){
+					gokuCharSelect.width = 215;
+					gokuCharSelect.height = 430;
+					gokuCharSelect.x -= 7.5;
+					gokuCharSelect.y -= 15;
+					isOnGoku = true;
+				}
+				else if (p1cursor.intersects(gokuCharSelect) == false && cpucursor.intersects(gokuCharSelect) == false && isOnGoku == true){
+					gokuCharSelect.width = 200;
+					gokuCharSelect.height = 400;
+					gokuCharSelect.x += 7.5;
+					gokuCharSelect.y += 15;
+					isOnGoku = false;
+				}
+
+				if (p1cursor.intersects(narutoCharSelect) && isOnNaruto == false || cpucursor.intersects(narutoCharSelect) && isOnNaruto == false){
+					narutoCharSelect.width = 215;
+					narutoCharSelect.height = 380;
+					narutoCharSelect.x -= 7.5;
+					narutoCharSelect.y -= 15;
+					isOnNaruto = true;
+				}
+				else if (p1cursor.intersects(narutoCharSelect) == false && cpucursor.intersects(narutoCharSelect) == false && isOnNaruto == true){
+					narutoCharSelect.width = 200;
+					narutoCharSelect.height = 350;
+					narutoCharSelect.x += 7.5;
+					narutoCharSelect.y += 15;
+					isOnNaruto = false;
+				}
+
+				if (newkeys[70] && p1cursor.intersects(gokuCharSelect) && isOnGoku == true && p1SelectedChar == ""){
+					p1SelectedChar = "goku";
+					p1markerX = getRandInt(gokuCharSelect.x, gokuCharSelect.x + gokuCharSelect.width);
+					p1markerY = getRandInt(gokuCharSelect.y, gokuCharSelect.y + gokuCharSelect.height);
+				}
+
+				if (newkeys[79] && cpucursor.intersects(gokuCharSelect) && isOnGoku == true && p2SelectedChar == ""){
+					p2SelectedChar = "goku";
+					p2markerX = getRandInt(gokuCharSelect.x, gokuCharSelect.x + gokuCharSelect.width);
+					p2markerY = getRandInt(gokuCharSelect.y, gokuCharSelect.y + gokuCharSelect.height);
+				}
+
+				if (newkeys[70] && p1cursor.intersects(narutoCharSelect) && isOnNaruto == true && p1SelectedChar == ""){
+					p1SelectedChar = "naruto";
+					p1markerX = getRandInt(narutoCharSelect.x, narutoCharSelect.x + narutoCharSelect.width);
+					p1markerY = getRandInt(narutoCharSelect.y, narutoCharSelect.y + narutoCharSelect.height);
+				}
+
+				if (newkeys[79] && cpucursor.intersects(narutoCharSelect) && isOnNaruto == true && p2SelectedChar == ""){
+					p2SelectedChar = "naruto";
+					p2markerX = getRandInt(narutoCharSelect.x, narutoCharSelect.x + narutoCharSelect.width);
+					p2markerY = getRandInt(narutoCharSelect.y, narutoCharSelect.y + narutoCharSelect.height);
+				}
+
+				if (p1SelectedChar != ""){
+					if (newkeys[8]){
+						p1SelectedChar = "";
+					}
+				}
+
+				if (p2SelectedChar != ""){
+					if (newkeys[8]){
+						p2SelectedChar = "";
+					}
+				}
+
+				if (p1SelectedChar != "" && p2SelectedChar != ""){
+					if (newkeys[13]){
+						player1.char = p1SelectedChar;
+						cpu.char = p2SelectedChar;
+
+						for (var i=0; i<3; i++){
+							projArray1[i].player = player1.char;
+						}
+						for (var i=0; i<3; i++){
+							projArray2[i].player = cpu.char;
+						}
+
+						gameState = "playtraining";
+					}
+				}
+			}
+			else if (gameState == "charselectversus"){
+				if (curkeys[87]){
+					p1cursor.moveUp();
+				}
+				
+				if (curkeys[83]){
+					p1cursor.moveDown();
+				}
+
+				if (curkeys[65]){
+					p1cursor.moveLeft();
+				}
+
+				if (curkeys[68]){
+					p1cursor.moveRight();
+				}
+
+				if (curkeys[38]){
+					p2cursor.moveUp();
+				}
+				
+				if (curkeys[40]){
+					p2cursor.moveDown();
+				}
+
+				if (curkeys[37]){
+					p2cursor.moveLeft();
+				}
+
+				if (curkeys[39]){
+					p2cursor.moveRight();
+				}
+
+				if (p1cursor.intersects(gokuCharSelect) && isOnGoku == false || p2cursor.intersects(gokuCharSelect) && isOnGoku == false){
+					gokuCharSelect.width = 215;
+					gokuCharSelect.height = 430;
+					gokuCharSelect.x -= 7.5;
+					gokuCharSelect.y -= 15;
+					isOnGoku = true;
+				}
+				else if (p1cursor.intersects(gokuCharSelect) == false && p2cursor.intersects(gokuCharSelect) == false && isOnGoku == true){
+					gokuCharSelect.width = 200;
+					gokuCharSelect.height = 400;
+					gokuCharSelect.x += 7.5;
+					gokuCharSelect.y += 15;
+					isOnGoku = false;
+				}
+
+				if (p1cursor.intersects(narutoCharSelect) && isOnNaruto == false || p2cursor.intersects(narutoCharSelect) && isOnNaruto == false){
+					narutoCharSelect.width = 215;
+					narutoCharSelect.height = 380;
+					narutoCharSelect.x -= 7.5;
+					narutoCharSelect.y -= 15;
+					isOnNaruto = true;
+				}
+				else if (p1cursor.intersects(narutoCharSelect) == false && p2cursor.intersects(narutoCharSelect) == false && isOnNaruto == true){
+					narutoCharSelect.width = 200;
+					narutoCharSelect.height = 350;
+					narutoCharSelect.x += 7.5;
+					narutoCharSelect.y += 15;
+					isOnNaruto = false;
+				}
+
+				if (newkeys[70] && p1cursor.intersects(gokuCharSelect) && isOnGoku == true && p1SelectedChar == ""){
+					p1SelectedChar = "goku";
+					p1markerX = getRandInt(gokuCharSelect.x, gokuCharSelect.x + gokuCharSelect.width) - 70;
+					p1markerY = getRandInt(gokuCharSelect.y, gokuCharSelect.y + gokuCharSelect.height) - 70;
+				}
+
+				if (newkeys[79] && p2cursor.intersects(gokuCharSelect) && isOnGoku == true && p2SelectedChar == ""){
+					p2SelectedChar = "goku";
+					p2markerX = getRandInt(gokuCharSelect.x, gokuCharSelect.x + gokuCharSelect.width) - 70;
+					p2markerY = getRandInt(gokuCharSelect.y, gokuCharSelect.y + gokuCharSelect.height) - 70;
+				}
+
+				if (newkeys[70] && p1cursor.intersects(narutoCharSelect) && isOnNaruto == true && p1SelectedChar == ""){
+					p1SelectedChar = "naruto";
+					p1markerX = getRandInt(narutoCharSelect.x, narutoCharSelect.x + narutoCharSelect.width);
+					p1markerY = getRandInt(narutoCharSelect.y, narutoCharSelect.y + narutoCharSelect.height);
+				}
+
+				if (newkeys[79] && p2cursor.intersects(narutoCharSelect) && isOnNaruto == true && p2SelectedChar == ""){
+					p2SelectedChar = "naruto";
+					p2markerX = getRandInt(narutoCharSelect.x, narutoCharSelect.x + narutoCharSelect.width);
+					p2markerY = getRandInt(narutoCharSelect.y, narutoCharSelect.y + narutoCharSelect.height);
+				}
+
+				if (p1SelectedChar != ""){
+					if (newkeys[8]){
+						p1SelectedChar = "";
+					}
+				}
+
+				if (p2SelectedChar != ""){
+					if (newkeys[8]){
+						p2SelectedChar = "";
+					}
+				}
+
+				if (p1SelectedChar != "" && p2SelectedChar != ""){
+					if (newkeys[13]){
+						player1.char = p1SelectedChar;
+						player2.char = p2SelectedChar;
+
+						for (var i=0; i<3; i++){
+							projArray1[i].player = player1.char;
+						}
+						for (var i=0; i<3; i++){
+							projArray2[i].player = player2.char;
+						}
+
+						gameState = "playversus";
+					}
+				}
+			}
+			else if (gameState == "playtraining"){
+				// Player 1
+				if (newkeys[87] && player1.charState != "block" && player1.charState != "punch" && player1.charState != "blast" && player1.charState != "grab" && player1.charState != "hurt"){
+					player1.jump();
+					player1.charState = "jump";
+				}
+				else if (curkeys[68] && player1.charState == "idle" || curkeys[68] && player1.charState == "jump" || curkeys[68] && player1.charState == "right" || curkeys[68] && player1.charState == "left"){
+					player1.x += 5;
+					player1.charState = "right";
+					player1.direction = "right";
+				}
+				else if (curkeys[65] && player1.charState == "idle" || curkeys[65] && player1.charState == "jump" || curkeys[65] && player1.charState == "right" || curkeys[65] && player1.charState == "left"){
+					player1.x -= 5;
+					player1.charState = "left";
+					player1.direction = "left";
+				}
+				else if (newkeys[70] && player1.bInAir == false){
+					if (player1.usingMove == "none"){
+						player1.charState = "punch";
+						player1.usingMove = "punch";
+						attackTimer.oldTime = new Date();
+						attackTimer.accum = 0;
+						canHit1 = true;
+					}
+				}
+				else if (newkeys[71] && player1.bInAir == false){
+					if (player1.usingMove == "none"){
+						player1.charState = "blast";
+						player1.usingMove = "blast";
+						attackTimer.oldTime = new Date();
+						attackTimer.accum = 0;
+
+						var isSpawned = false;
+
+						for (var i=0; i<projArray1.length; i++){
+							if (projArray1[i].bVisible == false && isSpawned == false){
+								projArray1[i].direction = player1.direction;
+								if (projArray1[i].direction == "right"){
+									projArray1[i].x = player1.x + player1.width + 10;
+									projArray1[i].y = player1.y + player1.height/2 - 20;
+								}
+								else if (projArray1[i].direction == "left"){
+									projArray1[i].x = player1.x - player1.width - 10;
+									projArray1[i].y = player1.y + player1.height/2 - 20;
+								}
+								projArray1[i].bVisible = true;
+								isSpawned = true;
+							}
+						}
+					}
+				}
+				else if (newkeys[72] && player1.bInAir == false){
+					if (player1.usingMove == "none"){
+						player1.charState = "grab";
+						player1.usingMove = "grab";
+						attackTimer.oldTime = new Date();
+						attackTimer.accum = 0;
+						canHit1 = true;
+					}
+				}
+				else if (curkeys[16] && player1.bInAir == false){
+					player1.charState = "block";
+				}
+				else if (player1.usingMove == "none"){
+					player1.charState = "idle";
+				}
+
+				if (player1.usingMove == "punch"){
+					if (attackTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "blast"){
+					if (attackTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "grab"){
+					if (attackTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "grabhit"){
+					if (player1.direction == "right"){
+						cpu.x = player1.x + player1.width - 25;
+					}
+					if (player1.direction == "left"){
+						cpu.x = player1.x - 25;
+					}
+
+					if (newkeys[70]){
+						if (punchCount == 0 || punchCount == 1){
+							cpu.damage += 5;
+							punchCount += 1;
+						}
+						else if (punchCount == 2){
+							cpu.damage += 5;
+							punchCount += 1;
+							cpu.knockback();
+							cpu.usingMove = "hurtpunch";
+							hitstunTimer2.oldTime = new Date();
+							hitstunTimer2.accum = 0;
+							player1.usingMove = "none";
+						}
+					}
+					player1.charState = "grab";
+					if (grabTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "hurtpunch"){
+					if (punchDirection1 == "left"){
+						player1.x -= xKnockback1;
+					}
+					else if (punchDirection1 == "right"){
+						player1.x += xKnockback1;
+					}
+					if (hitstunTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "hurtblast"){
+					if (hitstunTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "hurtgrab"){
+					player1.charState = "hurt";
+					if (grabTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				
+				// CPU
+				if (cpuState == "P2"){
+					if (newkeys[38] && cpu.charState != "block" && cpu.charState != "punch" && cpu.charState != "blast" && cpu.charState != "grab" && cpu.charState != "hurt"){
+						cpu.jump();
+						cpu.charState = "jump";
+						console.log(cpu.img.src)
+					}
+					else if (curkeys[39] && cpu.charState == "idle" || curkeys[39] && cpu.charState == "jump" || curkeys[39] && cpu.charState == "right" || curkeys[39] && cpu.charState == "left"){
+						cpu.x += 5;
+						cpu.charState = "right";
+						cpu.direction = "right";
+					}
+					else if (curkeys[37] && cpu.charState == "idle" || curkeys[37] && cpu.charState == "jump" || curkeys[37] && cpu.charState == "right" || curkeys[37] && cpu.charState == "left"){
+						cpu.x -= 5;
+						cpu.charState = "left";
+						cpu.direction = "left";
+					}
+					else if (newkeys[79] && cpu.bInAir == false){
+						if (cpu.usingMove == "none"){
+							cpu.charState = "punch";
+							cpu.usingMove = "punch";
+							attackTimer2.oldTime = new Date();
+							attackTimer2.accum = 0;
+							canHit2 = true;
+						}
+					}
+					else if (newkeys[80] && cpu.bInAir == false){
+						if (cpu.usingMove == "none"){
+							cpu.charState = "blast";
+							cpu.usingMove = "blast";
+							attackTimer2.oldTime = new Date();
+							attackTimer2.accum = 0;
+
+							var isSpawned = false;
+
+							for (var i=0; i<projArray2.length; i++){
+								if (projArray2[i].bVisible == false && isSpawned == false){
+									projArray2[i].direction = cpu.direction;
+									if (projArray2[i].direction == "right"){
+										projArray2[i].x = cpu.x + cpu.width + 10;
+										projArray2[i].y = cpu.y + cpu.height/2 - 20;
+									}
+									else if (projArray2[i].direction == "left"){
+										projArray2[i].x = cpu.x - cpu.width - 10;
+										projArray2[i].y = cpu.y + cpu.height/2 - 20;
+									}
+									projArray2[i].bVisible = true;
+									isSpawned = true;
+								}
+							}
+						}
+					}
+					else if (newkeys[219] && cpu.bInAir == false){
+						if (cpu.usingMove == "none"){
+							cpu.charState = "grab";
+							cpu.usingMove = "grab";
+							attackTimer2.oldTime = new Date();
+							attackTimer2.accum = 0;
+							canHit2 = true;
+						}
+					}
+					else if (curkeys[73] && cpu.bInAir == false){
+						cpu.charState = "block";
+					}
+					else if (cpu.usingMove == "none"){
+						cpu.charState = "idle";
+					}
+				}
+				else if (cpuState == "Punch"){
+					if (cpuAttackTimer.isReady() && cpu.charState != "hurt"){
+						if (cpu.usingMove == "none"){
+							cpu.charState = "punch";
+							cpu.usingMove = "punch";
+							attackTimer2.oldTime = new Date();
+							attackTimer2.accum = 0;
+							canHit2 = true;
+						}
+					}
+					else if (cpu.usingMove == "none"){
+						cpu.charState = "idle";
+					}
+				}
+				else if (cpuState == "Blast"){
+					if (cpuAttackTimer.isReady() && cpu.charState != "hurt"){
+						if (cpu.usingMove == "none"){
+							cpu.charState = "blast";
+							cpu.usingMove = "blast";
+							attackTimer2.oldTime = new Date();
+							attackTimer2.accum = 0;
+
+							var isSpawned = false;
+
+							for (var i=0; i<projArray2.length; i++){
+								if (projArray2[i].bVisible == false && isSpawned == false){
+									projArray2[i].direction = cpu.direction;
+									if (projArray2[i].direction == "right"){
+										projArray2[i].x = cpu.x + cpu.width + 10;
+										projArray2[i].y = cpu.y + cpu.height/2 - 20;
+									}
+									else if (projArray2[i].direction == "left"){
+										projArray2[i].x = cpu.x - cpu.width - 10;
+										projArray2[i].y = cpu.y + cpu.height/2 - 20;
+									}
+									projArray2[i].bVisible = true;
+									isSpawned = true;
+								}
+							}
+						}
+					}
+					else if (cpu.usingMove == "none"){
+						cpu.charState = "idle";
+					}
+				}
+				else if (cpuState == "Grab"){
+					if (cpuAttackTimer.isReady() && cpu.charState != "hurt"){
+						if (cpu.usingMove == "none"){
+							cpu.charState = "grab";
+							cpu.usingMove = "grab";
+							attackTimer2.oldTime = new Date();
+							attackTimer2.accum = 0;
+							canHit2 = true;
+						}
+					}
+					else if (cpu.usingMove == "none"){
+						cpu.charState = "idle";
+					}
+				}
+				else if (cpuState == "Block"){
+					cpu.charState = "block";
+				}
+				else if (cpuState == "Jump"){
+					if (cpuJumpTimer.isReady() && cpu.charState != "hurt"){
+						cpu.jump();
+						cpu.charState = "jump";
+					}
+					else if (cpu.usingMove == "none"){
+						cpu.charState = "idle";
+					}
+				}
+
+				if (cpu.usingMove == "punch"){
+					if (attackTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+				else if (cpu.usingMove == "blast"){
+					if (attackTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+				else if (cpu.usingMove == "grab"){
+					if (attackTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+				else if (cpu.usingMove == "grabhit"){
+					if (cpu.direction == "right"){
+						player1.x = cpu.x + cpu.width - 25;
+					}
+					if (cpu.direction == "left"){
+						player1.x = cpu.x - 25;
+					}
+
+					if (cpuState == "P2"){
+						if (newkeys[79]){
+							if (punchCount2 == 0 || punchCount2 == 1){
+								player1.damage += 5;
+								punchCount2 += 1;
+							}
+							else if (punchCount2 == 2){
+								player1.damage += 5;
+								punchCount2 += 1;
+								player1.knockback();
+								player1.usingMove = "hurtpunch";
+								hitstunTimer.oldTime = new Date();
+								hitstunTimer.accum = 0;
+								cpu.usingMove = "none";
+							}
+						}
+					}
+					else if (cpuState == "Grab"){
+						if (cpuGrabTimer.isReady()){
+							if (punchCount2 == 0 || punchCount2 == 1){
+								player1.damage += 5;
+								punchCount2 += 1;
+							}
+							else if (punchCount2 == 2){
+								player1.damage += 5;
+								punchCount2 += 1;
+								player1.knockback();
+								player1.usingMove = "hurtpunch";
+								hitstunTimer.oldTime = new Date();
+								hitstunTimer.accum = 0;
+								cpu.usingMove = "none";
+							}
+						}
+					}
+					cpu.charState = "grab";
+					if (grabTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+				else if (cpu.usingMove == "hurtpunch"){
+					if (punchDirection2 == "left"){
+						cpu.x -= xKnockback2;
+					}
+					else if (punchDirection2 == "right"){
+						cpu.x += xKnockback2;
+					}
+					if (hitstunTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+				else if (cpu.usingMove == "hurtblast"){
+					if (hitstunTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+				else if (cpu.usingMove == "hurtgrab"){
+					cpu.charState = "hurt";
+					if (grabTimer2.isReady()){
+						cpu.usingMove = "none";
+					}
+				}
+
+				// P1 Attacks P2
+				if (player1.usingMove == "punch" && player1.intersects(cpu) && cpu.charState != "block"){
+					if (canHit1 == true){
+						hitstunTimer2.oldTime = new Date();
+						hitstunTimer2.accum = 0;
+						cpu.usingMove = "hurtpunch";
+						cpu.charState = "hurt";
+						cpu.damage += 10;
+						cpu.knockback();
+						canHit1 = false;
+					}
+				}
+				for (var i=0; i<projArray1.length; i++){
+					if (cpu.intersects(projArray1[i]) && projArray1[i].bVisible == true){
+						if (cpu.charState != "block"){
+							hitstunTimer2.oldTime = new Date();
+							hitstunTimer2.accum = 0;
+							cpu.usingMove = "hurtblast";
+							cpu.charState = "hurt";
+							cpu.damage += 5;
+							projArray1[i].bVisible = false;
+						}
+						else if (cpu.charState == "block"){
+							projArray1[i].bVisible = false;
+						}
+					}
+				}
+				if (player1.usingMove == "grab" && player1.intersects(cpu)){
+					if (canHit1 == true){
+						grabTimer.accum = 0;
+						grabTimer.oldTime = new Date();
+						grabTimer2.accum = 0;
+						grabTimer2.oldTime = new Date();
+						
+						punchCount = 0;
+
+						player1.usingMove = "grabhit";
+						cpu.usingMove = "hurtgrab";
+						cpu.charState = "hurt";
+						canHit1 = false;
+					}
+				}
+
+				// P2 Attacks P1
+				if (cpu.usingMove == "punch" && cpu.intersects(player1) && player1.charState != "block"){
+					if (canHit2 == true){
+						hitstunTimer.oldTime = new Date();
+						hitstunTimer.accum = 0;
+						player1.usingMove = "hurtpunch";
+						player1.charState = "hurt";
+						player1.damage += 10;
+						player1.knockback();
+						canHit2 = false;
+					}
+				}
+				for (var i=0; i<projArray2.length; i++){
+					if (player1.intersects(projArray2[i]) && projArray2[i].bVisible == true){
+						if (player1.charState != "block"){
+							hitstunTimer.oldTime = new Date();
+							hitstunTimer.accum = 0;
+							player1.usingMove = "hurtblast";
+							player1.charState = "hurt";
+							player1.damage += 5;
+							projArray2[i].bVisible = false;
+						}
+						else if (player1.charState == "block"){
+							projArray2[i].bVisible = false;
+						}
+					}
+				}
+				if (cpu.usingMove == "grab" && cpu.intersects(player1)){
+					if (canHit2 == true){
+						grabTimer.accum = 0;
+						grabTimer.oldTime = new Date();
+						grabTimer2.accum = 0;
+						grabTimer2.oldTime = new Date();
+						
+						punchCount2 = 0;
+
+						cpu.usingMove = "grabhit";
+						player1.usingMove = "hurtgrab";
+						player1.charState = "hurt";
+						canHit2 = false;
+					}
+				}
+				
+				// Game Win
+				if (player1.lives == 0){
+					player1.lives = 3;
+				}
+
+				if (cpu.lives == 0){
+					cpu.lives = 3;
+				}
+
+				// Updates & KO's
+				if (isKo1 == false){
+					player1.update();
+				}
+				else if(isKo1 == true){
+					player1.charState = "hurt";
+					if (koTimer.isReady()){
+						isKo1 = false;
+						player1.x = 200;
+						player1.y = 315;
+						player1.jumps = 5;
+						player1.charState = "idle";
+						player1.usingMove = "none";
+						player1.bInAir = false;
+						player1.direction = "right";
+						offScreen1Right = false;
+						offScreen1Up = false;
+						offScreen1Down = false;
+						offScreen1Left = false;
+						player1.damage = 0;
+						player1.curYspeed = 0;
+					}
+				}
+
+				if (isKo2 == false){
+					cpu.update();
+				}
+				else if(isKo2 == true){
+					cpu.charState = "hurt";
+					if (koTimer2.isReady()){
+						isKo2 = false;
+						cpu.x = 575;
+						cpu.y = 315;
+						cpu.jumps = 5;
+						cpu.charState = "idle";
+						cpu.usingMove = "none";
+						cpu.bInAir = false;
+						cpu.direction = "left";
+						offScreen3Right = false;
+						offScreen3Up = false;
+						offScreen3Down = false;
+						offScreen3Left = false;
+						cpu.damage = 0;
+						cpu.curYspeed = 0;
+					}
+				}
+
+				if (newkeys[67]){
+					if (cpuState == "P2"){
+						cpuState = "Punch";
+					}
+					else if (cpuState == "Punch"){
+						cpuState = "Blast";
+					}
+					else if (cpuState == "Blast"){
+						cpuState = "Grab";
+					}
+					else if (cpuState == "Grab"){
+						cpuState = "Block";
+					}
+					else if (cpuState == "Block"){
+						cpuState = "Jump";
+					}
+					else if (cpuState == "Jump"){
+						cpuState = "P2";
+					}
+				}
+
+				if (newkeys[90]){
+					if (cpuState == "P2"){
+						cpuState = "Jump";
+					}
+					else if (cpuState == "Jump"){
+						cpuState = "Block";
+					}
+					else if (cpuState == "Block"){
+						cpuState = "Grab";
+					}
+					else if (cpuState == "Grab"){
+						cpuState = "Blast";
+					}
+					else if (cpuState == "Blast"){
+						cpuState = "Punch";
+					}
+					else if (cpuState == "Punch"){
+						cpuState = "P2";
+					}
+				}
+
+				if (newkeys[8]){
+					isKo1 = false;
+					isKo2 = false;
+					canHit1 = false;
+					canHit2 = false;
+					punchCount = 0;
+					punchCount2 = 0;
+					offScreen1Up = false;
+					offScreen1Right = false;
+					offScreen1Left = false;
+					offScreen1Down = false;
+					offScreen3Up = false;
+					offScreen3Right = false;
+					offScreen3Left = false;
+					offScreen3Down = false;
+					ko1Up = false;
+					ko1Right = false;
+					ko1Left = false;
+					ko1Down = false;
+					ko2Up = false;
+					ko2Right = false;
+					ko2Left = false;
+					ko2Down = false;
+					xKnockback1 = 0;
+					xKnockback2 = 0;
+					punchDirection1 = "right";
+					punchDirection2 = "left";
+					txtVisible = true;
+					p1cursor.x = 100;
+					p1cursor.y = 275;
+					cpucursor.x = 700;
+					cpucursor.y = 275;
+					showInstructions = false;
+					p1SelectedChar = "";
+					p2SelectedChar = "";
+					p1markerX = 0;
+					p1markerY = 0;
+					player1.lives = 3;
+					player1.damage = 0;
+					cpu.lives = 3;
+					cpu.damage = 0;
+					player1.x = 200;
+					cpu.x = 575;
+					player1.y = 315;
+					cpu.y = 315;
+					player1.curYspeed = 0;
+					cpu.curYspeed = 0
+					player1.usingMove = "none";
+					player1.charState = "idle";
+					cpu.usingMove = "none";
+					cpu.charState = "idle";
+					player1.direction = "right";
+					cpu.direction = "left";
+					player1.bInAir = false;
+					cpu.bInAir = false;
+					cpuState = "P2";
+
+					gameState = "mainmenu";
+				}
+
+				for (var i=0; i<projArray1.length; i++){
+					projArray1[i].update();
+				}
+				for (var i=0; i<projArray2.length; i++){
+					projArray2[i].update();
+				}
+			}
+			else if (gameState == "playversus"){
+				// Player 1
+				if (newkeys[87] && player1.charState != "block" && player1.charState != "punch" && player1.charState != "blast" && player1.charState != "grab" && player1.charState != "hurt"){
+					player1.jump();
+					player1.charState = "jump";
+				}
+				else if (curkeys[68] && player1.charState == "idle" || curkeys[68] && player1.charState == "jump" || curkeys[68] && player1.charState == "right" || curkeys[68] && player1.charState == "left"){
+					player1.x += 5;
+					player1.charState = "right";
+					player1.direction = "right";
+				}
+				else if (curkeys[65] && player1.charState == "idle" || curkeys[65] && player1.charState == "jump" || curkeys[65] && player1.charState == "right" || curkeys[65] && player1.charState == "left"){
+					player1.x -= 5;
+					player1.charState = "left";
+					player1.direction = "left";
+				}
+				else if (newkeys[70] && player1.bInAir == false){
+					if (player1.usingMove == "none"){
+						player1.charState = "punch";
+						player1.usingMove = "punch";
+						attackTimer.oldTime = new Date();
+						attackTimer.accum = 0;
+						canHit1 = true;
+					}
+				}
+				else if (newkeys[71] && player1.bInAir == false){
+					if (player1.usingMove == "none"){
+						player1.charState = "blast";
+						player1.usingMove = "blast";
+						attackTimer.oldTime = new Date();
+						attackTimer.accum = 0;
+
+						var isSpawned = false;
+
+						for (var i=0; i<projArray1.length; i++){
+							if (projArray1[i].bVisible == false && isSpawned == false){
+								projArray1[i].direction = player1.direction;
+								if (projArray1[i].direction == "right"){
+									projArray1[i].x = player1.x + player1.width + 10;
+									projArray1[i].y = player1.y + player1.height/2 - 20;
+								}
+								else if (projArray1[i].direction == "left"){
+									projArray1[i].x = player1.x - player1.width - 10;
+									projArray1[i].y = player1.y + player1.height/2 - 20;
+								}
+								projArray1[i].bVisible = true;
+								isSpawned = true;
+							}
+						}
+					}
+				}
+				else if (newkeys[72] && player1.bInAir == false){
+					if (player1.usingMove == "none"){
+						player1.charState = "grab";
+						player1.usingMove = "grab";
+						attackTimer.oldTime = new Date();
+						attackTimer.accum = 0;
+						canHit1 = true;
+					}
+				}
+				else if (curkeys[16] && player1.bInAir == false){
+					player1.charState = "block";
+				}
+				else if (player1.usingMove == "none"){
+					player1.charState = "idle";
+				}
+
+				if (player1.usingMove == "punch"){
+					if (attackTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "blast"){
+					if (attackTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "grab"){
+					if (attackTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "grabhit"){
+					if (player1.direction == "right"){
+						player2.x = player1.x + player1.width - 25;
+					}
+					if (player1.direction == "left"){
+						player2.x = player1.x - 25;
+					}
+
+					if (newkeys[70]){
+						if (punchCount == 0 || punchCount == 1){
+							player2.damage += 5;
+							punchCount += 1;
+						}
+						else if (punchCount == 2){
+							player2.damage += 5;
+							punchCount += 1;
+							player2.knockback();
+							player2.usingMove = "hurtpunch";
+							hitstunTimer2.oldTime = new Date();
+							hitstunTimer2.accum = 0;
+							player1.usingMove = "none";
+						}
+					}
+					player1.charState = "grab";
+					if (grabTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "hurtpunch"){
+					if (punchDirection1 == "left"){
+						player1.x -= xKnockback1;
+					}
+					else if (punchDirection1 == "right"){
+						player1.x += xKnockback1;
+					}
+					if (hitstunTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "hurtblast"){
+					if (hitstunTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				else if (player1.usingMove == "hurtgrab"){
+					player1.charState = "hurt";
+					if (grabTimer.isReady()){
+						player1.usingMove = "none";
+					}
+				}
+				
+
+				// Player 2
+				if (newkeys[38] && player2.charState != "block" && player2.charState != "punch" && player2.charState != "blast" && player2.charState != "grab" && player2.charState != "hurt"){
+					player2.jump();
+					player2.charState = "jump";
+				}
+				else if (curkeys[39] && player2.charState == "idle" || curkeys[39] && player2.charState == "jump" || curkeys[39] && player2.charState == "right" || curkeys[39] && player2.charState == "left"){
+					player2.x += 5;
+					player2.charState = "right";
+					player2.direction = "right";
+				}
+				else if (curkeys[37] && player2.charState == "idle" || curkeys[37] && player2.charState == "jump" || curkeys[37] && player2.charState == "right" || curkeys[37] && player2.charState == "left"){
+					player2.x -= 5;
+					player2.charState = "left";
+					player2.direction = "left";
+				}
+				else if (newkeys[79] && player2.bInAir == false){
+					if (player2.usingMove == "none"){
+						player2.charState = "punch";
+						player2.usingMove = "punch";
+						attackTimer2.oldTime = new Date();
+						attackTimer2.accum = 0;
+						canHit2 = true;
+					}
+				}
+				else if (newkeys[80] && player2.bInAir == false){
+					if (player2.usingMove == "none"){
+						player2.charState = "blast";
+						player2.usingMove = "blast";
+						attackTimer2.oldTime = new Date();
+						attackTimer2.accum = 0;
+
+						var isSpawned = false;
+
+						for (var i=0; i<projArray2.length; i++){
+							if (projArray2[i].bVisible == false && isSpawned == false){
+								projArray2[i].direction = player2.direction;
+								if (projArray2[i].direction == "right"){
+									projArray2[i].x = player2.x + player2.width + 10;
+									projArray2[i].y = player2.y + player2.height/2 - 20;
+								}
+								else if (projArray2[i].direction == "left"){
+									projArray2[i].x = player2.x - player2.width - 10;
+									projArray2[i].y = player2.y + player2.height/2 - 20;
+								}
+								projArray2[i].bVisible = true;
+								isSpawned = true;
+							}
+						}
+					}
+				}
+				else if (newkeys[219] && player2.bInAir == false){
+					if (player2.usingMove == "none"){
+						player2.charState = "grab";
+						player2.usingMove = "grab";
+						attackTimer2.oldTime = new Date();
+						attackTimer2.accum = 0;
+						canHit2 = true;
+					}
+				}
+				else if (curkeys[73] && player2.bInAir == false){
+					player2.charState = "block";
+				}
+				else if (player2.usingMove == "none"){
+					player2.charState = "idle";
+				}
+
+				if (player2.usingMove == "punch"){
+					if (attackTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+				else if (player2.usingMove == "blast"){
+					if (attackTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+				else if (player2.usingMove == "grab"){
+					if (attackTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+				else if (player2.usingMove == "grabhit"){
+					if (player2.direction == "right"){
+						player1.x = player2.x + player2.width - 25;
+					}
+					if (player2.direction == "left"){
+						player1.x = player2.x - 25;
+					}
+
+					if (newkeys[79]){
+						if (punchCount2 == 0 || punchCount2 == 1){
+							player1.damage += 5;
+							punchCount2 += 1;
+						}
+						else if (punchCount2 == 2){
+							player1.damage += 5;
+							punchCount2 += 1;
+							player1.knockback();
+							player1.usingMove = "hurtpunch";
+							hitstunTimer.oldTime = new Date();
+							hitstunTimer.accum = 0;
+							player2.usingMove = "none";
+						}
+					}
+					player2.charState = "grab";
+					if (grabTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+				else if (player2.usingMove == "hurtpunch"){
+					if (punchDirection2 == "left"){
+						player2.x -= xKnockback2;
+					}
+					else if (punchDirection2 == "right"){
+						player2.x += xKnockback2;
+					}
+					if (hitstunTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+				else if (player2.usingMove == "hurtblast"){
+					if (hitstunTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+				else if (player2.usingMove == "hurtgrab"){
+					player2.charState = "hurt";
+					if (grabTimer2.isReady()){
+						player2.usingMove = "none";
+					}
+				}
+
+				// P1 Attacks P2
+				if (player1.usingMove == "punch" && player1.intersects(player2) && player2.charState != "block"){
+					if (canHit1 == true){
+						hitstunTimer2.oldTime = new Date();
+						hitstunTimer2.accum = 0;
+						player2.usingMove = "hurtpunch";
+						player2.charState = "hurt";
+						player2.damage += 10;
+						player2.knockback();
+						canHit1 = false;
+					}
+				}
+				for (var i=0; i<projArray1.length; i++){
+					if (player2.intersects(projArray1[i]) && projArray1[i].bVisible == true){
+						if (player2.charState != "block"){
+							hitstunTimer2.oldTime = new Date();
+							hitstunTimer2.accum = 0;
+							player2.usingMove = "hurtblast";
+							player2.charState = "hurt";
+							player2.damage += 5;
+							projArray1[i].bVisible = false;
+						}
+						else if (player2.charState == "block"){
+							projArray1[i].bVisible = false;
+						}
+					}
+				}
+				if (player1.usingMove == "grab" && player1.intersects(player2)){
+					if (canHit1 == true){
+						grabTimer.accum = 0;
+						grabTimer.oldTime = new Date();
+						grabTimer2.accum = 0;
+						grabTimer2.oldTime = new Date();
+						
+						punchCount = 0;
+
+						player1.usingMove = "grabhit";
+						player2.usingMove = "hurtgrab";
+						player2.charState = "hurt";
+						canHit1 = false;
+					}
+				}
+
+				// P2 Attacks P1
+				if (player2.usingMove == "punch" && player2.intersects(player1) && player1.charState != "block"){
+					if (canHit2 == true){
+						hitstunTimer.oldTime = new Date();
+						hitstunTimer.accum = 0;
+						player1.usingMove = "hurtpunch";
+						player1.charState = "hurt";
+						player1.damage += 10;
+						player1.knockback();
+						canHit2 = false;
+					}
+				}
+				for (var i=0; i<projArray2.length; i++){
+					if (player1.intersects(projArray2[i]) && projArray2[i].bVisible == true){
+						if (player1.charState != "block"){
+							hitstunTimer.oldTime = new Date();
+							hitstunTimer.accum = 0;
+							player1.usingMove = "hurtblast";
+							player1.charState = "hurt";
+							player1.damage += 5;
+							projArray2[i].bVisible = false;
+						}
+						else if (player1.charState == "block"){
+							projArray2[i].bVisible = false;
+						}
+					}
+				}
+				if (player2.usingMove == "grab" && player2.intersects(player1)){
+					if (canHit2 == true){
+						grabTimer.accum = 0;
+						grabTimer.oldTime = new Date();
+						grabTimer2.accum = 0;
+						grabTimer2.oldTime = new Date();
+						
+						punchCount2 = 0;
+
+						player2.usingMove = "grabhit";
+						player1.usingMove = "hurtgrab";
+						player1.charState = "hurt";
+						canHit2 = false;
+					}
+				}
+				
+				// Game Win
+				if (player1.lives == 0){
+					gameState = "p2win";
+					narutoAnimTimer.oldTime = new Date();
+					narutoAnimTimer.accum = 0;
+				}
+
+				if (player2.lives == 0){
+					gameState = "p1win";
+					narutoAnimTimer.oldTime = new Date();
+					narutoAnimTimer.accum = 0;
+				}
+
+				// Updates & KO's
+				if (isKo1 == false){
+					player1.update();
+				}
+				else if(isKo1 == true){
+					player1.charState = "hurt";
+					if (koTimer.isReady()){
+						isKo1 = false;
+						player1.x = 200;
+						player1.y = 315;
+						player1.jumps = 5;
+						player1.charState = "idle";
+						player1.usingMove = "none";
+						player1.bInAir = false;
+						player1.direction = "right";
+						offScreen1Right = false;
+						offScreen1Up = false;
+						offScreen1Down = false;
+						offScreen1Left = false;
+						player1.damage = 0;
+						player1.curYspeed = 0;
+					}
+				}
+
+				if (isKo2 == false){
+					player2.update();
+				}
+				else if(isKo2 == true){
+					player2.charState = "hurt";
+					if (koTimer2.isReady()){
+						isKo2 = false;
+						player2.x = 575;
+						player2.y = 315;
+						player2.jumps = 5;
+						player2.charState = "idle";
+						player2.usingMove = "none";
+						player2.bInAir = false;
+						player2.direction = "left";
+						offScreen2Right = false;
+						offScreen2Up = false;
+						offScreen2Down = false;
+						offScreen2Left = false;
+						player2.damage = 0;
+						player2.curYspeed = 0;
+					}
+				}
+
+				for (var i=0; i<projArray1.length; i++){
+					projArray1[i].update();
+				}
+				for (var i=0; i<projArray2.length; i++){
+					projArray2[i].update();
+				}
+			}
+			else if (gameState == "p1win"){
+				if (newkeys[8]){
+					isKo1 = false;
+					isKo2 = false;
+					canHit1 = false;
+					canHit2 = false;
+					punchCount = 0;
+					punchCount2 = 0;
+					offScreen1Up = false;
+					offScreen1Right = false;
+					offScreen1Left = false;
+					offScreen1Down = false;
+					offScreen2Up = false;
+					offScreen2Right = false;
+					offScreen2Left = false;
+					offScreen2Down = false;
+					ko1Up = false;
+					ko1Right = false;
+					ko1Left = false;
+					ko1Down = false;
+					ko2Up = false;
+					ko2Right = false;
+					ko2Left = false;
+					ko2Down = false;
+					xKnockback1 = 0;
+					xKnockback2 = 0;
+					punchDirection1 = "right";
+					punchDirection2 = "left";
+					txtVisible = true;
+					p1cursor.x = 100;
+					p1cursor.y = 275;
+					p2cursor.x = 700;
+					p2cursor.y = 275;
+					showInstructions = false;
+					p1SelectedChar = "";
+					p2SelectedChar = "";
+					p1markerX = 0;
+					p1markerY = 0;
+					player1.lives = 3;
+					player2.lives = 3;
+					player1.damage = 0;
+					player2.damage = 0;
+					player1.x = 200;
+					player2.x = 575;
+					player1.y = 315;
+					player2.y = 315;
+					player1.curYspeed = 0;
+					player2.curYspeed = 0;
+					player1.usingMove = "none";
+					player1.charState = "idle";
+					player2.usingMove = "none";
+					player2.charState = "idle";
+					player1.direction = "right";
+					player2.direction = "left";
+					player1.bInAir = false;
+					player2.bInAir = false;
+					narutoAnimFrame = 1;
+
+					gameState = "mainmenu";
+				}
+
+				if (player1.char == "goku"){
+					if (shakeTimer.isReady()){
+						gokuwinbg.x = getRandInt(0, 25) - 25;
+						gokuwinbg.y = getRandInt(0, 25) - 25;
+					}
+				}
+				else if (player1.char == "naruto"){
+					if (narutoAnimTimer.isReady()){
+						narutoAnimFrame += 1;
+					}
+
+					if (narutoAnimFrame <= 11){
+						narutowinanimation.img.src = "narutowin" + narutoAnimFrame + ".png";
+					}
+					else if (narutoAnimFrame > 11){
+						narutowinanimation.img.src = "narutowin11.png";
+					}
+				}
+			}
+			else if (gameState == "p2win"){
+				if (newkeys[8]){
+					isKo1 = false;
+					isKo2 = false;
+					canHit1 = false;
+					canHit2 = false;
+					punchCount = 0;
+					punchCount2 = 0;
+					offScreen1Up = false;
+					offScreen1Right = false;
+					offScreen1Left = false;
+					offScreen1Down = false;
+					offScreen2Up = false;
+					offScreen2Right = false;
+					offScreen2Left = false;
+					offScreen2Down = false;
+					ko1Up = false;
+					ko1Right = false;
+					ko1Left = false;
+					ko1Down = false;
+					ko2Up = false;
+					ko2Right = false;
+					ko2Left = false;
+					ko2Down = false;
+					xKnockback1 = 0;
+					xKnockback2 = 0;
+					punchDirection1 = "right";
+					punchDirection2 = "left";
+					txtVisible = true;
+					p1cursor.x = 100;
+					p1cursor.y = 275;
+					p2cursor.x = 700;
+					p2cursor.y = 275;
+					showInstructions = false;
+					p1SelectedChar = "";
+					p2SelectedChar = "";
+					p1markerX = 0;
+					p1markerY = 0;
+					player1.lives = 3;
+					player2.lives = 3;
+					player1.damage = 0;
+					player2.damage = 0;
+					player1.x = 200;
+					player2.x = 575;
+					player1.y = 315;
+					player2.y = 315;
+					player1.curYspeed = 0;
+					player2.curYspeed = 0;
+					player1.usingMove = "none";
+					player1.charState = "idle";
+					player2.usingMove = "none";
+					player2.charState = "idle";
+					player1.direction = "right";
+					player2.direction = "left";
+					player1.bInAir = false;
+					player2.bInAir = false;
+					narutoAnimFrame = 1;
+
+					gameState = "mainmenu";
+				}
+
+				if (player2.char == "goku"){
+					if (shakeTimer.isReady()){
+						gokuwinbg.x = getRandInt(0, 25) - 25;
+						gokuwinbg.y = getRandInt(0, 25) - 25;
+					}
+				}
+				else if (player2.char == "naruto"){
+					if (narutoAnimTimer.isReady()){
+						narutoAnimFrame += 1;
+					}
+
+					if (narutoAnimFrame <= 11){
+						narutowinanimation.img.src = "narutowin" + narutoAnimFrame + ".png";
+					}
+					else if (narutoAnimFrame > 11){
+						narutowinanimation.img.src = "narutowin11.png";
+					}
+				}
+			}
+
+			
+			// DO NOT ADD OR MODIFY ANY CODE BELOW HERE
+
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			if (gameState == "intro"){
+				var background = new Image();
+				background.src = "mainmenubg.png";
+				c.drawImage(background, 0, 0, 1152, 648);
+
+				if (logoZoom == true && introWidth < 800){
+					c.fillStyle = "rgba(0,0,0,0.5)";
+					c.fillRect(0, 20, introWidth, 195);
+
+					introWidth += 10;
+				}
+				else if (introWidth >= 800){
+					gameState = "mainmenu";
+				}
+
+				gameLogo1.draw();
+			}
+			else if (gameState == "mainmenu"){
+				var background = new Image();
+				background.src = "mainmenubg.png";
+				c.drawImage(background, 0, 0, 1152, 648);
+
+				c.fillStyle = "rgba(0,0,0,0.5)";
+				c.fillRect(0, 20, 800, 195);
+
+				var gameLogo = new Image();
+				gameLogo.src = "ANIME.png";
+				c.drawImage(gameLogo, 205, 20, 400, 200);
+				
+				trainingBtn.draw();
+
+				if (isOnTrainingBtn == false){
+					c.font = "24px Impact";
+					c.fillStyle = "goldenrod";
+					c.fillText("Training Mode", 333, 400);
+				}
+				else if (isOnTrainingBtn == true){
+					c.font = "28px Impact";
+					c.fillStyle = "goldenrod";
+					c.fillText("Training Mode", 322, 401);
+				}
+
+				versusBtn.draw();
+
+				if (isOnVersusBtn == false){
+					c.font = "24px Impact";
+					c.fillStyle = "goldenrod";
+					c.fillText("Versus Mode", 340, 500);
+				}
+				else if (isOnVersusBtn == true){
+					c.font = "28px Impact";
+					c.fillStyle = "goldenrod";
+					c.fillText("Versus Mode", 330, 501);
+				}
+
+				howToPlayBtn.draw();
+
+				if (isOnHowToPlayBtn == false){
+					c.font = "24px Impact";
+					c.fillStyle = "goldenrod";
+					c.fillText("How To Play", 345, 301);
+				}
+				else if (isOnHowToPlayBtn == true){
+					c.font = "28px Impact";
+					c.fillStyle = "goldenrod";
+					c.fillText("How To Play", 334, 302);
+				}
+
+				if (showInstructions == true){
+					c.fillStyle = "rgba(245, 72, 29, 0.8)";
+					c.fillRect(155, 100, 500, 400);
+
+					xbutton.draw();
+
+					c.fillStyle = "black";
+					c.font = "24px Calibri";
+					c.fillText("Player 1 Controls", 165, 130);
+					c.fillText("Player 2 Controls", 385, 130);
+
+					c.font = "12px Calibri";
+					c.fillText("\"W\" to jump", 165, 160);
+					c.fillText("\"A\" to move left", 165, 175);
+					c.fillText("\"D\" to move right", 165, 190);
+					c.fillText("\"F\" to punch (select in main menu)", 165, 205);
+					c.fillText("\"G\" to blast/send projectile", 165, 220);
+					c.fillText("\"H\" to grab", 165, 235);
+					c.fillText("\"Shift\" to block", 165, 250);
+
+					c.fillText("\"Up arrow key\" to jump", 385, 160);
+					c.fillText("\"Left arrow key\" to move left", 385, 175);
+					c.fillText("\"Right arrow key\" to move right", 385, 190);
+					c.fillText("\"O\" to punch (select in main menu)", 385, 205);
+					c.fillText("\"P\" to blast/send projectile", 385, 220);
+					c.fillText("\"[\" to grab", 385, 235);
+					c.fillText("\"I\" to block", 385, 250);
+
+					c.font = "12px Calibri";
+					c.fillText("\"Backspace\" to go back (both players)", 295, 275);
+
+					c.font = "36px Impact";
+					c.fillStyle = "orange";
+					c.fillText("Fight your opponent on a floating", 165, 320);
+					c.fillText("battle arena. First to knock their", 165, 370);
+					c.fillText("opponent off 3 times wins!", 165, 420);
+				}
+
+				p2cursor.draw();
+				p1cursor.draw();
+			}
+			else if (gameState == "charselecttraining"){
+				var background = new Image();
+				background.src = "mainmenubg.png";
+				c.drawImage(background, 0, 0, 1152, 648);
+				
+				gokuCharSelect.draw();
+				narutoCharSelect.draw();
+
+				var gokuText1 = new Image();
+				gokuText1.src = "gokutext1.png";
+				c.drawImage(gokuText1, 100, 520, 200, 30);
+
+				var gokuText2 = new Image();
+				gokuText2.src = "gokutext2.png";
+				c.drawImage(gokuText2, 150, 550, 100, 30);
+
+				var narutoText1 = new Image();
+				narutoText1.src = "narutotext1.png";
+				c.drawImage(narutoText1, 450, 520, 300, 30);
+
+				var narutoText2 = new Image();
+				narutoText2.src = "narutotext2.png";
+				c.drawImage(narutoText2, 535, 550, 100, 30);
+
+				c.fillStyle = "skyblue";
+				c.fillRect(219, 23, 375, 36);
+				c.font = "36px Impact";
+				c.fillStyle = "red";
+				c.fillText("SELECT YOUR CHARACTER", 230, 55);
+
+				if (p1SelectedChar != ""){
+					var p1marker = new Image();
+					p1marker.src = "p1marker.png";
+					c.drawImage(p1marker, p1markerX, p1markerY, 70, 70);
+				}
+
+				if (p2SelectedChar != ""){
+					var p2marker = new Image();
+					p2marker.src = "cpumarker.png";
+					c.drawImage(p2marker, p2markerX, p2markerY, 70, 70);
+				}
+
+				if (p1SelectedChar != "" && p2SelectedChar != ""){
+					var pressenter = new Image();
+					pressenter.src = "pressenter.png";
+					c.drawImage(pressenter, 200, 200, 435, 165);
+				}
+
+				if (p1SelectedChar == ""){
+					p1cursor.draw();
+				}
+				if (p2SelectedChar == ""){
+					cpucursor.draw();
+				}
+			}
+			else if (gameState == "charselectversus"){
+				var background = new Image();
+				background.src = "mainmenubg.png";
+				c.drawImage(background, 0, 0, 1152, 648);
+				
+				gokuCharSelect.draw();
+				narutoCharSelect.draw();
+
+				var gokuText1 = new Image();
+				gokuText1.src = "gokutext1.png";
+				c.drawImage(gokuText1, 100, 520, 200, 30);
+
+				var gokuText2 = new Image();
+				gokuText2.src = "gokutext2.png";
+				c.drawImage(gokuText2, 150, 550, 100, 30);
+
+				var narutoText1 = new Image();
+				narutoText1.src = "narutotext1.png";
+				c.drawImage(narutoText1, 450, 520, 300, 30);
+
+				var narutoText2 = new Image();
+				narutoText2.src = "narutotext2.png";
+				c.drawImage(narutoText2, 535, 550, 100, 30);
+
+				c.fillStyle = "skyblue";
+				c.fillRect(219, 23, 375, 36);
+				c.font = "36px Impact";
+				c.fillStyle = "red";
+				c.fillText("SELECT YOUR CHARACTER", 230, 55);
+
+				if (p1SelectedChar != ""){
+					var p1marker = new Image();
+					p1marker.src = "p1marker.png";
+					c.drawImage(p1marker, p1markerX, p1markerY, 70, 70);
+				}
+
+				if (p2SelectedChar != ""){
+					var p2marker = new Image();
+					p2marker.src = "p2marker.png";
+					c.drawImage(p2marker, p2markerX, p2markerY, 70, 70);
+				}
+
+				if (p1SelectedChar != "" && p2SelectedChar != ""){
+					var pressenter = new Image();
+					pressenter.src = "pressenter.png";
+					c.drawImage(pressenter, 200, 200, 435, 165);
+				}
+
+				if (p1SelectedChar == ""){
+					p1cursor.draw();
+				}
+				if (p2SelectedChar == ""){
+					p2cursor.draw();
+				}
+			}
+			else if (gameState == "playtraining"){
+				var backgroundImage = new Image();
+				backgroundImage.src = "background.png";
+				c.drawImage(backgroundImage, 0, 0, 800, 600);
+
+				mainPlatform.draw();
+				for (var i=0; i<projArray1.length; i++){
+					projArray1[i].draw();
+				}
+				for (var i=0; i<projArray2.length; i++){
+					projArray2[i].draw();
+				}
+
+				var charIcon = new Image();
+				charIcon.src = "charIcon.png";
+				c.drawImage(charIcon, 200, 515, 150, 75);
+				if (player1.char == "goku"){
+					var char = new Image();
+					char.src = "gokuicon.png";
+					c.drawImage(char, 212, 527, 50, 50);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Goku", 285, 580, 50, 25);
+				}
+				else if (player1.char == "naruto"){
+					var char = new Image();
+					char.src = "narutoicon.png";
+					c.drawImage(char, 216, 525, 40, 58);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Naruto", 285, 580, 50, 25);
+				}
+
+				if (player1.damage >= 0 && player1.damage < 25){
+					c.fillStyle = "white";
+				}
+				else if (player1.damage >= 25 && player1.damage < 50){
+					c.fillStyle = "lightpink";
+				}
+				else if (player1.damage >= 50 && player1.damage < 75){
+					c.fillStyle = "red";
+				}
+				else if (player1.damage >= 75 && player1.damage < 100){
+					c.fillStyle = "darkred";
+				}
+				else if (player1.damage >= 100){
+					c.fillStyle = "purple";
+				}
+				c.font = "48px Impact";
+				c.fillText(player1.damage + "%", 300, 565, 50, 50);
+
+				var charIcon2 = new Image();
+				charIcon2.src = "charIcon3.png";
+				c.drawImage(charIcon2, 425, 515, 150, 75);
+				if (cpu.char == "goku"){
+					var char2 = new Image();
+					char2.src = "gokuicon.png";
+					c.drawImage(char2, 437, 527, 50, 50);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Goku", 510, 580, 50, 25);
+				}
+				else if (cpu.char == "naruto"){
+					var char2 = new Image();
+					char2.src = "narutoicon.png";
+					c.drawImage(char2, 442, 525, 40, 58);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Naruto", 510, 580, 50, 25);
+				}
+
+				if (cpu.damage >= 0 && cpu.damage < 25){
+					c.fillStyle = "white";
+				}
+				else if (cpu.damage >= 25 && cpu.damage < 50){
+					c.fillStyle = "lightpink";
+				}
+				else if (cpu.damage >= 50 && cpu.damage < 75){
+					c.fillStyle = "red";
+				}
+				else if (cpu.damage >= 75 && cpu.damage < 100){
+					c.fillStyle = "darkred";
+				}
+				else if (cpu.damage >= 100){
+					c.fillStyle = "purple";
+				}
+				c.font = "48px Impact";
+				c.fillText(cpu.damage + "%", 525, 565, 50, 50);
+
+				var p1Arrow = new Image();
+				p1Arrow.src = "charredarrow.png";
+				c.drawImage(p1Arrow, player1.x + (player1.width/2) - 12.5, player1.y - 25, 25, 25);
+
+				var p2Arrow = new Image();
+				p2Arrow.src = "chargrayarrow.png";
+				c.drawImage(p2Arrow, cpu.x + (cpu.width/2) - 12.5, cpu.y - 25, 25, 25);
+
+				if (isKo1 == false){
+					if (offScreen1Up == true){
+						if (player1.x > 745){
+							c.drawImage(marker1Up, 745, 0, 55, 45);
+						}
+						else if (player1.x < 0){
+							c.drawImage(marker1Up, 0, 0, 55, 45);
+						}
+						else{
+							c.drawImage(marker1Up, player1.x, 0, 55, 45);
+						}
+					}
+					if (offScreen1Right == true){
+						c.drawImage(marker1Right, 755, player1.y, 45, 55);
+					}
+					if (offScreen1Left == true){
+						c.drawImage(marker1Left, 0, player1.y, 45, 55);
+					}
+					if (offScreen1Down == true){
+						if (player1.x > 745){
+							c.drawImage(marker1Down, 745, 555, 55, 45);
+						}
+						else if (player1.x < 0){
+							c.drawImage(marker1Down, 0, 555, 55, 45);
+						}
+						else{
+							c.drawImage(marker1Down, player1.x, 555, 55, 45);
+						}
+					}
+				}
+				else if (isKo1 == true){
+					if (ko1Up == true){
+						if (player1.x > 745){
+							c.drawImage(koImage, 800-112.5, 0, 112.5, 56.25);
+						}
+						else if (player1.x < 0){
+							c.drawImage(koImage, 0, 0, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, player1.x - 30, 0, 112.5, 56.25);
+						}
+					}
+					if (ko1Right == true){
+						c.drawImage(koImage, 800-112.5, player1.y, 112.5, 56.25);
+					}
+					if (ko1Left == true){
+						c.drawImage(koImage, 0, player1.y, 112.5, 56.25);
+					}
+					if (ko1Down == true){
+						if (player1.x > 745){
+							c.drawImage(koImage, 800-112.5, 600-56.25, 112.5, 56.25);
+						}
+						else if (player1.x < 0){
+							c.drawImage(koImage, 0, 600-56.25, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, player1.x - 30, 600-56.25, 112.5, 56.25);
+						}
+					}
+				}
+
+				if (isKo2 == false){
+					if (offScreen3Up == true){
+						if (cpu.x > 745){
+							c.drawImage(marker3Up, 745, 0, 55, 45);
+						}
+						else if (cpu.x < 0){
+							c.drawImage(marker3Up, 0, 0, 55, 45);
+						}
+						else{
+							c.drawImage(marker3Up, cpu.x, 0, 55, 45);
+						}
+					}
+					if (offScreen3Right == true){
+						c.drawImage(marker3Right, 755, cpu.y, 45, 55);
+					}
+					if (offScreen3Left == true){
+						c.drawImage(marker3Left, 0, cpu.y, 45, 55);
+					}
+					if (offScreen3Down == true){
+						if (cpu.x > 745){
+							c.drawImage(marker3Down, 745, 555, 55, 45);
+						}
+						else if (cpu.x < 0){
+							c.drawImage(marker3Down, 0, 555, 55, 45);
+						}
+						else{
+							c.drawImage(marker3Down, cpu.x, 555, 55, 45);
+						}
+					}
+				}
+				else if (isKo2 == true){
+					if (ko2Up == true){
+						if (cpu.x > 745){
+							c.drawImage(koImage, 800-112.5, 0, 112.5, 56.25);
+						}
+						else if (cpu.x < 0){
+							c.drawImage(koImage, 0, 0, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, cpu.x - 30, 0, 112.5, 56.25);
+						}
+					}
+					if (ko2Right == true){
+						c.drawImage(koImage, 800-112.5, cpu.y, 112.5, 56.25);
+					}
+					if (ko2Left == true){
+						c.drawImage(koImage, 0, cpu.y, 112.5, 56.25);
+					}
+					if (ko2Down == true){
+						if (cpu.x > 745){
+							c.drawImage(koImage, 800-112.5, 600-56.25, 112.5, 56.25);
+						}
+						else if (cpu.x < 0){
+							c.drawImage(koImage, 0, 600-56.25, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, cpu.x - 30, 600-56.25, 112.5, 56.25);
+						}
+					}
+				}
+
+				if (player1.lives == 3){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 270, 585, 10, 8);
+					c.drawImage(heart, 285, 585, 10, 8);
+					c.drawImage(heart, 300, 585, 10, 8);
+				}
+				else if (player1.lives == 2){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 270, 585, 10, 8);
+					c.drawImage(heart, 285, 585, 10, 8);
+				}
+				else if (player1.lives == 1){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 270, 585, 10, 8);
+				}
+
+				if (cpu.lives == 3){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 495, 585, 10, 8);
+					c.drawImage(heart, 510, 585, 10, 8);
+					c.drawImage(heart, 525, 585, 10, 8);
+				}
+				else if (cpu.lives == 2){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 495, 585, 10, 8);
+					c.drawImage(heart, 510, 585, 10, 8);
+				}
+				else if (cpu.lives == 1){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 495, 585, 10, 8);
+				}
+
+				c.font = "24px Calibri";
+				c.fillStyle = "black";
+				c.fillText("<- ", 600, 25);
+				if (cpuState == "P2"){
+					c.fillText(cpuState, 685, 25);
+				}
+				else if (cpuState == "Punch"){
+					c.fillText(cpuState, 669, 25);
+				}
+				else if (cpuState == "Blast"){
+					c.fillText(cpuState, 673, 25);
+				}
+				else if (cpuState == "Grab"){
+					c.fillText(cpuState, 673, 25);
+				}
+				else if (cpuState == "Block"){
+					c.fillText(cpuState, 670, 25);
+				}
+				else if (cpuState == "Jump"){
+					c.fillText(cpuState, 670, 25);
+				}
+				c.fillText(" ->", 765, 25);
+				c.fillStyle = "red";
+				c.font = "24px Arial";
+				c.fillText("Z", 602, 50);
+				c.fillText("C", 773, 50);
+
+				player1.draw();
+				cpu.draw();
+			}
+			else if (gameState == "playversus"){
+				var backgroundImage = new Image();
+				backgroundImage.src = "background.png";
+				c.drawImage(backgroundImage, 0, 0, 800, 600);
+
+				mainPlatform.draw();
+				for (var i=0; i<projArray1.length; i++){
+					projArray1[i].draw();
+				}
+				for (var i=0; i<projArray2.length; i++){
+					projArray2[i].draw();
+				}
+
+				var charIcon = new Image();
+				charIcon.src = "charIcon.png";
+				c.drawImage(charIcon, 200, 515, 150, 75);
+				if (player1.char == "goku"){
+					var char = new Image();
+					char.src = "gokuicon.png";
+					c.drawImage(char, 212, 527, 50, 50);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Goku", 285, 580, 50, 25)
+				}
+				else if (player1.char == "naruto"){
+					var char = new Image();
+					char.src = "narutoicon.png";
+					c.drawImage(char, 216, 525, 40, 58);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Naruto", 285, 580, 50, 25);
+				}
+
+				if (player1.damage >= 0 && player1.damage < 25){
+					c.fillStyle = "white";
+				}
+				else if (player1.damage >= 25 && player1.damage < 50){
+					c.fillStyle = "lightpink";
+				}
+				else if (player1.damage >= 50 && player1.damage < 75){
+					c.fillStyle = "red";
+				}
+				else if (player1.damage >= 75 && player1.damage < 100){
+					c.fillStyle = "darkred";
+				}
+				else if (player1.damage >= 100){
+					c.fillStyle = "purple";
+				}
+				c.font = "48px Impact";
+				c.fillText(player1.damage + "%", 300, 565, 50, 50);
+
+				var charIcon2 = new Image();
+				charIcon2.src = "charIcon2.png";
+				c.drawImage(charIcon2, 425, 515, 150, 75);
+				if (player2.char == "goku"){
+					var char2 = new Image();
+					char2.src = "gokuicon.png";
+					c.drawImage(char2, 437, 527, 50, 50);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Goku", 510, 580, 50, 25)
+				}
+				else if (player2.char == "naruto"){
+					var char2 = new Image();
+					char2.src = "narutoicon.png";
+					c.drawImage(char2, 442, 525, 40, 58);
+					c.font = "12px Calibri";
+					c.fillStyle = "white";
+					c.fillText("Naruto", 510, 580, 50, 25);
+				}
+
+				if (player2.damage >= 0 && player2.damage < 25){
+					c.fillStyle = "white";
+				}
+				else if (player2.damage >= 25 && player2.damage < 50){
+					c.fillStyle = "lightpink";
+				}
+				else if (player2.damage >= 50 && player2.damage < 75){
+					c.fillStyle = "red";
+				}
+				else if (player2.damage >= 75 && player2.damage < 100){
+					c.fillStyle = "darkred";
+				}
+				else if (player2.damage >= 100){
+					c.fillStyle = "purple";
+				}
+				c.font = "48px Impact";
+				c.fillText(player2.damage + "%", 525, 565, 50, 50);
+
+				var p1Arrow = new Image();
+				p1Arrow.src = "charredarrow.png";
+				c.drawImage(p1Arrow, player1.x + (player1.width/2) - 12.5, player1.y - 25, 25, 25);
+
+				var p2Arrow = new Image();
+				p2Arrow.src = "charbluearrow.png";
+				c.drawImage(p2Arrow, player2.x + (player2.width/2) - 12.5, player2.y - 25, 25, 25);
+
+				if (isKo1 == false){
+					if (offScreen1Up == true){
+						if (player1.x > 745){
+							c.drawImage(marker1Up, 745, 0, 55, 45);
+						}
+						else if (player1.x < 0){
+							c.drawImage(marker1Up, 0, 0, 55, 45);
+						}
+						else{
+							c.drawImage(marker1Up, player1.x, 0, 55, 45);
+						}
+					}
+					if (offScreen1Right == true){
+						c.drawImage(marker1Right, 755, player1.y, 45, 55);
+					}
+					if (offScreen1Left == true){
+						c.drawImage(marker1Left, 0, player1.y, 45, 55);
+					}
+					if (offScreen1Down == true){
+						if (player1.x > 745){
+							c.drawImage(marker1Down, 745, 555, 55, 45);
+						}
+						else if (player1.x < 0){
+							c.drawImage(marker1Down, 0, 555, 55, 45);
+						}
+						else{
+							c.drawImage(marker1Down, player1.x, 555, 55, 45);
+						}
+					}
+				}
+				else if (isKo1 == true){
+					if (ko1Up == true){
+						if (player1.x > 745){
+							c.drawImage(koImage, 800-112.5, 0, 112.5, 56.25);
+						}
+						else if (player1.x < 0){
+							c.drawImage(koImage, 0, 0, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, player1.x - 30, 0, 112.5, 56.25);
+						}
+					}
+					if (ko1Right == true){
+						c.drawImage(koImage, 800-112.5, player1.y, 112.5, 56.25);
+					}
+					if (ko1Left == true){
+						c.drawImage(koImage, 0, player1.y, 112.5, 56.25);
+					}
+					if (ko1Down == true){
+						if (player1.x > 745){
+							c.drawImage(koImage, 800-112.5, 600-56.25, 112.5, 56.25);
+						}
+						else if (player1.x < 0){
+							c.drawImage(koImage, 0, 600-56.25, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, player1.x - 30, 600-56.25, 112.5, 56.25);
+						}
+					}
+				}
+
+				if (isKo2 == false){
+					if (offScreen2Up == true){
+						if (player2.x > 745){
+							c.drawImage(marker2Up, 745, 0, 55, 45);
+						}
+						else if (player2.x < 0){
+							c.drawImage(marker2Up, 0, 0, 55, 45);
+						}
+						else{
+							c.drawImage(marker2Up, player2.x, 0, 55, 45);
+						}
+					}
+					if (offScreen2Right == true){
+						c.drawImage(marker2Right, 755, player2.y, 45, 55);
+					}
+					if (offScreen2Left == true){
+						c.drawImage(marker2Left, 0, player2.y, 45, 55);
+					}
+					if (offScreen2Down == true){
+						if (player2.x > 745){
+							c.drawImage(marker2Down, 745, 555, 55, 45);
+						}
+						else if (player2.x < 0){
+							c.drawImage(marker2Down, 0, 555, 55, 45);
+						}
+						else{
+							c.drawImage(marker2Down, player2.x, 555, 55, 45);
+						}
+					}
+				}
+				else if (isKo2 == true){
+					if (ko2Up == true){
+						if (player2.x > 745){
+							c.drawImage(koImage, 800-112.5, 0, 112.5, 56.25);
+						}
+						else if (player2.x < 0){
+							c.drawImage(koImage, 0, 0, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, player2.x - 30, 0, 112.5, 56.25);
+						}
+					}
+					if (ko2Right == true){
+						c.drawImage(koImage, 800-112.5, player2.y, 112.5, 56.25);
+					}
+					if (ko2Left == true){
+						c.drawImage(koImage, 0, player2.y, 112.5, 56.25);
+					}
+					if (ko2Down == true){
+						if (player2.x > 745){
+							c.drawImage(koImage, 800-112.5, 600-56.25, 112.5, 56.25);
+						}
+						else if (player2.x < 0){
+							c.drawImage(koImage, 0, 600-56.25, 112.5, 56.25);
+						}
+						else{
+							c.drawImage(koImage, player2.x - 30, 600-56.25, 112.5, 56.25);
+						}
+					}
+				}
+
+				if (player1.lives == 3){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 270, 585, 10, 8);
+					c.drawImage(heart, 285, 585, 10, 8);
+					c.drawImage(heart, 300, 585, 10, 8);
+				}
+				else if (player1.lives == 2){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 270, 585, 10, 8);
+					c.drawImage(heart, 285, 585, 10, 8);
+				}
+				else if (player1.lives == 1){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 270, 585, 10, 8);
+				}
+
+				if (player2.lives == 3){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 495, 585, 10, 8);
+					c.drawImage(heart, 510, 585, 10, 8);
+					c.drawImage(heart, 525, 585, 10, 8);
+				}
+				else if (player2.lives == 2){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 495, 585, 10, 8);
+					c.drawImage(heart, 510, 585, 10, 8);
+				}
+				else if (player2.lives == 1){
+					var heart = new Image();
+					heart.src = "heart.png";
+					c.drawImage(heart, 495, 585, 10, 8);
+				}
+
+				player1.draw();
+				player2.draw();
+			}
+			else if (gameState == "p1win"){
+				if (player1.char == "goku"){
+					gokuwinbg.draw();
+					gokuwinaura.draw();
+					gokuwinpose.draw();
+				}
+				else if (player1.char == "naruto"){
+					narutowinbg.draw();
+					narutowinanimation.draw();
+				}
+
+				p1win.draw();
+				c.font = "24px Calibri";
+				c.fillStyle = "#95ea8a";
+
+				if (flashingTimer.isReady()){
+					if (txtVisible == true){
+						txtVisible = false;
+					}
+					else if (txtVisible == false){
+						txtVisible = true;
+					}
+				}
+
+				if (txtVisible == true){
+					c.fillText("Press [Backspace] to return to the main menu", 350, 575);
+				}
+			}
+			else if (gameState == "p2win"){
+				if (player2.char == "goku"){
+					gokuwinbg.draw();
+					gokuwinaura.draw();
+					gokuwinpose.draw();
+				}
+				else if (player2.char == "naruto"){
+					narutowinbg.draw();
+					narutowinanimation.draw();
+				}
+
+				p2win.draw();
+				c.font = "24px Calibri";
+				c.fillStyle = "#95ea8a";
+
+				if (flashingTimer.isReady()){
+					if (txtVisible == true){
+						txtVisible = false;
+					}
+					else if (txtVisible == false){
+						txtVisible = true;
+					}
+				}
+
+				if (txtVisible == true){
+					c.fillText("Press [Backspace] to return to the main menu", 350, 575);
+				}
+			}
+		}
+
+
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>

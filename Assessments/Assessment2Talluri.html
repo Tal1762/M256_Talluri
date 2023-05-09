@@ -1,0 +1,53 @@
+<html>
+<head>
+    <title>Assessment 2</title>
+    <style>
+        body{
+            background-color: cornsilk;
+            color: fuchsia;
+            font-size: 24px;
+            font-family: Geneva;
+        }
+    </style>
+
+    <script>
+        function randomColor(){
+            // Generates a random number between 1 and 4
+            var randomInt = Math.floor((Math.random() * 4) + 1);
+
+            // Prepares the "color" variable to later be associated with randomInt
+            var color = "";
+
+            // Associates the appropriate color variable based on the random integer
+            if (randomInt == 1){
+                color = "Blue";
+            }
+            else if (randomInt == 2){
+                color = "Green";
+            }
+            else if (randomInt == 3){
+                color = "Red";
+            }
+            else{
+                color = "Yellow";
+            }
+
+            // Puts the random integer into the textbox,
+            // the color name into the div, and
+            // changes the background color to match
+            idTxtRandInt.value = randomInt;
+            idDivColor.innerHTML = color;
+            document.body.style.backgroundColor = color;
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        <input type="text" id="idTxtRandInt">
+        <br>
+        <div id="idDivColor"></div>
+        <input type="button" value="Generate Random Color" onClick="randomColor()">
+    </form>
+</body>
+</html>

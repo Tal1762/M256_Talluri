@@ -1,0 +1,41 @@
+<html>
+<head>
+    <title> Table </title>
+
+    <style>
+        table{
+            border: 1px solid black;
+        }
+        th{
+            border: 1px dashed red;
+        }
+        td{
+            border: 1px dotted blue;
+        }
+    </style>
+
+    <script>
+        function showItems(){
+            var output = "<table>";
+
+            output += "<tr> <th>Item</th> <th>Price</th> </tr>";
+            output += "<tr> <td>Dog</td> <td>$200</td> </tr>";
+            output += "<tr> <td>Cats</td> <td>$150</td> </tr>";
+
+            output += "</table>";
+
+            idTableItems.innerHTML = output;
+        }
+    </script>
+</head>
+
+<body>
+    <input type="button" value="Show Items" onClick="showItems()">
+
+    <table id="idTableItems">
+        <tr> <th>Item</th> <th>Price</th> </tr>
+        <tr> <td>Dragon</td> <td>$100</td> </tr>
+        <tr> <td>Unicorn</td> <td>$40</td> </tr>
+    </table>
+</body>
+</html>

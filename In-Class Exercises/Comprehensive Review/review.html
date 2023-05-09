@@ -1,0 +1,85 @@
+<html>
+<head>
+    <title>Review</title>
+    <link rel="stylesheet" type="text/css" href="reviewStyleSheet.css">
+
+    <script>
+        var clickCount = 0;
+
+        function exTextAlert(){
+            var text1 = idTxtBox1.value;
+            var text2 = idTxtBox2.value;
+            var output = "";
+            if (text1 == text2){
+                output = "Oh hey, you typed in the same thing twice: " + text1;
+            }
+            else{
+                output = "Your two words are " + text1 + " and " + text2;
+                output += ". What connection do these two words have?";
+            }
+            window.alert(output);
+        }
+
+        function exCalcOutput(){
+            var num1 = Number(idTxtNum1.value);
+            var num2 = Number(idTxtNum2.value);
+            var sum = num1 + num2;
+            var output = "When you add " + num1 + " and ";
+            output += num2 + " together, you get " + sum + "!!";
+            idDivOutput.innerHTML = output;
+        }
+
+        function rollOverEffect(){
+            idBtnAddition.value = "Success! On to Checkpoint C!"
+        }
+
+        function checkWordLength(word, length){
+            if (word.length == length){
+                var output = "Whoa, are you a mindreader? The word " + word + " is exactly " + length + " characters long!";
+                clickCount += 1;
+                idDivClickCount.innerHTML = "Wow, that took " + clickCount + " clicks!";
+                clickCount = 0;
+                return output
+            }
+            else{
+                var output = "Darn, " + word + " isn't " + length + " characters long. Try again!";
+                clickCount += 1;
+                idDivClickCount.innerHTML = "";
+                return output
+            }
+        }
+        
+        function exUsingParameters(){
+            var text = idTxtBox1.value;
+            var num = Number(idTxtNum1.value);
+            output = checkWordLength(text, num);
+            idDivOutput.innerHTML = output;
+            idTxtNum1.value = Math.floor((Math.random() * 50) + 1);
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Enter a word:
+        <input type="text" id="idTxtBox1">
+        <br>
+        Enter another word:
+        <input type="text" id="idTxtBox2">
+        <br>
+        Enter a number:
+        <input type="text" id="idTxtNum1">
+        <br>
+        Enter another number:
+        <input type="text" id="idTxtNum2">
+        <br>
+        <input type="button" value="Alert Message" onClick="exTextAlert()">
+        <input type="button" id="idBtnAddition" value="Output Calculation" onClick="exCalcOutput()" onMouseOver="rollOverEffect()">
+        <input type=button value="Check Word Length" onClick="exUsingParameters()">
+        <br><br>
+        <div id="idDivOutput"></div>
+        <br>
+        <div id="idDivClickCount"></div>
+    </form>
+</body>
+</html>

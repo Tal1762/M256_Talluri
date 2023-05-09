@@ -1,0 +1,63 @@
+<html>
+<head>
+    <title> Assessment 4 </title>
+
+    <script>
+        var randIntArray = [];
+
+        function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+        function onLoadFxn(){
+            var num = 0;
+
+            for (i=0; i<100; i++){
+                num = getRandInt(1000, 2000);
+                randIntArray.push(num);
+            }
+            console.log(randIntArray);
+        }
+
+        function performTask(){
+            var output = "The randomly generated numbers are: ";
+
+            for (i=0; i<100; i++){
+                output += "<br>" + randIntArray[i];
+            }
+
+            idDivOutput.innerHTML = output;
+
+            var output2 = "The minimum value is ";
+
+            var sortDone;
+            var arraySize = randIntArray.length;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arraySize-1; i++){
+                    if (randIntArray[i] > randIntArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = randIntArray[i];
+                        randIntArray[i] = randIntArray[i+1];
+                        randIntArray[i+1] = temp;
+                    }
+                }
+            } while (sortDone == false)
+
+            output2 += randIntArray[0] + ", and the maximum value is ";
+            output2 += randIntArray[arraySize-1] + ".";
+
+            window.alert(output2);
+        }
+    </script>
+</head>
+
+<body onLoad="onLoadFxn()">
+    <input type="button" value="Perform Function" onClick="performTask()">
+    <div id="idDivOutput"></div>
+</body>
+</html>

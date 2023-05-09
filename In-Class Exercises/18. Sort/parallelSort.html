@@ -1,0 +1,147 @@
+<html>
+<head>
+    <title>Parallel Sort</title>
+
+    <script>
+        var firstNameArray = ["Bob", "Dave", "Alice", "Carol"];
+        var ageArray = [17, 13, 16, 20];
+        var lastNameArray = ["Davidson", "Smith", "Brown", "Brown"];
+
+        function displayList(){
+            var output = "Here is a list of everyone's name and age: <br>";
+            var arrayLength = firstNameArray.length;
+            for (var i=0; i<arrayLength; i++){
+                output += firstNameArray[i] + ", age " + ageArray[i] + "<br>";
+            }
+            
+            idDivOutput.innerHTML = output;
+        }
+
+        function displayAlphabeticalList(){
+            var output = "Here is a list of everyone's name and age: <br>";
+            var arrayLength = firstNameArray.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (firstNameArray[i] > firstNameArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = firstNameArray[i];
+                        firstNameArray[i] = firstNameArray[i+1];
+                        firstNameArray[i+1] = temp;
+
+                        var temp2 = ageArray[i];
+                        ageArray[i] = ageArray[i+1];
+                        ageArray[i+1] = temp2;
+
+                        var temp3 = lastNameArray[i];
+                        lastNameArray[i] = lastNameArray[i+1];
+                        lastNameArray[i+1] = temp3;
+                    }
+
+                }
+            } while (sortDone == false)
+
+            for (var i=0; i<arrayLength; i++){
+                output += firstNameArray[i] + ", age " + ageArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+        }
+
+        function displayLastNameList(){
+            var output = "Here is a list of everyone's name and age: <br>";
+            var arrayLength = lastNameArray.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (lastNameArray[i] > lastNameArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = firstNameArray[i];
+                        firstNameArray[i] = firstNameArray[i+1];
+                        firstNameArray[i+1] = temp;
+
+                        var temp2 = ageArray[i];
+                        ageArray[i] = ageArray[i+1];
+                        ageArray[i+1] = temp2;
+
+                        var temp3 = lastNameArray[i];
+                        lastNameArray[i] = lastNameArray[i+1];
+                        lastNameArray[i+1] = temp3;
+                    }
+
+                }
+            } while (sortDone == false)
+
+            console.log(firstNameArray, ageArray, lastNameArray);
+
+            for (var i=0; i<arrayLength; i++){
+                output += lastNameArray[i] + ", " + firstNameArray[i] + ", age " + ageArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+        }
+
+        function displayAgeList(){
+            var output = "Here is a list of everyone's name and age: <br>";
+            var arrayLength = ageArray.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (ageArray[i] > ageArray[i+1]){
+                        sortDone = false;
+                        
+                        var temp = firstNameArray[i];
+                        firstNameArray[i] = firstNameArray[i+1];
+                        firstNameArray[i+1] = temp;
+
+                        var temp2 = ageArray[i];
+                        ageArray[i] = ageArray[i+1];
+                        ageArray[i+1] = temp2;
+
+                        var temp3 = lastNameArray[i];
+                        lastNameArray[i] = lastNameArray[i+1];
+                        lastNameArray[i+1] = temp3;
+                    }
+
+                }
+            } while (sortDone == false)
+
+            for (var i=0; i<arrayLength; i++){
+                output += lastNameArray[i] + ", " + firstNameArray[i] + ", age " + ageArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+        }
+
+        function showTxtBox(){
+            if (idDivOutput.innerHTML == "Type Something: <input type=\"text\" id=\"idTxtShow\">"){
+                idDivOutput.innerHTML = "";
+            }
+            else{
+                idDivOutput.innerHTML = "Type Something: <input type='text' id='idTxtShow'>";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <input type="button" value="Display List" onClick="displayList()">
+    <input type="button" value="Show List By First Name" onClick="displayAlphabeticalList()">
+    <input type="button" value="Show List By Last Name" onClick="displayLastNameList()">
+    <input type="button" value="Show List By Age" onClick="displayAgeList()">
+    <input type="button" value="Show TxtBox" onClick="showTxtBox()">
+    <br><br>
+    <div id="idDivOutput"></div>
+</body>
+</html>

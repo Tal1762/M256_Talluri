@@ -1,0 +1,69 @@
+<html>
+<head>
+    <script>
+        // Define the fruit class, which represents a fruit object.
+        // We start with 3 attributes:
+        //             1. name (string)
+        //             2. color (string)
+        //             3. edible (bool)
+        class fruitClass{
+            constructor(fruitName, fruitColor, fruitEdible, fruitWeight){
+                // Use the passed-in parameters to define this particular object's attributes
+                this.name = fruitName;
+                this.color = fruitColor;
+                this.edible = fruitEdible;
+                this.weight = fruitWeight;
+            }
+
+            // Define a method, alertInfo(), for a fruit object.
+            // This method alerts the object's attributes.
+            alertInfo(){
+                var output = "Name: " + this.name + "\n";
+                output += "Color: " + this.color + "\n";
+                output += "Edible: " + this.edible + "\n";
+                output += "Weight: " + this.weight;
+
+                alert(output);
+            }
+
+            isHeavy(){
+                if (this.weight > 100){
+                    alert("Heavy: " + true);
+                }
+                else{
+                    alert("Heavy: " + false);
+                }
+            }
+        }
+
+        // Create two fruit objects (Each one is an instance of the fruitClass)
+        var f1 = new fruitClass("Apple", "Red", true, 120);
+        var f2 = new fruitClass("Lemon", "Yellow", false, 80);
+        var f3 = new fruitClass("Grape", "Green", true, 20);
+
+        // This event handler function calls the alertInfo() method for f1
+        function showf1(){
+            f1.alertInfo();
+            f1.isHeavy();
+        }
+
+        // This event handler function calls the alertInfo() method for f2
+        function showf2(){
+            f2.alertInfo();
+            f2.isHeavy();
+        }
+
+        // This event handler function calls the alertInfo() method for f3
+        function showf3(){
+            f3.alertInfo();
+            f3.isHeavy();
+        }
+    </script>
+</head>
+
+<body>
+    <input type="button" value="Show f1" onClick="showf1()">
+    <input type="button" value="Show f2" onClick="showf2()">
+    <input type="button" value="Show f3" onClick="showf3()">
+</body>
+</html>

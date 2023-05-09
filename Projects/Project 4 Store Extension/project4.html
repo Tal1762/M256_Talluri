@@ -1,0 +1,376 @@
+<html>
+<head>
+    <title> The Store </title>
+    <link rel=stylesheet  type=text/css href="project4.css">
+
+    <script>
+        var games = ["Minecraft", "Roblox", "Among Us", "FNAF", "2K22"];
+        var prices = [50.99, 10.99, 69.99, 24.99, 19.99];
+        var descriptions = ["Use your creative imagination in a blocky world!", "Play many different games on one platform!",
+                             "Join a game with your friends!", "Try not to get jumpscared!", "A high-quality basketball game!"];
+        var images = ["minecraft.jpg", "roblox.jpg", "amongus.jpg", "FNAF.jpg", "2k22.jpg"];
+        var buttons = ["delete0", "delete1", "delete2", "delete3", "delete4"];
+        var consoles = ["Wii", "PlayStation 4", "Xbox", "PC", "PlayStation 5"];
+
+        function sortAZ(){
+            var arrayLength = games.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (games[i] > games[i+1]){
+                        sortDone = false;
+                        
+                        var temp = games[i];
+                        games[i] = games[i+1];
+                        games[i+1] = temp;
+
+                        var temp2 = prices[i];
+                        prices[i] = prices[i+1];
+                        prices[i+1] = temp2;
+
+                        var temp3 = descriptions[i];
+                        descriptions[i] = descriptions[i+1];
+                        descriptions[i+1] = temp3;
+
+                        var temp3 = images[i];
+                        images[i] = images[i+1];
+                        images[i+1] = temp3;
+
+                        var temp4 = consoles[i];
+                        consoles[i] = consoles[i+1];
+                        consoles[i+1] = temp4;
+                    }
+
+                }
+            } while (sortDone == false)
+            
+            showTable();
+        }
+
+        function sortZA(){
+            var arrayLength = games.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (games[i] < games[i+1]){
+                        sortDone = false;
+                        
+                        var temp = games[i];
+                        games[i] = games[i+1];
+                        games[i+1] = temp;
+
+                        var temp2 = prices[i];
+                        prices[i] = prices[i+1];
+                        prices[i+1] = temp2;
+
+                        var temp3 = descriptions[i];
+                        descriptions[i] = descriptions[i+1];
+                        descriptions[i+1] = temp3;
+
+                        var temp3 = images[i];
+                        images[i] = images[i+1];
+                        images[i+1] = temp3;
+
+                        var temp4 = consoles[i];
+                        consoles[i] = consoles[i+1];
+                        consoles[i+1] = temp4;
+                    }
+
+                }
+            } while (sortDone == false)
+            
+            showTable();
+        }
+
+        function sortLowHigh(){
+            var arrayLength = prices.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (prices[i] > prices[i+1]){
+                        sortDone = false;
+                        
+                        var temp = games[i];
+                        games[i] = games[i+1];
+                        games[i+1] = temp;
+
+                        var temp2 = prices[i];
+                        prices[i] = prices[i+1];
+                        prices[i+1] = temp2;
+
+                        var temp3 = descriptions[i];
+                        descriptions[i] = descriptions[i+1];
+                        descriptions[i+1] = temp3;
+
+                        var temp3 = images[i];
+                        images[i] = images[i+1];
+                        images[i+1] = temp3;
+
+                        var temp4 = consoles[i];
+                        consoles[i] = consoles[i+1];
+                        consoles[i+1] = temp4;
+                    }
+
+                }
+            } while (sortDone == false)
+            
+            showTable();
+        }
+
+        function sortHighLow(){
+            var arrayLength = prices.length;
+            var sortDone;
+
+            do{
+                sortDone = true;
+
+                for(var i=0; i<arrayLength-1; i++){
+                    if (prices[i] < prices[i+1]){
+                        sortDone = false;
+                        
+                        var temp = games[i];
+                        games[i] = games[i+1];
+                        games[i+1] = temp;
+
+                        var temp2 = prices[i];
+                        prices[i] = prices[i+1];
+                        prices[i+1] = temp2;
+
+                        var temp3 = descriptions[i];
+                        descriptions[i] = descriptions[i+1];
+                        descriptions[i+1] = temp3;
+
+                        var temp3 = images[i];
+                        images[i] = images[i+1];
+                        images[i+1] = temp3;
+
+                        var temp4 = consoles[i];
+                        consoles[i] = consoles[i+1];
+                        consoles[i+1] = temp4;
+
+                    }
+
+                }
+            } while (sortDone == false)
+            
+            showTable();
+        }
+
+        function showTable(){
+            var output = "<table>";
+            output += "<tr> <th>Item Name</th> <th>Price</th>";
+            output += "<th> Console </th>";
+            output += "<th>Description</th> <th>Image</th> <th>Purchase Game (Only 1)</th> </tr>";
+
+             
+            for(var i= 0; i < games.length; i++){
+                output += "<tr> <td>" + games[i] + "</td> <td>$" + prices[i] + "</td> <td>" + consoles[i] + " <td>";
+                output += descriptions[i] + "</td> <td>" + "<img src=\"" + images[i] + "\" width=100>" + "</td>";
+                output += "<td> <input type=\"button\" id=\"idBtn" + buttons[i] + "\"";
+                output += "value=\"Buy\" onClick=\"" + buttons[i] + "()\" </td> </tr>";
+            }
+             
+            output += "</table>";
+
+            idTableItems.innerHTML = output;
+        }
+
+        function delete0(){
+            var length = idTableItems.rows.length;
+            if (length == 6){
+                document.getElementById("idTableItems").deleteRow(1);
+                games.splice(0, 1);
+                prices.splice(0, 1);
+                images.splice(0, 1);
+                descriptions.splice(0, 1);
+                buttons.splice(0, 1);
+                consoles.splice(0, 1);
+            }
+            else{
+                window.alert("You have already reached the maximum purchases!");
+                return
+            }
+        }
+        function delete1(){
+            var length = idTableItems.rows.length;
+            if (length == 6){
+                document.getElementById("idTableItems").deleteRow(2);
+                games.splice(1, 1);
+                prices.splice(1, 1);
+                images.splice(1, 1);
+                descriptions.splice(1, 1);
+                buttons.splice(1, 1);
+                consoles.splice(1, 1);
+            }
+            else{
+                window.alert("You have already reached the maximum purchases!");
+                return
+            }
+        }
+        function delete2(){
+            var length = idTableItems.rows.length;
+            if (length == 6){
+                document.getElementById("idTableItems").deleteRow(3);
+                games.splice(2, 1);
+                prices.splice(2, 1);
+                images.splice(2, 1);
+                descriptions.splice(2, 1);
+                buttons.splice(2, 1);
+                consoles.splice(2, 1);
+            }
+            else{
+                window.alert("You have already reached the maximum purchases!");
+                return
+            }
+        }
+        function delete3(){
+            var length = idTableItems.rows.length;
+            if (length == 6){
+                document.getElementById("idTableItems").deleteRow(4);
+                games.splice(3, 1);
+                prices.splice(3, 1);
+                images.splice(3, 1);
+                descriptions.splice(3, 1);
+                buttons.splice(3, 1);
+                consoles.splice(3, 1);
+            }
+            else{
+                window.alert("You have already reached the maximum purchases!");
+                return
+            }
+        }
+        function delete4(){
+            var length = idTableItems.rows.length;
+            if (length == 6){
+                document.getElementById("idTableItems").deleteRow(5);
+                games.splice(4, 1);
+                prices.splice(4, 1);
+                images.splice(4, 1);
+                descriptions.splice(4, 1);
+                buttons.splice(4, 1);
+                consoles.splice(4, 1);
+            }
+            else{
+                window.alert("You have already reached the maximum purchases!");
+                return
+            }
+        }
+
+        function openPage(){
+            var output = "<html><head><title>About Us</title>";
+            output += "<style>wonky{font-size: 36px; color: pink;}</style></head>";
+            output += "<body><div>We sell video games. Our company was founded 23 hours ago.";
+            output += "When we first started our company, we wanted to enlighten new gamers ";
+            output += "with new games for them to enjoy, along with the lowest prices around.";
+            output += "<br><wonky> Providing content for people since 1 day ago!</wonky></div>"
+            output += "</body></html>";
+
+            var newWindow = window.open("","",width=250,height=250);
+            newWindow.document.write(output);
+        }
+
+        function showItemsWithName(){
+            var searchArray = [];
+
+            for (var i=0; i<games.length; i++){
+                var searchLength = idTxtSearchName.value.length;
+
+                if (idTxtSearchName.value.toLowerCase() == games[i].toLowerCase()){
+                    searchArray.push(i);
+                }
+                else if (idTxtSearchName.value.toLowerCase() == games[i].toLowerCase().slice(0, searchLength)){
+                    searchArray.push(i);
+                }
+                else{
+                    var subArray = games[i].split("");
+                    var output2 = "";
+
+                    for (var j=1; j<=games[i].length; j++){
+                        for (var k=j+1; k<=searchLength+j; k++){
+                            output2 += subArray[k-2];
+                        }
+                        console.log(output2);
+                        if (idTxtSearchName.value.toLowerCase() == output2.toLowerCase()){
+                            searchArray.push(i);
+                        }
+                        output2 = "";
+                    }
+                }
+            }
+
+            showSearchResults(searchArray);
+        }
+
+        function showItemsWithPrice(){
+            var searchArray = [];
+
+            for (var i=0; i<prices.length; i++){
+                if (Number(idTxtMinPrice.value) <= prices[i] && 
+                    Number(idTxtMaxPrice.value) >= prices[i]){
+                    searchArray.push(i);
+                }
+            }
+
+            showSearchResults(searchArray);
+        }
+
+        function showSearchResults(inputArray){
+            var output = "<table>";
+            output += "<tr> <th>Item Name</th> <th>Price</th>";
+            output += "<th> Console </th>";
+            output += "<th>Description</th> <th>Image</th> <th>Purchase Game (Only 1)</th> </tr>";
+
+            for (var i=0; i<inputArray.length; i++){
+                output += "<tr> <td>" + games[inputArray[i]] + "</td> <td>$" + prices[inputArray[i]] + "</td> <td>" + consoles[i] + " <td>";
+                output += descriptions[inputArray[i]] + "</td> <td>" + "<img src=\"" + images[inputArray[i]] + "\" width=100>" + "</td>";
+                output += "<td> <input type=\"button\" id=\"idBtn" + buttons[inputArray[i]] + "\"";
+                output += "value=\"Buy\" onClick=\"" + buttons[inputArray[i]] + "()\" </td> </tr>";
+            }
+             
+            output += "</table>";
+
+            idTableItems.innerHTML = output;
+        }
+    </script>
+</head>
+
+<body onLoad="showTable()">
+    <br><br><br>
+    <table id="idTableItems">
+        
+    </table>
+
+    <br><br>
+    <input type="button" value="Sort A-Z" id="idBtnAZ" onClick="sortAZ()">
+    <input type="button" value="Sort Z-A" id="idBtnZA" onClick="sortZA()">
+    <input type="button" value="Sort By Price (L to H)" id="idBtnLowHigh" onClick="sortLowHigh()">
+    <input type="button" value="Sort By Price (H to L)" id="idBtnHighLow" onClick="sortHighLow()">
+    <br><br>
+    Search:
+    <input type="text" id="idTxtSearchName">
+    <br>
+    <input type="button" value="Search By Name" onClick="showItemsWithName()">
+    <br><br>
+    Minimum Price:
+    <input type="text" id="idTxtMinPrice">
+    <br>
+    Maximum Price:
+    <input type="text" id="idTxtMaxPrice">
+    <br>
+    <input type="button" value="Search In Price Range" onClick="showItemsWithPrice()">
+    <br><br>
+    <input type="button" value="About Us" id="idBtnAbout" onClick="openPage()">
+    <address>
+        Brought to you by <a href="mailto:Gamer213@gmail.com">Anastasia and Tej</a>.<br>
+    </address>
+</body>
+</html>

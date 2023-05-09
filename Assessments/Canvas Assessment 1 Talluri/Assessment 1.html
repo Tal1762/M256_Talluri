@@ -1,0 +1,175 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		var happyImg = new Image();
+        happyImg.src = "happybear.jpg";
+
+		var angryImg = new Image();
+        angryImg.src = "angrybear.jpg";
+
+		// Class that represents a bear
+		class bearClass{
+			
+			// This constructor takes in the following parameters:
+			//	1. bearX is the x-coordinate of the bear's location
+			//	2. bearY is the y-coordinate of the bear's location
+			//	3. bearHappy is a boolean, where true means the bear is happy
+			//			and false means the bear is not happy
+			constructor(bearX, bearY, bearHappy){
+				this.x = bearX;
+				this.y = bearY;
+				this.happy = bearHappy;
+			}
+			
+			draw(){
+				if (this.happy == true){
+					c.drawImage(happyImg, this.x, this.y, 300, 200);
+				}
+				else if (this.happy == false){
+					c.drawImage(angryImg, this.x, this.y, 300, 200);
+				}
+			}
+
+			moveLeft(){
+				this.x -= 2;
+			}
+			moveRight(){
+				this.x += 2;
+			}
+			moveUp(){
+				this.y -= 2;
+			}
+			moveDown(){
+				this.y += 2;
+			}
+		}
+
+
+
+
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+		var bear1 = new bearClass(250, 200, true);
+				
+				
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameUpdate(){
+			// H key
+			if (newkeys[72]){
+				bear1.happy = true;
+			}
+			
+			// A key
+			if (newkeys[65]){
+				bear1.happy = false;
+			}
+
+			// Right arrow key
+            if (curkeys[39]){
+                bear1.moveRight();
+            }
+
+            // Up arrow key
+            if (curkeys[38]){
+                bear1.moveUp();
+            }
+
+            // Down arrow key
+            if (curkeys[40]){
+                bear1.moveDown();
+            }
+
+			// Left arrow key
+            if (curkeys[37]){
+                bear1.moveLeft();
+            }
+			
+			// DO NOT TOUCH ANY OF THE BELOW CODE
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			bear1.draw();
+		}
+
+
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>

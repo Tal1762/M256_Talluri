@@ -1,0 +1,321 @@
+<html>
+    <head>
+
+        <style>
+            canvas
+            {
+                background: #dddddd;
+            }
+        </style>
+
+        <script>
+            function getRandInt(min, max){
+                var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+                return randInt
+            }
+
+            class timerClass{
+                constructor(timeIntervalMS){
+                    // Initialize oldTime to be the time of creation
+                    this.oldTime = new Date();
+
+                    // Set interval to elapse before the timer fires
+                    this.interval = timeIntervalMS;
+                    
+                    // Keeps track of the # of milliseconds accumulated since the last firing
+                    this.accum = 0;
+                }
+
+                // This method returns true if the timer is ready to fire, false otherwise
+                // If it returns true, then resets fire interval
+                isReady(){
+                    var curTime = new Date();
+                    var delta = curTime - this.oldTime;
+
+                    this.accum += delta;
+                    this.oldTime = curTime;
+                    if (this.accum > this.interval){
+                        this.accum = 0;
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+		    }
+
+            // This class represents a rectangle object
+
+            class rectClass
+            {
+                constructor(rectX, rectY, rectWidth, rectHeight, rectImg)
+                {
+                    this.x = rectX;
+                    this.y = rectY;
+                    this.width = rectWidth;
+                    this.height = rectHeight;
+
+                    this.img = new Image();
+                    this.img.src = rectImg;
+                }
+
+                moveLeft()
+                {
+                    this.x-=50;
+                }
+
+                moveRight()
+                {
+                    this.x+=50;
+                }
+
+                moveUp()
+                {
+                    this.y-=50;
+                }
+
+                moveDown()
+                {
+                    this.y+=50;
+                }
+
+
+                // The rectangle draws itself
+                draw()
+                {
+                    c.drawImage(this.img,
+                                this.x,
+                                this.y,
+                                this.width,
+                                this.height);
+                }
+
+
+                /* Returns true if this rectangle intersects the rectangle "rect", and false otherwise.
+                * Example:
+                *		var cat = new rectClass(300, 200, 100, 100, "cat.jpg");
+                *		var dog = new rectClass(600, 400, 150, 150, "dog.jpg"):
+                *		if (cat.intersects(dog)){ ... }
+                *	OR:	if (dog.intersects(cat)){ ... }
+                */
+                intersects(rect){
+                    if (this.x < rect.x + rect.width &&
+                        this.x + this.width > rect.x &&
+                        this.y < rect.y + rect.height &&
+                        this.y + this.height > rect.y)
+                    {
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            }
+
+
+        
+            // Canvas context; used to call Canvas methods
+            var c;
+
+            // Canvas width and height.
+            var cWidth, cHeight;
+
+            // Stores the current keyboard state
+            var curkeys = [];
+            
+            // Stores keys that have been newly pressed since last update
+            var newkeys = [];
+
+            var frog = new rectClass(0, 0, 100, 100, "frog.png");
+            var fly = new rectClass(700, 500, 100, 100, "fly.png");
+            var crab = new rectClass(350, 225, 100, 100, "crab.png");
+
+            var winCount = 0;
+            var loseCount = 0;
+
+            var gameTimer = new timerClass(3000);
+            var otherTimer = new timerClass(100);
+            var timeOutput = 3;
+
+            // The current game state, can be one of:
+            //		1. "play" - the main playing phase of the game
+            //		2. "win" - after frog gets fly
+            //		3. "lose" - after crab gets frog
+            var gameState = "play";
+
+
+
+            // Initializes entire game framework. This method should only be called
+            // once, by the body onload event handler.
+            function gameFrameworkInit()
+            {		
+                // Initialize key arrays
+                for (i = 0; i < 256; i++){
+                    curkeys[i] = false;
+                    newkeys[i] = false;
+                }
+            
+                // Initialize global variables for canvas
+                c = myCanvas.getContext('2d');
+                cWidth = myCanvas.width;
+                cHeight = myCanvas.height;
+
+
+                // Start listeners for getting keyboard state
+                window.addEventListener('keydown',
+                                        function(e){
+                                            if (!curkeys[e.keyCode]){
+                                                curkeys[e.keyCode] = true;
+                                                newkeys[e.keyCode] = true;
+                                            }
+                                        }
+                                    );
+                
+                window.addEventListener('keyup',
+                                        function(e){ curkeys[e.keyCode] = false; }
+                                    );
+
+                // Schedule the update function to be called right before the next repaint.
+                // (At the end of the update function, it will schedule itself to be called
+                // again before the NEXT repaint, and so on.
+                window.requestAnimationFrame(gameUpdate);
+            }
+
+
+            function gameUpdate()
+            {
+                if (gameState == "play"){
+                    crab.x += 2;
+                    if (crab.x >= 800){
+                        crab.x = -100;
+                    }
+
+                    // Right arrow key
+                    if (newkeys[39]){
+                        frog.moveRight();
+                    }
+
+                    // Up arrow key
+                    if (newkeys[38]){
+                        frog.moveUp();
+                    }
+
+                    // Down arrow key
+                    if (newkeys[40]){
+                        frog.moveDown();
+                    }
+
+                    // Left arrow key
+                    if (newkeys[37]){
+                        frog.moveLeft();
+                    }
+
+                    if (frog.intersects(fly)){
+                        gameState = "win";
+                        winCount += 1;
+                    }
+
+                    if (frog.intersects(crab)){
+                        gameState = "lose";
+                        loseCount += 1;
+                    }
+
+                    if (timeOutput > 0){
+                        timeOutput = 3000 - gameTimer.accum;
+                        timeOutput = timeOutput / 1000;
+                        timeOutput = Math.trunc(timeOutput * 10) / 10;
+                    }
+                    if (gameTimer.isReady() == true){
+                        gameState = "lose";
+                        loseCount += 1;
+                    }
+                }
+                else if (gameState == "win"){
+                    gameTimer.oldTime = new Date();
+                    gameTimer.accum = 0;
+                    if (newkeys[32]){
+                        frog.x = 0;
+                        frog.y = 0;
+                        gameState = "play";
+                        crab.x = getRandInt(150, 700);
+                        crab.y = getRandInt(150, 500);
+                        fly.x = getRandInt(150, 700);
+                        fly.y = getRandInt(150, 500);
+                        gameTimer.accum = 0;
+                        gameTimer.oldTime = new Date();
+                        timeOutput = 3;
+                    }
+                }
+                else if (gameState == "lose"){
+                    gameTimer.accum = 0;
+                    gameTimer.oldTime = new Date();
+                    if (newkeys[13]){
+                        frog.x = 0;
+                        frog.y = 0;
+                        gameState = "play";
+                        crab.x = getRandInt(150, 700);
+                        crab.y = getRandInt(150, 500);
+                        fly.x = getRandInt(150, 700);
+                        fly.y = getRandInt(150, 500);
+                        gameTimer.accum = 0;
+                        gameTimer.oldTime = new Date();
+                        timeOutput = 3;
+                    }
+                }
+
+                // Reset newkeys
+                for (i = 0; i < 256; i++){
+                    newkeys[i] = false;
+                }
+
+                // At the end of the update function, repaint the screen
+                gameDraw();
+                    
+                // Last thing the update function does is to schedule itself to be called
+                // again before the next repaint
+                window.requestAnimationFrame(gameUpdate);
+            }
+
+
+            function gameDraw()
+            {
+                // Clear the canvas before we draw the current frame
+                c.clearRect(0,0,cWidth,cHeight);
+
+                c.font = "24px Calibri";
+                
+                if (gameState == "play"){
+                    fly.draw();
+                    crab.draw();
+                    frog.draw();
+                    c.fillStyle = "gray";
+                    c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 25);
+                    c.fillText("Time left: " + timeOutput, 500, 50);
+                }
+                else if (gameState == "win"){
+                    c.fillStyle = "green";
+                    c.fillText("You win! Press space to play again.", 235, 275);
+                    c.fillStyle = "gray";
+                    c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 25);
+
+                }
+                else if (gameState == "lose"){
+                    c.fillStyle = "red";
+                    c.fillText("You lost... Press enter to play again.", 235, 275)
+                    c.fillStyle = "gray";
+                    c.fillText("Win count: " + winCount + " | Lose count: " + loseCount, 500, 25);
+                }
+            }
+
+
+        </script>
+
+    </head>
+
+
+    <body onload="gameFrameworkInit()">
+        
+        <canvas id="myCanvas" width="800" height="600"></canvas>
+
+    </body>
+</html>

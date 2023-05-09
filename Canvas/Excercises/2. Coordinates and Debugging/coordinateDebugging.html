@@ -1,0 +1,141 @@
+<html>
+<head>
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+
+		// Location & dimension of our rectangle
+		var rectX = 0, rectY = 0;
+		var rectWidth = 200, rectHeight = 100;
+        var color1 = "maroon";
+		var color2 = "red";
+        var rectSpeed = 3;
+
+        var rectDirection = "";
+		var output = "x:0 | y:0";
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){ curkeys[e.keyCode] = true; }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameUpdate(){
+			// Right arrow key
+            if (curkeys[39]){
+                rectDirection = "right";
+            }
+
+            // Up arrow key
+            if (curkeys[38]){
+                rectDirection = "up";
+            }
+
+            // Down arrow key
+            if (curkeys[40]){
+                rectDirection = "down";
+            }
+
+            // Left arrow key
+            if (curkeys[37]){
+                rectDirection = "left";
+            }
+
+			if (curkeys[32]){
+				rectDirection = "";
+			}
+
+            if (rectDirection == "left"){
+                rectX -= rectSpeed;
+
+				if (rectX <= -200){
+                    rectX = 800;
+                }
+				
+				output = "x:" + rectX + " | y:" + rectY;
+            }
+            else if (rectDirection == "down"){
+                rectY += rectSpeed;
+
+				if (rectY >= 600){
+                    rectY = -100;
+                }
+
+				output = "x:" + rectX + " | y:" + rectY;
+            }
+            else if (rectDirection == "up"){
+                rectY -= rectSpeed;
+				
+				if (rectY <= -100){
+                    rectY = 600;
+                }
+
+				output = "x:" + rectX + " | y:" + rectY;
+            }
+            else if (rectDirection == "right"){
+                rectX += rectSpeed;
+
+				if (rectX >= 800){
+                    rectX = -200;
+                }
+
+				output = "x:" + rectX + " | y:" + rectY;
+            }
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+            c.fillStyle = color1;
+
+			c.fillRect(rectX, rectY, rectWidth, rectHeight);
+
+            c.font = "24px Calibri";
+			c.fillStyle = color2;
+
+            c.fillText(output, 665, 30);
+		}
+	</script>
+</head>
+
+<body onload="gameFrameworkInit()">
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+</html>

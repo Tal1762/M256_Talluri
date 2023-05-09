@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title> Array Loops P. 2 </title>
+
+    <script>
+        var numBottlesRemaining = [];
+        var repeatedX = [];
+
+        function fillArray(){
+            for(var i=100; i>=0; i--){
+                numBottlesRemaining.push(i + " bottles left");
+            }
+            var X = ""
+            for(var i=0; i<=100; i++){
+                repeatedX.push(X);
+                X += "X";
+            }
+        }
+
+        function displayArray(inputArray){
+            var arraySize = inputArray.length;
+            output = "";
+
+            for (var i=0; i < arraySize; i++){
+                output += inputArray[i] + "<br>";
+            }
+
+            idDivOutput.innerHTML = output;
+        }
+
+        function displayElements(){
+            displayArray(numBottlesRemaining);
+        }
+
+        function showRepeatedX(){
+            displayArray(repeatedX);
+        }
+    </script>
+</head>
+
+<body onLoad="fillArray()">
+    <input type="button" value="Display Elements" onClick="displayElements()">
+    <input type="button" value="Show Repeated Xs" onClick="showRepeatedX()">
+    <br><br>
+    <div id="idDivOutput"></div>
+</body>
+</html>

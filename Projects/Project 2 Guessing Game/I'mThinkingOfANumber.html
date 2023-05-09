@@ -1,0 +1,262 @@
+<html>
+<head>
+    <title>A Guessing Game!</title>
+    <link rel=stylesheet type=text/css href="project2.css">
+
+    <script>
+        var randInt;
+        var guesses = 6;
+        var roundNum = 0;
+        var playerNum = 0;
+        var computerNum = 0;
+        var totalGuesses = 0;
+        var guess1 = "1000";
+        var guess2 = "2000";
+        var guess3 = "3000";
+        var guess4 = "4000";
+        var guess5 = "5000";
+        var guess6 = "6000";
+
+        function getRandInt(min, max){
+            var randInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randInt
+        }
+
+        function resetGame(){
+            onLoadFxn();
+            idTxtInput.value = "";
+            guess1 = "1000";
+            guess2 = "2000";
+            guess3 = "3000";
+            guess4 = "4000";
+            guess5 = "5000";
+            guess6 = "6000";
+            guesses = 6;
+            roundNum = 0;
+            playerNum = 0;
+            computerNum = 0;
+            totalGuesses = 0;
+            idDivGuess.innerHTML = guesses;
+            idDivRounds.innerHTML = roundNum;
+            idDivPlayer.innerHTML = playerNum;
+            idDivComputer.innerHTML = computerNum;
+            idDivAverage.innerHTML = "Not Applicable"
+            var output = "This is a game between you and the computer. Guess a number between 1 and 50 to start, ";
+            output += "and the computer will tell you whether you are greater than, less than, ";
+            output += "or equal to their randomized pick. Be sure to use your reasoning to figure out ";
+            output += "the computer's number before all 6 of your turns are up, otherwise the computer ";
+            output += "will win the round! Good luck and have fun!";
+            idDivInstructions.innerHTML = output;
+            document.body.style.backgroundColor = "forestgreen";
+        }
+
+        function onLoadFxn(){
+            randInt = getRandInt(1, 50);
+        }
+
+        function checkGuess(){
+            var numGuess = Number(idTxtInput.value);
+
+            if (isNaN(numGuess)){
+                window.alert("That is not a number! Please guess again with a number.");
+                return
+            }
+            if (numGuess < 1 || numGuess > 50){
+                window.alert("The computer's number can't be that number.");
+                return
+            }
+            if (Number.isInteger(numGuess) == false){
+                window.alert("Your guess can't be a decimal! Try again.");
+                return
+            }
+
+            idDivInstructions.innerHTML = "Good Luck!";
+            
+            if (guesses == 6){
+                guess1 = idTxtInput.value;
+            }
+            else if (guesses == 5){
+                guess2 = idTxtInput.value;
+            }
+            else if (guesses == 4){
+                guess3 = idTxtInput.value;
+            }
+            else if (guesses == 3){
+                guess4 = idTxtInput.value;
+            }
+            else if (guesses == 2){
+                guess5 = idTxtInput.value;
+            }
+            else if (guesses == 1){
+                guess6 = idTxtInput.value;
+            }
+
+            if (guess1 == guess2 || guess1 ==  guess3 || guess1 ==  guess4 || guess1 ==  guess5 || guess1 ==  guess6){
+                window.alert("You already guessed that number!");
+                return
+            }
+            else if (guess2 == guess3 || guess2 ==  guess4 || guess2 ==  guess5 || guess2 ==  guess6){
+                window.alert("You already guessed that number!");
+                return
+            }
+            else if (guess3 == guess4 || guess3 ==  guess5 || guess3 ==  guess6){
+                window.alert("You already guessed that number!");
+                return
+            }
+            else if (guess4 == guess5 || guess4 ==  guess6){
+                window.alert("You already guessed that number!");
+                return
+            }
+            else if (guess5 == guess6){
+                window.alert("You already guessed that number!");
+                return
+            }
+
+            if (numGuess > randInt){
+                window.alert("Your guess is too high!");
+                totalGuesses += 1;
+                guesses -= 1;
+                idDivGuess.innerHTML = guesses;
+            }
+            else if (numGuess < randInt){
+                window.alert("Your guess is too low!");
+                totalGuesses += 1;
+                guesses -= 1;
+                idDivGuess.innerHTML = guesses;
+            }
+            else{
+                var confirm = window.confirm("Congratulations! Would you like to continue?");
+                if (confirm == false){
+                    resetGame();
+                }
+                else{
+                    onLoadFxn();
+                    playerNum += 1;
+                    roundNum += 1;
+                    idDivRounds.innerHTML = roundNum;
+                    idDivPlayer.innerHTML = playerNum;
+                    guesses = 6;
+                    idDivGuess.innerHTML = guesses;
+                    totalGuesses += 1;
+                    var averageGuess = totalGuesses/roundNum;
+                    idDivAverage.innerHTML = averageGuess;
+                    document.body.style.backgroundColor = "forestgreen";
+                    guess1 = "1000";
+                    guess2 = "2000";
+                    guess3 = "3000";
+                    guess4 = "4000";
+                    guess5 = "5000";
+                    guess6 = "6000";
+                }
+            }
+
+            if (guesses == 5){
+                document.body.style.backgroundColor = "gold";
+            }
+            else if (guesses == 4){
+                document.body.style.backgroundColor = "orange";
+            }
+            else if (guesses == 3){
+                document.body.style.backgroundColor = "darkorange";
+            }
+            else if (guesses == 2){
+                document.body.style.backgroundColor = "maroon";
+            }
+            else if (guesses == 1){
+                document.body.style.backgroundColor = "purple";
+            }
+            else if (guesses == 0){
+                document.body.style.backgroundColor = "forestgreen";
+            }
+
+            if (guesses == 0){
+                var confirm = window.confirm("Too bad! The computer's number was " + randInt + ". Want to try again?")
+                if (confirm == false){
+                    resetGame();
+                }
+                else{
+                    onLoadFxn();
+                    guesses = 6;
+                    idDivGuess.innerHTML = guesses;
+                    computerNum += 1;
+                    roundNum += 1;
+                    idDivRounds.innerHTML = roundNum;
+                    idDivComputer.innerHTML = computerNum;
+                    var averageGuess = totalGuesses/roundNum;
+                    idDivAverage.innerHTML = averageGuess;
+                    guess1 = "1000";
+                    guess2 = "2000";
+                    guess3 = "3000";
+                    guess4 = "4000";
+                    guess5 = "5000";
+                    guess6 = "6000";
+                }
+            }
+
+            if (playerNum == 5){
+                window.alert("That's game! The player wins this one!");
+                resetGame();
+            }
+            
+            if (computerNum == 5){
+                window.alert("That's game! The computer takes the win!");
+                resetGame();
+            }
+        }
+
+        function restartGame(){
+            var confirm = window.confirm("Are you sure you want to restart the game?");
+
+            if (confirm == true){
+                resetGame();
+            }
+            else{
+                return
+            }
+        }
+
+        function cheatOutput(){
+            var rangeMin = getRandInt(1,3);
+            var rangeMax = getRandInt(1,3);
+            var cheatMin = randInt - rangeMin;
+            var cheatMax = randInt + rangeMax;
+            window.alert("The computer's number is somewhere between " + cheatMin + " and " + cheatMax + ".")
+        }
+    </script>
+</head>
+
+<body onLoad="onLoadFxn()">
+    <form>
+        <fieldset id="idFldSet1">
+        <div id="idDivInstructions">This is a game between you and the computer. 
+        Guess a number between 1 and 50 to start, 
+        and the computer will tell you whether you are greater than, less than, 
+        or equal to their randomized pick. Be sure to use your reasoning to figure out 
+        the computer's number before all 6 of your turns are up, otherwise the computer
+        will win the round! Good luck and have fun!</div>
+        </fieldset>
+        <br><br>
+        <fieldset id="idFldSet2">
+        Type in your guess:
+        <input type="text" id="idTxtInput">
+        <br>
+        <input type="button" value="Check Your Guess" id="idBtnCheck" onClick="checkGuess()">
+        <input type="button" value="Restart The Game" id="idBtnRestart" onClick="restartGame()">
+        <input type="button" value="Cheat >:)" id="idBtnCheat" onClick="cheatOutput()">
+        </fieldset>
+        <br><br>
+        <fieldset id="idFldSet3">
+        Number of guesses left:
+        <div id="idDivGuess">6</div>
+        Number of rounds played:
+        <div id="idDivRounds">0</div>
+        Number of rounds won by the player:
+        <div id="idDivPlayer">0</div>
+        Number of rounds won by the computer:
+        <div id="idDivComputer">0</div>
+        Average guesses per round:
+        <div id="idDivAverage">Not Applicable</div>
+        </fieldset>
+    </form>
+</body>
+</html>

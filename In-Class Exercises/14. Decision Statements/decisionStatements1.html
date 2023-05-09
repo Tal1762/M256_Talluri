@@ -1,0 +1,54 @@
+<html>
+<head>
+    <title>Decision Statements 1</title>
+    <style>
+        body{
+            background-color: ivory;
+            color: saddlebrown;
+            font-family: Geneva;
+            font-size: 24px;
+        }
+    </style>
+
+    <script>
+        function checkZipCode(){
+            var zipCode = Number(idTxtZipCode.value);
+            console.log(zipCode);
+            if (isNaN(zipCode) == true){
+                window.alert("That's not a number!");
+                document.body.style.backgroundColor = "ivory";
+                return
+            }
+            else if (idTxtZipCode.value.includes(" ")){
+                window.alert("You have extra spaces in your zip code!");
+                document.body.style.backgroundColor = "ivory";
+                return
+            }
+            else if (idTxtZipCode.value.length == 5){
+                document.body.style.backgroundColor = "green";
+                window.alert("Thank you for entering your zip code!");
+                console.log("green");
+            }
+            else if (idTxtZipCode.value.length < 5){
+                document.body.style.backgroundColor = "red";
+                window.alert("You didn't enter enough digits, please try again!");
+                console.log("red")
+            }
+            else if (idTxtZipCode.value.length > 5){
+                document.body.style.backgroundColor = "orange";
+                window.alert("You entered too many digits, please try again!");
+                console.log("orange");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <form>
+        Enter a zip code:
+        <input type="text" id="idTxtZipCode">
+        <br>
+        <input type="button" value="Check Zip Code" onClick="checkZipCode()">
+    </form>
+</body>
+</html>

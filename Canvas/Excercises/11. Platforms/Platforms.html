@@ -1,0 +1,231 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+
+		class platformClass{
+			constructor(pfX, pfY,			// location
+						pfWidth, pfHeight,	// dimensions
+						pfImgFile)			// image file name
+			{
+				this.x = pfX;
+				this.y = pfY;
+				this.width = pfWidth;
+				this.height = pfHeight;
+				this.img = new Image();
+				this.img.src = pfImgFile;
+			}
+
+			// Draw this platform on the screen
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+
+		class birdClass{
+			constructor(){
+				// CONSTRUCTOR CODE
+				this.x = 50;
+				this.y = 410;
+				this.width = 100;
+				this.height = 100;
+
+				this.img = new Image();
+				this.img.src = "bird.png";
+
+				this.bInAir = false;
+				this.curYspeed = 0;				
+			}
+
+			// Initiate the a jump for this bird
+			jump(){
+				// Can initiate jump only if bird is currently on the ground
+				if (this.bInAir == false){
+					this.bInAir = true;
+					this.curYspeed = -20;
+				}
+			}
+
+
+
+			// This updates the bird's current location & speed (e.g. if it's falling in the air)
+			// (Must be called in the main gameUpdate method)
+			update(){
+
+				// If the bird is currently in the air (i.e. mid-jump), then update its
+				// location and current vertical speed
+				if (this.bInAir == true){
+					this.y += this.curYspeed;
+					this.curYspeed++;
+
+					// Check if we landed on the ground
+					if (this.y > 410){
+						this.y = 410;
+						this.bInAir = false;
+					}
+
+					if (this.curYspeed > 0 && this.intersects(pf1)){
+						this.curYspeed = 0;
+						this.bInAir = false;
+						this.y = pf1.y - this.height + 4;
+					}
+
+					if (this.curYspeed > 0 && this.intersects(pf2)){
+						this.curYspeed = 0;
+						this.bInAir = false;
+						this.y = pf2.y - this.height + 4;
+					}
+				}
+
+				if (this.bInAir == false && this.y < 410 && this.intersects(pf1) == false && this.intersects(pf2) == false){
+					this.bInAir = true;
+				}
+			}
+
+
+			// Returns true if this bird intersects with "obj"; returns false otherwise
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+
+			// Draw this bird on the screen
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+
+		var bird = new birdClass();
+		var pf1 = new platformClass(200, 350, 200, 25, "platform.png");
+		var pf2 = new platformClass(300, 150, 200, 25, "platform.png");
+	
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+
+
+		function gameUpdate(){
+			if (curkeys[32]){		// SPACE
+				bird.jump();
+			}
+			if (curkeys[39]){
+				bird.x += 5;
+			}
+			if (curkeys[37]){
+				bird.x -= 5;
+			}
+
+			// Update bird
+			bird.update();
+
+
+
+			// DO NOT ADD OR MODIFY ANY CODE BELOW HERE
+
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			// Draw the background
+			var bg = new Image();
+			bg.src = "background.png";
+			c.drawImage(bg, 0, 0, 800, 600);
+			pf1.draw();
+			pf2.draw();
+
+			// Draw the bird
+			bird.draw();
+		}
+
+
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>
